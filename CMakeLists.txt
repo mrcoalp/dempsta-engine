@@ -1,7 +1,12 @@
 cmake_minimum_required(VERSION 3.10)
-project(dempsta-engine)
+project(game_test)
 
 set(CMAKE_CXX_STANDARD 17)
 
 add_subdirectory(engine)
-add_subdirectory(game_test)
+
+file(GLOB_RECURSE SOURCES src/*.h src/*.cpp)
+
+add_executable(game_test ${SOURCES})
+
+target_link_libraries(game_test PRIVATE dempsta)

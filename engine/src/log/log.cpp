@@ -1,9 +1,8 @@
 #include "log.h"
 
 namespace de {
-
-    std::shared_ptr <spdlog::logger> Log::engineLogger;
-    std::shared_ptr <spdlog::logger> Log::applicationLogger;
+    std::shared_ptr<spdlog::logger> Log::engineLogger;
+    std::shared_ptr<spdlog::logger> Log::applicationLogger;
 
     void Log::Init() {
         spdlog::set_pattern("%^[%c] %n: %v%$");

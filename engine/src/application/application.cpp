@@ -1,12 +1,22 @@
 #include "application.h"
 
-using namespace de;
+namespace de {
+    Application* Application::instance = nullptr;
 
-Application::Application() {}
+    Application::Application() {
+        if (instance) {
+            LOG_ENGINE_ERROR("Application already exists! Aborting...");
+            throw;
+        }
 
-Application::~Application() {}
+        instance = this;
+    }
 
-void Application::Run() {
-    Log::Init();
-    LOG_ENGINE_INFO("Running initialization...");
+    Application::~Application() {
+        delete instance;
+    }
+
+    void Application::Run() {
+        while (true);
+    }
 }
