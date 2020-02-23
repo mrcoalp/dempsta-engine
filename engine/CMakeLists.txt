@@ -15,6 +15,9 @@ set(SPDLOG_BUILD_SHARED ON CACHE INTERNAL "")
 add_subdirectory(external/spdlog)
 
 # Add glfw
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_SHARED_LIBS ON CACHE INTERNAL "")
 add_subdirectory(external/glfw)
 

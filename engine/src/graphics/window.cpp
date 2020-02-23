@@ -8,13 +8,19 @@ namespace de {
         data.width = windowProps.width;
         data.height = windowProps.height;
 
-        LOG_ENGINE_INFO("Creating window {0} ({1}x{2})", data.title, data.width, data.height);
-
         if (!GLFWInitialized) {
             int success = glfwInit();
-            LOG_ENGINE_INFO("GLFWInit ({0})", success);
-            GLFWInitialized = true;
+
+            if (success == 1) {
+                LOG_ENGINE_INFO("GLFW initialized successfully!");
+                GLFWInitialized = true;
+            } else {
+                LOG_ENGINE_CRITICAL("GLFW initialization failed!");
+                throw;
+            }
         }
+
+        LOG_ENGINE_TRACE("Creating window {0} ({1}x{2})...", data.title, data.width, data.height);
 
         window = glfwCreateWindow(
                 (int) windowProps.width,

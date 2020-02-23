@@ -5,7 +5,7 @@ namespace de {
 
     Application::Application() {
         if (instance) {
-            LOG_ENGINE_ERROR("Application already exists! Aborting...");
+            LOG_ENGINE_CRITICAL("Application already exists! Aborting...");
             throw;
         }
 

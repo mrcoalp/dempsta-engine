@@ -15,7 +15,7 @@ namespace de {
         unsigned int height;
 
         explicit WindowProps(
-                std::string title = "Demspta Application",
+                std::string title = "Default Dempsta Title",
                 unsigned int width = 1280,
                 unsigned int height = 720
         ) : title(std::move(title)), width(width), height(height) {}
