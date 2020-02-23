@@ -18,6 +18,10 @@ add_subdirectory(external/spdlog)
 set(BUILD_SHARED_LIBS ON CACHE INTERNAL "")
 add_subdirectory(external/glfw)
 
+# Add OpenGL
+set(OpenGL_GL_PREFERENCE GLVND)
+find_package(OpenGL REQUIRED)
+
 # Add imgui
 add_subdirectory(external/imgui)
 
@@ -28,4 +32,4 @@ target_include_directories(dempsta
         include
         )
 
-target_link_libraries(dempsta spdlog glfw imgui)
+target_link_libraries(dempsta spdlog glfw OpenGL::GL imgui)

@@ -1,4 +1,3 @@
-#include <dempsta.h>
 #include "Core/application.h"
 
 namespace de {
@@ -11,6 +10,8 @@ namespace de {
         }
 
         instance = this;
+
+        window = std::make_unique<Window>(WindowProps());
     }
 
     Application::~Application() {
@@ -18,6 +19,12 @@ namespace de {
     }
 
     void Application::Run() {
-        while (true);
+        running = true;
+
+        while (running) {
+            glClearColor(0, 1, 0, 1);
+            glClear(GL_COLOR_BUFFER_BIT);
+            window->OnUpdate();
+        }
     }
 }

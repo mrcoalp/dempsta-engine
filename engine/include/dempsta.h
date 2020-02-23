@@ -8,5 +8,6 @@
 #include "Core/application.h"
 #include "Core/log.h"
 #include "Core/entry.h"
+#include "Core/window.h"
 
 #endif  // DEMPSTA_H

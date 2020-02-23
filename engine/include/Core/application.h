@@ -1,6 +1,7 @@
 #pragma once
 
-#include "log.h"
+#include "Core/log.h"
+#include "Core/window.h"
 
 int main(int argc, char** argv);
 
@@ -18,7 +19,19 @@ namespace de {
         inline static Application& GetInstance() { return *instance; }
 
     private:
+        /**
+         * @brief Application instance.
+         * Application is a singleton.
+         */
         static Application* instance;
+        /**
+         * @brief Window object pointer.
+         */
+        std::unique_ptr<Window> window;
+        /**
+         * @brief Whether or not the application is running.
+         */
+        bool running = false;
 
         /**
          * @brief Initializes application.
