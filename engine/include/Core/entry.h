@@ -1,6 +1,6 @@
 #pragma once
 
-#include "application.h"
+#include "Core/application.h"
 
 int main(int argc, char** argv) {
     de::Log::Init();

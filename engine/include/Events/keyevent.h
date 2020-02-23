@@ -11,7 +11,7 @@ namespace de {
             return keyCode;
         }
 
-        EVENT_CLASS_CATEGORY(KeyboardEvent | InputEvent)
+        EVENT_CLASS_CATEGORY(KeyboardEventCategory | InputEventCategory)
 
     protected:
         explicit KeyEvent(int keyCode) : keyCode(keyCode) {};
@@ -54,5 +54,18 @@ namespace de {
         }
 
         EVENT_CLASS_TYPE(KeyReleased)
+    };
+
+    class KeyTypedEvent : public KeyEvent {
+    public:
+        explicit KeyTypedEvent(int keyCode) : KeyEvent(keyCode) {}
+
+        [[nodiscard]] std::string ToString() const override {
+            std::stringstream ss;
+            ss << "KeyTypedEvent: " << keyCode;
+            return ss.str();
+        }
+
+        EVENT_CLASS_TYPE(KeyTyped)
     };
 }

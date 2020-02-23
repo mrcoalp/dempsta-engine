@@ -1,4 +1,5 @@
-#include "application.h"
+#include <dempsta.h>
+#include "Core/application.h"
 
 namespace de {
     Application* Application::instance = nullptr;

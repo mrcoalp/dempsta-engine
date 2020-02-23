@@ -1,27 +1,41 @@
 #pragma  once
 
-#include "pch.h"
+#include "Core/pch.h"
 
 namespace de {
+    /**
+     * @brief Event type enumeration.
+     */
     enum class EventType {
         None = 0,
         WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
         AppTick, AppUpdate, AppRender,
-        KeyPressed, KeyReleased,
+        KeyPressed, KeyReleased, KeyTyped,
         MouseBtnPressed, MouseBtnReleased, MouseMoved, MouseScrolled
     };
 
+    /**
+     * @brief Event category is represented as a bitfield.
+     * An event can fall into multiple categories.
+     */
     enum EventCategory {
-        None                = 0,
-        ApplicationEvent    = 1u << 0u,
-        InputEvent          = 1u << 1u,
-        KeyboardEvent       = 1u << 2u,
-        MouseEvent          = 1u << 3u,
-        MouseBtnEvent       = 1u << 4u
+        None                        = 0,
+        ApplicationEventCategory    = 1u << 0u,
+        InputEventCategory          = 1u << 1u,
+        KeyboardEventCategory       = 1u << 2u,
+        MouseEventCategory          = 1u << 3u
     };
 
+    /**
+     * @brief Base class for all events.
+     */
     class Event {
     public:
+        /**
+         * @brief Has event been handled?
+         */
+        bool Handled = false;
+
         /**
          * @brief Getter for the EventType of an Event.
          * @return The event type.
@@ -56,10 +70,44 @@ namespace de {
         inline bool IsInCategory(EventCategory category) {
             return GetCategoryFlags() & category;
         }
-
-    protected:
-        bool handled = false;
     };
+
+    /**
+     * @brief Class handler for dispatch an event.
+     */
+    class EventDispatcher {
+    public:
+        explicit EventDispatcher(Event& event): event(event) {}
+
+        /**
+         * @brief Dispatcher method.
+         * @tparam E Event to compare to.
+         * @tparam F Lambda return type.
+         * @param func Lambda to be used to get handled.
+         * @return True if event was dispatched, false otherwise.
+         */
+        template<typename E, typename F>
+        bool Dispatch(const F& func) {
+            if (event.GetEventType() == E::GetStaticEventType()) {
+                event.Handled = func(static_cast<E&>(event));
+                return true;
+            }
+            return false;
+        }
+
+    private:
+        Event& event;
+    };
+
+    /**
+     * @brief Overload of << operator to print event.ToString();
+     * @param os
+     * @param e
+     * @return
+     */
+    inline std::ostream& operator<<(std::ostream& os, Event& e) {
+        return os << e.ToString();
+    }
 
 // Macros to avoid boilerplate in event classes
 #define EVENT_CLASS_TYPE(type)  static EventType GetStaticEventType() { return EventType::type; }\

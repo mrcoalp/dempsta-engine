@@ -3,8 +3,10 @@
 
 #include "Events/event.h"
 #include "Events/keyevent.h"
-#include "application.h"
-#include "log.h"
-#include "entry.h"
+#include "Events/mouseevent.h"
+#include "Events/applicationevent.h"
+#include "Core/application.h"
+#include "Core/log.h"
+#include "Core/entry.h"
 
 #endif  // DEMPSTA_H
