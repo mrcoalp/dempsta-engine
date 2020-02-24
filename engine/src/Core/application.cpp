@@ -12,14 +12,14 @@ namespace de {
         instance = this;
 
         window = std::make_unique<Window>(WindowProps());
-        window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
+        window->SetEventCallback(DE_BIND_EVENT_FN(Application::OnEvent));
     }
 
     Application::~Application() = default;
 
     void Application::OnEvent(Event& e) {
         EventDispatcher eventDispatcher(e);
-        eventDispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::onWindowClose));
+        eventDispatcher.Dispatch<WindowCloseEvent>(DE_BIND_EVENT_FN(Application::onWindowClose));
 
         for (auto it = layerStack.rbegin(); it != layerStack.rend(); ++it) {
             (*it)->OnEvent(e);

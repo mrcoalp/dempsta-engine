@@ -22,17 +22,15 @@ set(BUILD_SHARED_LIBS ON CACHE INTERNAL "")
 add_subdirectory(external/glfw)
 
 # Add OpenGL
-set(OpenGL_GL_PREFERENCE GLVND)
-find_package(OpenGL REQUIRED)
+#set(OpenGL_GL_PREFERENCE GLVND)
+#find_package(OpenGL REQUIRED)
+
+# Add glad
+add_subdirectory(external/glad)
 
 # Add imgui
 add_subdirectory(external/imgui)
 
-target_include_directories(dempsta
-        PRIVATE
-        src
-        PUBLIC
-        include
-        )
+target_include_directories(dempsta PUBLIC include)
 
-target_link_libraries(dempsta spdlog glfw OpenGL::GL imgui)
+target_link_libraries(dempsta spdlog glfw glad imgui)

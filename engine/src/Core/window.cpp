@@ -13,15 +13,9 @@ namespace de {
         data.height = windowProps.height;
 
         if (!GLFWInitialized) {
-            int success = glfwInit();
-
-            if (success == 1) {
-                LOG_ENGINE_INFO("GLFW initialized successfully!");
-                GLFWInitialized = true;
-            } else {
-                LOG_ENGINE_CRITICAL("GLFW initialization failed!");
-                throw;
-            }
+            int status = glfwInit();
+            DE_ASSERT(status, "GLFW")
+            GLFWInitialized = true;
         }
 
         LOG_ENGINE_TRACE("Creating window \"{0}\" ({1}x{2})...", data.title, data.width, data.height);
@@ -35,6 +29,11 @@ namespace de {
         );
 
         glfwMakeContextCurrent(window);
+
+        // Initialize GLAD
+        int status = gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
+        DE_ASSERT(status, "GLAD")
+
         glfwSetWindowUserPointer(window, &data);
         SetVSync(true);
 
