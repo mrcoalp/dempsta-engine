@@ -1,8 +1,6 @@
 #include "Core/application.h"
 
 namespace de {
-#define BIND_EVENT_FN(fn)    std::bind(&fn, this, std::placeholders::_1)
-
     Application* Application::instance = nullptr;
 
     Application::Application() {
@@ -14,29 +12,49 @@ namespace de {
         instance = this;
 
         window = std::make_unique<Window>(WindowProps());
-        window->SetEventCallback(BIND_EVENT_FN(Application::onEvent));
+        window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
     }
 
     Application::~Application() = default;
 
-    void Application::onEvent(Event& e) {
+    void Application::OnEvent(Event& e) {
         EventDispatcher eventDispatcher(e);
         eventDispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::onWindowClose));
+
+        for (auto it = layerStack.rbegin(); it != layerStack.rend(); ++it) {
+            (*it)->OnEvent(e);
+            if (e.Handled) {
+                break;
+            }
+        }
     }
 
-    void Application::run() {
+    void Application::Run() {
         running = true;
 
         while (running) {
-            glClearColor(0, 1, 0, 1);
+            glClearColor(1, 1, 0, 1);
             glClear(GL_COLOR_BUFFER_BIT);
+
+            for (auto& layer : layerStack) {
+                layer->OnUpdate();
+            }
+
             window->OnUpdate();
         }
     }
 
     bool Application::onWindowClose(WindowCloseEvent& event) {
-        LOG_ENGINE_DEBUG("Closed window! Shutting down program...");
+        LOG_ENGINE_DEBUG("{0}! Shutting down program...", event.ToString());
         running = false;
         return true;
+    }
+
+    void Application::PushLayer(Layer* layer) {
+        layerStack.PushLayer(layer);
+    }
+
+    void Application::PushOverlay(Layer* overlay) {
+        layerStack.PushOverlay(overlay);
     }
 }

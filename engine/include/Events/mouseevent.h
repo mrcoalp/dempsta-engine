@@ -15,7 +15,7 @@ namespace de {
 
         [[nodiscard]] std::string ToString() const override {
             std::stringstream ss;
-            ss << "MouseMovedEvent: " << "x: " << mouseX << "y: " << mouseY;
+            ss << "MouseMovedEvent: " << "x: " << mouseX << ", y: " << mouseY;
             return ss.str();
         }
 

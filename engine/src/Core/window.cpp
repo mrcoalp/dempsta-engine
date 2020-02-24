@@ -63,6 +63,12 @@ namespace de {
             data.EventCallback(event);
         });
 
+        glfwSetCharCallback(window, [](GLFWwindow* pWwindow, unsigned int keyCode) {
+            WindowData& data = *(WindowData*) glfwGetWindowUserPointer(pWwindow);
+            KeyTypedEvent event(keyCode);
+            data.EventCallback(event);
+        });
+
         glfwSetKeyCallback(window, [](GLFWwindow* pWwindow, int key, int scancode, int action, int mods) {
             WindowData& data = *(WindowData*) glfwGetWindowUserPointer(pWwindow);
             switch (action) {

@@ -9,5 +9,8 @@
 #include "Core/log.h"
 #include "Core/entry.h"
 #include "Core/window.h"
+#include "Core/core.h"
+#include "Core/layer.h"
+#include "Core/layerstack.h"
 
 #endif  // DEMPSTA_H

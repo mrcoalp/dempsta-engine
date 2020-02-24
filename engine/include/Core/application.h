@@ -2,6 +2,8 @@
 
 #include "Core/log.h"
 #include "Core/window.h"
+#include "Core/core.h"
+#include "Core/layerstack.h"
 
 int main(int argc, char** argv);
 
@@ -16,7 +18,24 @@ namespace de {
          * @brief Getter for the app instance.
          * @return Application instance.
          */
-        inline static Application& GetInstance() { return *instance; }
+        inline static Application& GetInstance() {
+            return *instance;
+        }
+
+        /**
+         * @brief Initializes application.
+         */
+        void Run();
+
+        /**
+         * @brief Handle on event.
+         * @param e Event to be handled.
+         */
+        void OnEvent(Event& e);
+
+        void PushLayer(Layer* layer);
+
+        void PushOverlay(Layer* overlay);
 
     private:
         /**
@@ -32,16 +51,21 @@ namespace de {
          * @brief Whether or not the application is running.
          */
         bool running = false;
+        LayerStack layerStack;
 
         /**
-         * @brief Initializes application.
+         * @brief On window close event callback.
+         * @param event
+         * @return
          */
-        void run();
-
-        void onEvent(Event& e);
-
         bool onWindowClose(WindowCloseEvent& event);
 
+        /**
+         * @brief Main function entry.
+         * @param argc
+         * @param argv
+         * @return
+         */
         friend int::main(int argc, char** argv);
     };
 
