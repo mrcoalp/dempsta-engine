@@ -4,6 +4,9 @@
 #include "Core/pch.h"
 #include "Core/log.h"
 #include "Events/event.h"
+#include "Events/applicationevent.h"
+#include "Events/keyevent.h"
+#include "Events/mouseevent.h"
 
 namespace de {
     /**
@@ -82,7 +85,8 @@ namespace de {
         }
 
     private:
-        void Shutdown();
+        void shutdown();
+        void setGLFWCallbacks();
 
     private:
         GLFWwindow* window;

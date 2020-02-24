@@ -42,7 +42,7 @@ namespace de {
 
         [[nodiscard]] std::string ToString() const override {
             std::stringstream ss;
-            ss << "MouseScrolledEvent: " << "x: " << offsetX << "y: " << offsetY;
+            ss << "MouseScrolledEvent: " << "x: " << offsetX << ", y: " << offsetY;
             return ss.str();
         }
 

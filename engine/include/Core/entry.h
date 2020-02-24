@@ -10,7 +10,7 @@ int main(int argc, char** argv) {
                      "************************************************************");
     LOG_ENGINE_TRACE("Running initialization...");
 
-    auto app = CreateApplication();
-    app->Run();
+    auto app = de::CreateApplication();
+    app->run();
     delete app;
 }

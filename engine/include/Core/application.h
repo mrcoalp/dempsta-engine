@@ -36,14 +36,19 @@ namespace de {
         /**
          * @brief Initializes application.
          */
-        void Run();
+        void run();
+
+        void onEvent(Event& e);
+
+        bool onWindowClose(WindowCloseEvent& event);
 
         friend int::main(int argc, char** argv);
     };
-}  // namespace de
 
-/**
-  * @brief Creates a new DEMPSTA ENGINE Application.
-  * @return Used as an entry point to be defined by client app.
-  */
-de::Application* CreateApplication();
+    /**
+      * @brief Creates a new DEMPSTA ENGINE Application.
+      * Used as an entry point to be defined by client app.
+      * @return A new de::Application.
+      */
+    Application* CreateApplication();
+}  // namespace de

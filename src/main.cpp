@@ -7,6 +7,6 @@ public:
     ~Game() override = default;
 };
 
-de::Application* CreateApplication() {
+de::Application* de::CreateApplication() {
     return new Game();
 }
