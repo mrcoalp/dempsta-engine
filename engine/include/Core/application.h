@@ -18,9 +18,7 @@ namespace de {
          * @brief Getter for the app instance.
          * @return Application instance.
          */
-        inline static Application& GetInstance() {
-            return *instance;
-        }
+        inline static Application& GetInstance() { return *instance; }
 
         /**
          * @brief Initializes application.

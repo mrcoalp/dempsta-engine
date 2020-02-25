@@ -13,8 +13,8 @@ namespace de {
         data.height = windowProps.height;
 
         if (!GLFWInitialized) {
-            int status = glfwInit();
-            DE_ASSERT(status, "GLFW")
+            int _statusGLFW = glfwInit();
+            DE_ASSERT(_statusGLFW, "GLFW")
             GLFWInitialized = true;
         }
 
@@ -31,8 +31,8 @@ namespace de {
         glfwMakeContextCurrent(window);
 
         // Initialize GLAD
-        int status = gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
-        DE_ASSERT(status, "GLAD")
+        int _statusGLAD = gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
+        DE_ASSERT(_statusGLAD, "GLAD")
 
         glfwSetWindowUserPointer(window, &data);
         SetVSync(true);
@@ -52,38 +52,38 @@ namespace de {
             WindowData& data = *(WindowData*) glfwGetWindowUserPointer(pWwindow);
             data.width = width;
             data.height = height;
-            WindowResizeEvent event(width, height);
-            data.EventCallback(event);
+            WindowResizeEvent _event(width, height);
+            data.EventCallback(_event);
         });
 
         glfwSetWindowCloseCallback(window, [](GLFWwindow* pWwindow) {
             WindowData& data = *(WindowData*) glfwGetWindowUserPointer(pWwindow);
-            WindowCloseEvent event;
-            data.EventCallback(event);
+            WindowCloseEvent _event;
+            data.EventCallback(_event);
         });
 
         glfwSetCharCallback(window, [](GLFWwindow* pWwindow, unsigned int keyCode) {
             WindowData& data = *(WindowData*) glfwGetWindowUserPointer(pWwindow);
-            KeyTypedEvent event(keyCode);
-            data.EventCallback(event);
+            KeyTypedEvent _event(keyCode);
+            data.EventCallback(_event);
         });
 
         glfwSetKeyCallback(window, [](GLFWwindow* pWwindow, int key, int scancode, int action, int mods) {
             WindowData& data = *(WindowData*) glfwGetWindowUserPointer(pWwindow);
             switch (action) {
                 case GLFW_PRESS: {
-                    KeyPressedEvent event(key, 0);
-                    data.EventCallback(event);
+                    KeyPressedEvent _event(key, 0);
+                    data.EventCallback(_event);
                     break;
                 }
                 case GLFW_RELEASE: {
-                    KeyReleasedEvent event(key);
-                    data.EventCallback(event);
+                    KeyReleasedEvent _event(key);
+                    data.EventCallback(_event);
                     break;
                 }
                 case GLFW_REPEAT: {
-                    KeyPressedEvent event(key, 1);
-                    data.EventCallback(event);
+                    KeyPressedEvent _event(key, 1);
+                    data.EventCallback(_event);
                     break;
                 }
                 default: {
@@ -97,13 +97,13 @@ namespace de {
             WindowData& data = *(WindowData*) glfwGetWindowUserPointer(pWwindow);
             switch (action) {
                 case GLFW_PRESS: {
-                    MouseBtnPressedEvent event(button);
-                    data.EventCallback(event);
+                    MouseBtnPressedEvent _event(button);
+                    data.EventCallback(_event);
                     break;
                 }
                 case GLFW_RELEASE: {
-                    MouseBtnReleasedEvent event(button);
-                    data.EventCallback(event);
+                    MouseBtnReleasedEvent _event(button);
+                    data.EventCallback(_event);
                     break;
                 }
                 default: {
@@ -115,14 +115,14 @@ namespace de {
 
         glfwSetScrollCallback(window, [](GLFWwindow* pWwindow, double offsetX, double offsetY) {
             WindowData& data = *(WindowData*) glfwGetWindowUserPointer(pWwindow);
-            MouseScrolledEvent event((float) offsetX, (float) offsetY);
-            data.EventCallback(event);
+            MouseScrolledEvent _event((float) offsetX, (float) offsetY);
+            data.EventCallback(_event);
         });
 
         glfwSetCursorPosCallback(window, [](GLFWwindow* pWwindow, double x, double y) {
             WindowData& data = *(WindowData*) glfwGetWindowUserPointer(pWwindow);
-            MouseMovedEvent event((float) x, (float) y);
-            data.EventCallback(event);
+            MouseMovedEvent _event((float) x, (float) y);
+            data.EventCallback(_event);
         });
 
         LOG_ENGINE_INFO("Callbacks initialized!");

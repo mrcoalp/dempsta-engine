@@ -40,37 +40,21 @@ namespace de {
 #define STACK_IT_REV [[nodiscard]] std::vector<Layer*>::reverse_iterator
 #define STACK_IT_CONST_REV [[nodiscard]] std::vector<Layer*>::const_reverse_iterator
 
-        STACK_IT begin() {
-            return layers.begin();
-        }
+        STACK_IT begin() { return layers.begin(); }
 
-        STACK_IT end() {
-            return layers.end();
-        }
+        STACK_IT end() { return layers.end(); }
 
-        STACK_IT_REV rbegin() {
-            return layers.rbegin();
-        }
+        STACK_IT_REV rbegin() { return layers.rbegin(); }
 
-        STACK_IT_REV rend() {
-            return layers.rend();
-        }
+        STACK_IT_REV rend() { return layers.rend(); }
 
-        STACK_IT_CONST begin() const {
-            return layers.begin();
-        }
+        STACK_IT_CONST begin() const { return layers.begin(); }
 
-        STACK_IT_CONST end() const {
-            return layers.end();
-        }
+        STACK_IT_CONST end() const { return layers.end(); }
 
-        STACK_IT_CONST_REV rbegin() const {
-            return layers.rbegin();
-        }
+        STACK_IT_CONST_REV rbegin() const { return layers.rbegin(); }
 
-        STACK_IT_CONST_REV rend() const {
-            return layers.rend();
-        }
+        STACK_IT_CONST_REV rend() const { return layers.rend(); }
 
     private:
         /**

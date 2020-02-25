@@ -2,9 +2,9 @@
 
 namespace de {
     LayerStack::~LayerStack() {
-        for (auto& layer : layers) {
-            layer->OnDetach();
-            delete layer;
+        for (auto& _layer : layers) {
+            _layer->OnDetach();
+            delete _layer;
         }
     }
 
@@ -13,10 +13,10 @@ namespace de {
     }
 
     void LayerStack::PopOverlay(Layer* overlay) {
-        auto it = std::find(layers.begin() + lastInsertedLayerIndex, layers.end(), overlay);
-        if (it != layers.end()) {
+        auto _it = std::find(layers.begin() + lastInsertedLayerIndex, layers.end(), overlay);
+        if (_it != layers.end()) {
             overlay->OnDetach();
-            layers.erase(it);
+            layers.erase(_it);
         }
     }
 
@@ -26,10 +26,10 @@ namespace de {
     }
 
     void LayerStack::PopLayer(Layer* layer) {
-        auto it = std::find(layers.begin(), layers.begin() + lastInsertedLayerIndex, layer);
-        if (it != layers.begin() + lastInsertedLayerIndex) {
+        auto _it = std::find(layers.begin(), layers.begin() + lastInsertedLayerIndex, layer);
+        if (_it != layers.begin() + lastInsertedLayerIndex) {
             layer->OnDetach();
-            layers.erase(it);
+            layers.erase(_it);
             --lastInsertedLayerIndex;
         }
     }

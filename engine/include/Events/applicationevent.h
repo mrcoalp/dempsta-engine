@@ -9,17 +9,13 @@ namespace de {
          * @brief Getter for the window width.
          * @return Width of window.
          */
-        [[nodiscard]] inline unsigned int GetWidth() const {
-            return width;
-        }
+        [[nodiscard]] inline unsigned int GetWidth() const { return width; }
 
         /**
          * @brief Getter for the window height.
          * @return Height of window.
          */
-        [[nodiscard]] inline unsigned int GetHeight() const {
-            return height;
-        }
+        [[nodiscard]] inline unsigned int GetHeight() const { return height; }
 
         [[nodiscard]] std::string ToString() const override {
             std::stringstream ss;

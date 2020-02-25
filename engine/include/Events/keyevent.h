@@ -7,9 +7,7 @@ namespace de {
          * @brief Getter for the key code.
          * @return Key code int.
          */
-        [[nodiscard]] inline int GetKeyCode() const {
-            return keyCode;
-        }
+        [[nodiscard]] inline int GetKeyCode() const { return keyCode; }
 
         EVENT_CLASS_CATEGORY(KeyboardEventCategory | InputEventCategory)
 
@@ -27,9 +25,7 @@ namespace de {
          * @brief Getter a key pressed repeat count.
          * @return The repeat count of a key pressed event.
          */
-        inline int GetRepeatCount() {
-            return repeatCount;
-        }
+        [[nodiscard]] inline int GetRepeatCount() const { return repeatCount; }
 
         [[nodiscard]] std::string ToString() const override {
             std::stringstream ss;

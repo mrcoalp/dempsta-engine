@@ -46,7 +46,7 @@ namespace de {
          * @brief Getter for the event name.
          * @return Event name.
          */
-        [[nodiscard]] virtual const char *GetName() const = 0;
+        [[nodiscard]] virtual const char* GetName() const = 0;
 
         /**
          * @brief Getter for the category flags.
@@ -58,18 +58,14 @@ namespace de {
          * @brief Use for debug only. Abstraction to better log.
          * @return A string version of the event.
          */
-        [[nodiscard]] virtual std::string ToString() const {
-            return GetName();
-        }
+        [[nodiscard]] virtual std::string ToString() const { return GetName(); }
 
         /**
          * @brief Checks if an event is the given category.
          * @param category
          * @return True if it is, false otherwise.
          */
-        inline bool IsInCategory(EventCategory category) {
-            return GetCategoryFlags() & category;
-        }
+        [[nodiscard]] inline bool IsInCategory(EventCategory category) const { return GetCategoryFlags() & category; }
     };
 
     /**
@@ -77,7 +73,7 @@ namespace de {
      */
     class EventDispatcher {
     public:
-        explicit EventDispatcher(Event& event): event(event) {}
+        explicit EventDispatcher(Event& event) : event(event) {}
 
         /**
          * @brief Dispatcher method.

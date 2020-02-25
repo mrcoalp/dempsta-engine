@@ -20,9 +20,7 @@ namespace de {
 
         virtual void OnEvent(Event& event) {};
 
-        [[nodiscard]] inline const std::string& GetName() const {
-            return debugName;
-        }
+        [[nodiscard]] inline const std::string& GetName() const { return debugName; }
 
     protected:
         std::string debugName;

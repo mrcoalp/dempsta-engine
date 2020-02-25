@@ -46,25 +46,19 @@ namespace de {
          * @brief Getter for the window width.
          * @return Window width.
          */
-        [[nodiscard]] inline unsigned int GetWidth() const {
-            return data.height;
-        }
+        [[nodiscard]] inline unsigned int GetWidth() const { return data.height; }
 
         /**
           * @brief Getter for the window height.
           * @return Window height.
           */
-        [[nodiscard]] inline unsigned int GetHeight() const {
-            return data.height;
-        }
+        [[nodiscard]] inline unsigned int GetHeight() const { return data.height; }
 
         /**
          * @brief Event callback function setter in WindowData.
          * @param callback Function to define callback.
          */
-        inline void SetEventCallback(const EventCallbackFn& callback) {
-            data.EventCallback = callback;
-        }
+        inline void SetEventCallback(const EventCallbackFn& callback) { data.EventCallback = callback; }
 
         /**
          * @brief VSync attribute setter
@@ -82,12 +76,11 @@ namespace de {
          * @brief Getter for glfw window pointer.
          * @return
          */
-        [[nodiscard]] inline void* GetNativeWindow() const {
-            return window;
-        }
+        [[nodiscard]] inline void* GetNativeWindow() const { return window; }
 
     private:
         void shutdown();
+
         void setGLFWCallbacks();
 
     private:

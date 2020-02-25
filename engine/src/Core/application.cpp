@@ -18,11 +18,11 @@ namespace de {
     Application::~Application() = default;
 
     void Application::OnEvent(Event& e) {
-        EventDispatcher eventDispatcher(e);
-        eventDispatcher.Dispatch<WindowCloseEvent>(DE_BIND_EVENT_FN(Application::onWindowClose));
+        EventDispatcher _eventDispatcher(e);
+        _eventDispatcher.Dispatch<WindowCloseEvent>(DE_BIND_EVENT_FN(Application::onWindowClose));
 
-        for (auto it = layerStack.rbegin(); it != layerStack.rend(); ++it) {
-            (*it)->OnEvent(e);
+        for (auto _it = layerStack.rbegin(); _it != layerStack.rend(); ++_it) {
+            (*_it)->OnEvent(e);
             if (e.Handled) {
                 break;
             }
@@ -36,8 +36,8 @@ namespace de {
             glClearColor(1, 1, 0, 1);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            for (auto& layer : layerStack) {
-                layer->OnUpdate();
+            for (auto& _layer : layerStack) {
+                _layer->OnUpdate();
             }
 
             window->OnUpdate();

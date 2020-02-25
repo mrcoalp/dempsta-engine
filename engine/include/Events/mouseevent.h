@@ -5,13 +5,9 @@ namespace de {
     public:
         MouseMovedEvent(float x, float y) : mouseX(x), mouseY(y) {}
 
-        [[nodiscard]] inline float GetX() const {
-            return mouseX;
-        }
+        [[nodiscard]] inline float GetX() const { return mouseX; }
 
-        [[nodiscard]] inline float GetY() const {
-            return mouseY;
-        }
+        [[nodiscard]] inline float GetY() const { return mouseY; }
 
         [[nodiscard]] std::string ToString() const override {
             std::stringstream ss;
@@ -32,13 +28,9 @@ namespace de {
     public:
         MouseScrolledEvent(float offsetX, float offsetY) : offsetX(offsetX), offsetY(offsetY) {}
 
-        [[nodiscard]] inline float GetOffsetX() const {
-            return offsetX;
-        }
+        [[nodiscard]] inline float GetOffsetX() const { return offsetX; }
 
-        [[nodiscard]] inline float GetOffsetY() const {
-            return offsetY;
-        }
+        [[nodiscard]] inline float GetOffsetY() const { return offsetY; }
 
         [[nodiscard]] std::string ToString() const override {
             std::stringstream ss;
@@ -57,9 +49,7 @@ namespace de {
 
     class MouseBtnEvent : public Event {
     public:
-        [[nodiscard]] inline int GetMouseBtnCode() const {
-            return mouseBtnCode;
-        }
+        [[nodiscard]] inline int GetMouseBtnCode() const { return mouseBtnCode; }
 
         EVENT_CLASS_CATEGORY(InputEventCategory | MouseEventCategory)
 
