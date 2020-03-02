@@ -13,6 +13,9 @@ namespace de {
 
         window = std::make_unique<Window>(WindowProps());
         window->SetEventCallback(DE_BIND_EVENT_FN(Application::OnEvent));
+
+        imguiLayer = new ImGuiLayer();
+        PushOverlay(imguiLayer);
     }
 
     Application::~Application() = default;
@@ -39,6 +42,13 @@ namespace de {
             for (auto& _layer : layerStack) {
                 _layer->OnUpdate();
             }
+
+            imguiLayer->Begin();
+            {
+                for (Layer* _layer : layerStack)
+                    _layer->OnImGuiRender();
+            }
+            imguiLayer->End();
 
             window->OnUpdate();
         }

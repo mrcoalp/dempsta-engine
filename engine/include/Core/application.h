@@ -4,6 +4,7 @@
 #include "Core/window.h"
 #include "Core/core.h"
 #include "Core/layerstack.h"
+#include "ImGui/imguilayer.h"
 
 int main(int argc, char** argv);
 
@@ -35,6 +36,8 @@ namespace de {
 
         void PushOverlay(Layer* overlay);
 
+        [[nodiscard]] inline Window& GetWindow() const { return *window; }
+
     private:
         /**
          * @brief Application instance.
@@ -50,6 +53,7 @@ namespace de {
          */
         bool running = false;
         LayerStack layerStack;
+        ImGuiLayer* imguiLayer;
 
         /**
          * @brief On window close event callback.

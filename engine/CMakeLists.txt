@@ -12,6 +12,7 @@ add_library(dempsta SHARED ${SOURCES})
 # Add spdlog
 #cmake_policy(SET CMP0072 NEW)
 set(SPDLOG_BUILD_SHARED ON CACHE INTERNAL "")
+set(SPDLOG_BUILD_TESTING OFF CACHE INTERNAL "")
 add_subdirectory(external/spdlog)
 
 # Add glfw
