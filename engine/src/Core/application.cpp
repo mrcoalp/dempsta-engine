@@ -45,8 +45,9 @@ namespace de {
 
             imguiLayer->Begin();
             {
-                for (Layer* _layer : layerStack)
+                for (Layer* _layer : layerStack) {
                     _layer->OnImGuiRender();
+                }
             }
             imguiLayer->End();
 
@@ -62,9 +63,11 @@ namespace de {
 
     void Application::PushLayer(Layer* layer) {
         layerStack.PushLayer(layer);
+        layer->OnAttach();
     }
 
     void Application::PushOverlay(Layer* overlay) {
         layerStack.PushOverlay(overlay);
+        overlay->OnAttach();
     }
 }

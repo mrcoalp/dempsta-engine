@@ -41,7 +41,8 @@ namespace de {
 
         // Setup Platform/Renderer bindings
         ImGui_ImplGlfw_InitForOpenGL(window, true);
-        ImGui_ImplOpenGL3_Init("#version 410");
+        // TODO(MPINTO): Change to 410 when in compatible environment
+        ImGui_ImplOpenGL3_Init("#version 330");
     }
 
     void ImGuiLayer::OnDetach() {
@@ -71,5 +72,10 @@ namespace de {
             ImGui::RenderPlatformWindowsDefault();
             glfwMakeContextCurrent(backup_current_context);
         }
+    }
+
+    void ImGuiLayer::OnImGuiRender() {
+        static bool show = true;
+        ImGui::ShowDemoWindow(&show);
     }
 }
