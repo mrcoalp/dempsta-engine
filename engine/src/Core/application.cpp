@@ -1,5 +1,9 @@
 #include "Core/application.h"
 
+#include "Core/input.h"
+#include "Core/log.h"
+#include "Core/core.h"
+
 namespace de {
     Application* Application::instance = nullptr;
 
@@ -42,12 +46,10 @@ namespace de {
             for (auto& _layer : layerStack) {
                 _layer->OnUpdate();
             }
-
+            // Render ImGui layer
             imguiLayer->Begin();
-            {
-                for (Layer* _layer : layerStack) {
-                    _layer->OnImGuiRender();
-                }
+            for (Layer* _layer : layerStack) {
+                _layer->OnImGuiRender();
             }
             imguiLayer->End();
 

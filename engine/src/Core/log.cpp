@@ -1,5 +1,10 @@
 #include "Core/log.h"
 
+#include "spdlog/sinks/daily_file_sink.h"
+#include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/async.h"
+
 namespace de {
     std::shared_ptr<spdlog::logger> Log::engineLogger;
     std::shared_ptr<spdlog::logger> Log::applicationLogger;

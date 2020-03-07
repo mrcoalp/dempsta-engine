@@ -3,12 +3,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "Core/pch.h"
-#include "Core/log.h"
-#include "Core/core.h"
 #include "Events/event.h"
-#include "Events/applicationevent.h"
-#include "Events/keyevent.h"
-#include "Events/mouseevent.h"
 
 namespace de {
     /**

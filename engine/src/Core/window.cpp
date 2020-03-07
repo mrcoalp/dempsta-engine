@@ -1,5 +1,11 @@
 #include "Core/window.h"
 
+#include "Core/log.h"
+#include "Core/core.h"
+#include "Events/applicationevent.h"
+#include "Events/keyevent.h"
+#include "Events/mouseevent.h"
+
 namespace de {
     static bool GLFWInitialized = false;
 

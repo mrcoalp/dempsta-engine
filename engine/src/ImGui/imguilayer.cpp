@@ -37,12 +37,11 @@ namespace de {
         }
 
         auto& app = Application::GetInstance();
-        GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
+        auto* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
 
         // Setup Platform/Renderer bindings
         ImGui_ImplGlfw_InitForOpenGL(window, true);
-        // TODO(MPINTO): Change to 410 when in compatible environment
-        ImGui_ImplOpenGL3_Init("#version 330");
+        ImGui_ImplOpenGL3_Init("#version 410");
     }
 
     void ImGuiLayer::OnDetach() {

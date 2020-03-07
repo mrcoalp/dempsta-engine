@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Core/log.h"
 #include "Core/window.h"
-#include "Core/core.h"
+#include "Core/layer.h"
 #include "Core/layerstack.h"
 #include "ImGui/imguilayer.h"
+#include "Events/applicationevent.h"
 
 int main(int argc, char** argv);
 

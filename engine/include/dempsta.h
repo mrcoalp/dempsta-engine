@@ -8,6 +8,7 @@
 #include "Core/core.h"
 #include "Core/layer.h"
 #include "Core/layerstack.h"
+#include "Core/input.h"
 #include "Events/event.h"
 #include "Events/keyevent.h"
 #include "Events/mouseevent.h"
