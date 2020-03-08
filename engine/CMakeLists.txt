@@ -6,6 +6,23 @@ set(CMAKE_CXX_STANDARD 17)
 # Include cmake util functions
 include(${CMAKE_CURRENT_SOURCE_DIR}/utils/cmake/utils.cmake)
 
+message("Building Dempsta Engine...")
+
+if (NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug CACHE STRING
+            "Choose the type of build, options are: Debug Release."
+            FORCE)
+endif ()
+
+if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
+    message("-- Build type: Debug")
+    message("Adding Debug flag...")
+    add_definitions(-DNDEBUG)
+else ()
+    message("-- Build type: Release")
+    add_definitions(-UNDEBUG)
+endif ()
+
 file(GLOB_RECURSE SOURCES src/*.cpp)
 add_library(dempsta SHARED ${SOURCES})
 
