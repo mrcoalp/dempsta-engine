@@ -21,6 +21,52 @@ namespace de {
 
         imguiLayer = new ImGuiLayer();
         PushOverlay(imguiLayer);
+
+        glGenVertexArrays(1, &vertexArray);
+        glBindVertexArray(vertexArray);
+        glGenBuffers(1, &bufferArray);
+        glBindBuffer(GL_ARRAY_BUFFER, bufferArray);
+
+        float _vertices[3 * 3] = {
+                -0.5f, -0.5f, 0.0f,
+                0.5f, -0.5f, 0.0f,
+                0.0f, 0.5f, 0.0f
+        };
+
+        glBufferData(GL_ARRAY_BUFFER, sizeof(_vertices), _vertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+        glGenBuffers(1, &indexBuffer);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+        unsigned int _indices[3] = {0, 1, 2};
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(_indices), _indices, GL_STATIC_DRAW);
+
+        std::string vertexSrc = R"(
+            #version 330 core
+
+            layout(location = 0) in vec3 position;
+
+            out vec3 o_position;
+
+            void main() {
+                o_position = position;
+                gl_Position = vec4(position, 1.0);
+            }
+        )";
+
+        std::string fragmentSrc = R"(
+            #version 330 core
+
+            layout(location = 0) out vec4 color;
+
+            in vec3 o_position;
+
+            void main() {
+                color = vec4(o_position * 0.5 + 0.5, 0.1);
+            }
+        )";
+
+        shader = std::make_unique<Shader>(vertexSrc, fragmentSrc);
     }
 
     Application::~Application() = default;
@@ -43,6 +89,10 @@ namespace de {
         while (running) {
             glClearColor(1, 1, 0, 1);
             glClear(GL_COLOR_BUFFER_BIT);
+
+            glBindVertexArray(vertexArray);
+            shader->Bind();
+            glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
 
             for (auto& _layer : layerStack) {
                 _layer->OnUpdate();
