@@ -1,5 +1,6 @@
 #include "Core/window.h"
 
+#include <GLFW/glfw3.h>
 #include "Core/log.h"
 #include "Core/core.h"
 #include "Events/applicationevent.h"
@@ -34,11 +35,9 @@ namespace de {
                 nullptr
         );
 
-        glfwMakeContextCurrent(window);
-
-        // Initialize GLAD
-        int _statusGLAD = gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
-        DE_ASSERT(_statusGLAD, "GLAD")
+        // Initialize context
+        context = new OpenGLContext(window);
+        context->Init();
 
         glfwSetWindowUserPointer(window, &data);
         SetVSync(true);
@@ -144,7 +143,7 @@ namespace de {
 
     void Window::OnUpdate() {
         glfwPollEvents();
-        glfwSwapBuffers(window);
+        context->SwapBuffers();
     }
 
     void Window::SetVSync(bool enabled) {

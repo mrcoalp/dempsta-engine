@@ -1,3 +1,5 @@
+#pragma once
+
 #define DE_MOUSE_BUTTON_1         0
 #define DE_MOUSE_BUTTON_2         1
 #define DE_MOUSE_BUTTON_3         2

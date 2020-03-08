@@ -1,9 +1,8 @@
 #pragma once
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include "Core/pch.h"
 #include "Events/event.h"
+#include "Platform/OpenGL/openglcontext.h"
 
 namespace de {
     /**
@@ -97,5 +96,7 @@ namespace de {
         };
 
         WindowData data;
+
+        OpenGLContext* context;
     };
 }

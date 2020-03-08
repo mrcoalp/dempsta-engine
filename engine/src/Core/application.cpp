@@ -1,5 +1,6 @@
 #include "Core/application.h"
 
+#include <glad/glad.h>
 #include "Input/input.h"
 #include "Core/log.h"
 #include "Core/core.h"

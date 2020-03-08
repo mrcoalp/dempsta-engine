@@ -1,34 +1,35 @@
 #include "Input/input.h"
 
+#include <GLFW/glfw3.h>
 #include "Core/application.h"
 
 namespace de {
     bool Input::IsKeyPressed(int keyCode) {
-        auto window = Application::GetInstance().GetWindow().GetNativeWindow();
-        auto state = glfwGetKey(window, keyCode);
-        return state == GLFW_PRESS || state == GLFW_REPEAT;
+        auto _window = Application::GetInstance().GetWindow().GetNativeWindow();
+        auto _state = glfwGetKey(_window, keyCode);
+        return _state == GLFW_PRESS || _state == GLFW_REPEAT;
     }
 
     bool Input::IsMouseButtonPressed(int mouseButton) {
-        auto window = Application::GetInstance().GetWindow().GetNativeWindow();
-        auto state = glfwGetMouseButton(window, mouseButton);
-        return state == GLFW_PRESS;
+        auto _window = Application::GetInstance().GetWindow().GetNativeWindow();
+        auto _state = glfwGetMouseButton(_window, mouseButton);
+        return _state == GLFW_PRESS;
     }
 
     std::pair<float, float> Input::GetMousePosition() {
-        auto window = Application::GetInstance().GetWindow().GetNativeWindow();
-        double x, y;
-        glfwGetCursorPos(window, &x, &y);
-        return {static_cast<float>(x), static_cast<float>(y)};
+        auto _window = Application::GetInstance().GetWindow().GetNativeWindow();
+        double _x, _y;
+        glfwGetCursorPos(_window, &_x, &_y);
+        return {static_cast<float>(_x), static_cast<float>(_y)};
     }
 
     float Input::GetMouseX() {
-        auto[x, y] = GetMousePosition();
-        return x;
+        auto[_x, _y] = GetMousePosition();
+        return _x;
     }
 
     float Input::GetMouseY() {
-        auto[x, y] = GetMousePosition();
-        return y;
+        auto[_x, _y] = GetMousePosition();
+        return _y;
     }
 }

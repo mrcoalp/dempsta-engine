@@ -1,3 +1,5 @@
+#pragma once
+
 /* The unknown key */
 #define DE_KEY_UNKNOWN            -1
 

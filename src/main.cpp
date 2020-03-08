@@ -11,12 +11,18 @@ public:
     void OnEvent(de::Event& e) final {
         // LOG_DEBUG("{0} {1}", GetName(), e.ToString());
         if (e.GetEventType() == de::EventType::KeyPressed) {
-            auto& event = (de::KeyEvent&) e;
+            auto& _event = (de::KeyEvent&) e;
 
-            if (event.GetKeyCode() == DE_KEY_SPACE) {
+            if (_event.GetKeyCode() == DE_KEY_SPACE) {
                 LOG_DEBUG("Space PRESSED");
             }
         }
+    }
+
+    void OnImGuiRender() final {
+        ImGui::Begin("Debug Window");
+        ImGui::Text("Client app debug ImGui window.");
+        ImGui::End();
     }
 };
 

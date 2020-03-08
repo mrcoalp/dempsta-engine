@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Core/log.h"
+
 #define DE_BIND_EVENT_FN(fn)        std::bind(&fn, this, std::placeholders::_1)
 #define DE_ASSERT(status, name)     if (status == 1) {\
                                         LOG_ENGINE_INFO("{0} initialized successfully!", name);\

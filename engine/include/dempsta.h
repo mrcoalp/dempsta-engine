@@ -1,6 +1,9 @@
 #ifndef DEMPSTA_H
 #define DEMPSTA_H
 
+// Public external
+#include <imgui.h>
+
 #include "Core/application.h"
 #include "Core/log.h"
 #include "Core/entry.h"
