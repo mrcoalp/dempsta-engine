@@ -8,14 +8,11 @@ APPNAME=game_test
 # Check for arguments
 while test $# -gt 0; do
   case "$1" in
-  -d | --debug)
+  -d | --debug | --Debug)
     BUILD=Debug
     ;;
-  -r | --release)
+  -r | --release | --Release)
     BUILD=Release
-    ;;
-  -c | --clean)
-    rm -rf build-*
     ;;
   -n | --name)
     shift
@@ -32,6 +29,11 @@ while test $# -gt 0; do
   esac
   shift
 done
+
+# Build project if build folder is not present
+if [ ! -d "build/${BUILD}" ]; then
+  ./build.sh "--${BUILD}"
+fi
 
 # Run the game
 ./build/${BUILD}/"${APPNAME}"

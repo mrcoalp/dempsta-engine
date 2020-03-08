@@ -6,10 +6,10 @@ BUILD=Debug
 # Check for arguments
 while test $# -gt 0; do
   case "$1" in
-  -d | --debug)
+  -d | --debug | --Debug)
     BUILD=Debug
     ;;
-  -r | --release)
+  -r | --release | --Release)
     BUILD=Release
     ;;
   -c | --clean)
