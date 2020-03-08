@@ -1,6 +1,6 @@
 #include "Core/application.h"
 
-#include "Core/input.h"
+#include "Input/input.h"
 #include "Core/log.h"
 #include "Core/core.h"
 

@@ -32,6 +32,9 @@ add_subdirectory(external/glad)
 # Add imgui
 add_subdirectory(external/imgui)
 
+# Add glm
+add_subdirectory(external/glm/glm)
+
 target_include_directories(dempsta PUBLIC include)
 
-target_link_libraries(dempsta spdlog glfw glad imgui)
+target_link_libraries(dempsta spdlog glfw glad imgui glm)

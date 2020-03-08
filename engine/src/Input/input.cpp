@@ -1,4 +1,5 @@
-#include "Core/input.h"
+#include "Input/input.h"
+
 #include "Core/application.h"
 
 namespace de {

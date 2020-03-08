@@ -32,10 +32,22 @@ namespace de {
          */
         void OnEvent(Event& e);
 
+        /**
+         * @brief Pushes a new layer to layerstack and attaches it.
+         * @param layer Layer to be pushed
+         */
         void PushLayer(Layer* layer);
 
+        /**
+         * @brief Pushes a new layer as an overlay to layerstack and attaches it.
+         * @param overlay Layer to be pushed as an overlay.
+         */
         void PushOverlay(Layer* overlay);
 
+        /**
+         * @brief Getter for the window.
+         * @return A pointer to the window
+         */
         [[nodiscard]] inline Window& GetWindow() const { return *window; }
 
     private:

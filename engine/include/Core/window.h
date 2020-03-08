@@ -26,7 +26,7 @@ namespace de {
         /**
          * @brief Event callback function is a void function that receives an event.
          */
-        using EventCallbackFn = std::function<void(Event & )>;
+        using EventCallbackFn = std::function<void(Event&)>;
 
         explicit Window(const WindowProps& windowProps);
 
@@ -74,8 +74,14 @@ namespace de {
         [[nodiscard]] inline void* GetNativeWindow() const { return window; }
 
     private:
+        /**
+         * @brief Destroys current window.
+         */
         void shutdown();
 
+        /**
+         * @brief Initializes glfw callback functions.
+         */
         void setGLFWCallbacks();
 
     private:
