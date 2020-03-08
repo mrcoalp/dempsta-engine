@@ -14,6 +14,15 @@ namespace de {
         // Initialize GLAD
         int _statusGLAD = gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
         DE_ASSERT(_statusGLAD, "GLAD")
+
+        LOG_ENGINE_INFO("OpenGL Renderer:\n"
+                        "\tVendor - {0}\n"
+                        "\tRenderer - {1}\n"
+                        "\tVersion - {2}",
+                        glGetString(GL_VENDOR),
+                        glGetString(GL_RENDERER),
+                        glGetString(GL_VERSION)
+        );
     }
 
     void OpenGLContext::SwapBuffers() {
