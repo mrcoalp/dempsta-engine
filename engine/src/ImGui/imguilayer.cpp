@@ -6,9 +6,7 @@
 #include "Core/application.h"
 
 namespace de {
-    ImGuiLayer::ImGuiLayer() : Layer("ImGuiLayer") {
-
-    }
+    ImGuiLayer::ImGuiLayer() : Layer("ImGuiLayer") {}
 
     ImGuiLayer::~ImGuiLayer() = default;
 
@@ -36,11 +34,10 @@ namespace de {
             style.Colors[ImGuiCol_WindowBg].w = 1.0f;
         }
 
-        auto& app = Application::GetInstance();
-        auto* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
+        auto glfwWindow = Application::GetInstance().GetWindow().GetNativeWindow();
 
         // Setup Platform/Renderer bindings
-        ImGui_ImplGlfw_InitForOpenGL(window, true);
+        ImGui_ImplGlfw_InitForOpenGL(glfwWindow, true);
         ImGui_ImplOpenGL3_Init("#version 410");
     }
 
@@ -58,8 +55,8 @@ namespace de {
 
     void ImGuiLayer::End() {
         ImGuiIO& io = ImGui::GetIO();
-        auto& app = Application::GetInstance();
-        io.DisplaySize = ImVec2((float) app.GetWindow().GetWidth(), (float) app.GetWindow().GetHeight());
+        auto& window = Application::GetInstance().GetWindow();
+        io.DisplaySize = ImVec2((float) window.GetWidth(), (float) window.GetHeight());
 
         // Rendering
         ImGui::Render();

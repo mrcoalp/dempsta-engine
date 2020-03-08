@@ -71,7 +71,7 @@ namespace de {
          * @brief Getter for glfw window pointer.
          * @return
          */
-        [[nodiscard]] inline void* GetNativeWindow() const { return window; }
+        [[nodiscard]] inline GLFWwindow* GetNativeWindow() const { return window; }
 
     private:
         /**
