@@ -30,6 +30,7 @@ add_library(dempsta SHARED ${SOURCES})
 #cmake_policy(SET CMP0072 NEW)
 set(SPDLOG_BUILD_SHARED ON CACHE INTERNAL "")
 set(SPDLOG_BUILD_TESTING OFF CACHE INTERNAL "")
+set(SPDLOG_INSTALL true CACHE INTERNAL "")
 add_subdirectory(external/spdlog)
 
 # Add glfw
@@ -37,6 +38,7 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_SHARED_LIBS ON CACHE INTERNAL "")
+set(GLFW_INSTALL true CACHE INTERNAL "")
 add_subdirectory(external/glfw)
 
 # Add OpenGL
@@ -61,3 +63,9 @@ target_link_libraries(dempsta
         glad
         glm
         imgui)
+
+set_target_properties(dempsta PROPERTIES INSTALL_RPATH $ORIGIN/lib)
+
+install(TARGETS dempsta DESTINATION lib)
+file(GLOB_RECURSE INCLUDES include/*.h)
+install(FILES ${INCLUDES} DESTINATION include)

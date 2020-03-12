@@ -12,7 +12,7 @@ namespace de {
     std::shared_ptr<spdlog::logger> Log::fileApplicationLogger;
 
     void Log::Init() {
-        spdlog::set_pattern("%^[%t][%H:%M:%S.%e][%l][%n]: %v%$");
+        spdlog::set_pattern("%^[%t][%H:%M:%S.%e][%n]: %v%$");
         engineLogger = spdlog::stdout_color_mt("DEMPSTA");
         engineLogger->set_level(spdlog::level::trace);
 
