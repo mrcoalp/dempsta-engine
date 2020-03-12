@@ -28,7 +28,7 @@ while test $# -gt 0; do
 
   run.sh [options]
 
-  Runs the game by defautl with debug configuration.
+  Runs the game by default with debug configuration.
   If build folder doesn't exist, builds game before running.
 
   Options
@@ -41,10 +41,12 @@ while test $# -gt 0; do
     ;;
   -*)
     echo -e "\033[0;31mBad argument: $1!\033[0m"
+    ./run.sh -h
     exit 1
     ;;
   *)
     echo -e "\033[0;31mUnknown argument: $1!\033[0m"
+    ./run.sh -h
     exit 1
     ;;
   esac

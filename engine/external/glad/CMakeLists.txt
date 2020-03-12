@@ -8,4 +8,4 @@ target_include_directories(glad PUBLIC include)
 
 install(TARGETS glad DESTINATION lib)
 file(GLOB_RECURSE INCLUDES include/*.h)
-install(FILES ${INCLUDES} DESTINATION include)
+install(FILES ${INCLUDES} DESTINATION include/glad)

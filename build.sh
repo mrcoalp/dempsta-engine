@@ -15,17 +15,34 @@ while test $# -gt 0; do
     CONFIGURATION=Release
     ;;
   -c | --clean)
-    rm -rf build
+    rm -rf build/${CONFIGURATION}
     ;;
   -i | --install)
     INSTALL=1
     ;;
+  -h | --help)
+    printf "Usage
+
+  build.sh [options]
+
+  Builds the game by default with debug configuration.
+
+  Options
+  \t-d | --debug\t\t- Build game with debug configuration
+  \t-r | --release\t\t- Build game with release configuration
+  \t-c | --clean\t\t- Clean build of configuration
+  \t-i | --install\t\t- Install game to build/bin folder
+  \t-h | --help\t\t- Show help\n"
+    exit 0
+    ;;
   -*)
     echo -e "\033[0;31mBad argument: $1\033[0m"
+    ./build.sh -h
     exit 1
     ;;
   *)
     echo -e "\033[0;31mUnknown argument: $1\033[0m"
+    ./build.sh -h
     exit 1
     ;;
   esac
