@@ -4,6 +4,8 @@
 CONFIGURATION=Debug
 # Install game?
 INSTALL=0
+# Use Ninja?
+NINJA=
 
 # Check for arguments
 while test $# -gt 0; do
@@ -15,10 +17,13 @@ while test $# -gt 0; do
     CONFIGURATION=Release
     ;;
   -c | --clean)
-    rm -rf build/${CONFIGURATION}
+    rm -rf build/$CONFIGURATION
     ;;
   -i | --install)
     INSTALL=1
+    ;;
+  --ninja)
+    NINJA=-GNinja
     ;;
   -h | --help)
     printf "Usage
@@ -50,7 +55,7 @@ while test $# -gt 0; do
 done
 
 # Build project
-echo -e "\033[0;34mBuilding a ${CONFIGURATION} version...\033[0m"
+echo -e "\033[0;34mBuilding a $CONFIGURATION version...\033[0m"
 
 # Create build dir if not exists
 if [ ! -d "build" ]; then
@@ -61,20 +66,28 @@ fi
 cd build || exit 1
 
 # Create version dir
-if [ ! -d ${CONFIGURATION} ]; then
-  mkdir ${CONFIGURATION}
+if [ ! -d $CONFIGURATION ]; then
+  mkdir $CONFIGURATION
 fi
 
 # Fail if couldn't cd into dir
-cd ${CONFIGURATION} || exit 1
+cd $CONFIGURATION || exit 1
 
 # Run CMake
-cmake ../.. -DCMAKE_BUILD_TYPE=${CONFIGURATION} -DCMAKE_INSTALL_PREFIX=./bin
-if [ $INSTALL = 1 ]; then
+cmake ../.. -DCMAKE_BUILD_TYPE=$CONFIGURATION -DCMAKE_INSTALL_PREFIX=./bin $NINJA
+if [ -z $NINJA ]; then
   make
-  make install
 else
-  cmake --build . --target all -- -j 10
+  ninja
+fi
+
+# Install game
+if [ $INSTALL = 1 ]; then
+  if [ -z $NINJA ]; then
+    make install
+  else
+    ninja install
+  fi
 fi
 
 # Exit script successfully

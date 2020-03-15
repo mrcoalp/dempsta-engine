@@ -54,16 +54,20 @@ while test $# -gt 0; do
 done
 
 # Build project if build folder is not present
-if [ ! -d "build/${CONFIGURATION}" ] || [ ${BUILD} = 1 ]; then
-  ./build.sh "--${CONFIGURATION}"
+if [ ! -d "build/$CONFIGURATION" ] || [ $BUILD = 1 ]; then
+  ./build.sh "--$CONFIGURATION"
 fi
 
-if [ -f "build/${CONFIGURATION}/${APPNAME}" ]; then
+if [ -f "build/$CONFIGURATION/$APPNAME" ]; then
   # Run the game
-  echo -e "\033[0;34mRunning ${CONFIGURATION} configuration...\033[0m"
-  ./build/${CONFIGURATION}/"${APPNAME}"
+  echo -e "\033[0;34mRunning $CONFIGURATION configuration...\033[0m"
+  if [ $CONFIGURATION = Debug ]; then
+    gdb build/$CONFIGURATION/"$APPNAME" -ex=run
+  else
+    ./build/$CONFIGURATION/"$APPNAME"
+  fi
   exit 0
 else
-  echo -e "\033[0;31mExecutable doesn't exist: ./build/${CONFIGURATION}/${APPNAME}\033[0m"
+  echo -e "\033[0;31mExecutable doesn't exist: ./build/$CONFIGURATION/$APPNAME\033[0m"
   exit 1
 fi
