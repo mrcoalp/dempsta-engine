@@ -25,6 +25,10 @@ while test $# -gt 0; do
   --ninja)
     NINJA=-GNinja
     ;;
+  --clang)
+    export CC=/usr/bin/clang
+    export CXX=/usr/bin/clang++
+    ;;
   -h | --help)
     printf "Usage
 
