@@ -24,21 +24,20 @@ namespace de {
 
         glGenVertexArrays(1, &vertexArray);
         glBindVertexArray(vertexArray);
-        glGenBuffers(1, &bufferArray);
-        glBindBuffer(GL_ARRAY_BUFFER, bufferArray);
 
         float _vertices[3 * 3] = {
                 -0.5f, -0.5f, 0.0f,
                 0.5f, -0.5f, 0.0f,
                 0.0f, 0.5f, 0.0f
         };
+        vertexBuffer.reset(VertexBuffer::Create(_vertices, sizeof(_vertices)));
 
-        glBufferData(GL_ARRAY_BUFFER, sizeof(_vertices), _vertices, GL_STATIC_DRAW);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-        glGenBuffers(1, &indexBuffer);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-        unsigned int _indices[3] = {0, 1, 2};
+
+        uint32_t _indices[3] = {0, 1, 2};
+        indexBuffer.reset(IndexBuffer::Create(_indices, sizeof(_indices) / sizeof(uint32_t)));
+
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(_indices), _indices, GL_STATIC_DRAW);
 
         std::string vertexSrc = R"(
@@ -92,7 +91,7 @@ namespace de {
 
             glBindVertexArray(vertexArray);
             shader->Bind();
-            glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+            glDrawElements(GL_TRIANGLES, indexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
 
             for (auto& _layer : layerStack) {
                 _layer->OnUpdate();

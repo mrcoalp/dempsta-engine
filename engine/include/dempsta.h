@@ -14,5 +14,6 @@
 #include "Events/applicationevent.h"
 #include "Events/mouseevent.h"
 #include "Input/input.h"
+#include "Renderer/buffer.h"
 
 #endif  // DEMPSTA_H

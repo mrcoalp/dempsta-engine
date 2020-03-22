@@ -6,6 +6,7 @@
 #include "ImGui/imguilayer.h"
 #include "Events/applicationevent.h"
 #include "Renderer/shader.h"
+#include "Renderer/buffer.h"
 
 int main(int argc, char** argv);
 
@@ -67,8 +68,10 @@ namespace de {
         bool running = false;
         LayerStack layerStack;
         ImGuiLayer* imguiLayer;
-        unsigned int vertexArray, bufferArray, indexBuffer;
+        unsigned int vertexArray;
         std::unique_ptr<Shader> shader;
+        std::unique_ptr<VertexBuffer> vertexBuffer;
+        std::unique_ptr<IndexBuffer> indexBuffer;
 
         /**
          * @brief On window close event callback.
