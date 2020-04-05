@@ -25,23 +25,31 @@ while test $# -gt 0; do
   --ninja)
     NINJA=-GNinja
     ;;
+  --cc)
+    export CC=/usr/bin/gcc-$2
+    export CXX=/usr/bin/g++-$2
+    shift
+    ;;
   --clang)
     export CC=/usr/bin/clang
     export CXX=/usr/bin/clang++
     ;;
   -h | --help)
-    printf "Usage
+    echo "Usage
 
-  build.sh [options]
+    build.sh [options]
 
-  Builds the game by default with debug configuration.
+    Builds the game, by default, with debug configuration.
 
-  Options
-  \t-d | --debug\t\t- Build game with debug configuration
-  \t-r | --release\t\t- Build game with release configuration
-  \t-c | --clean\t\t- Clean build of configuration
-  \t-i | --install\t\t- Install game to build/bin folder
-  \t-h | --help\t\t- Show help\n"
+Options
+    -h | --help       - Show help
+    -d | --debug      - Build game with debug configuration
+    -r | --release    - Build game with release configuration
+    -c | --clean      - Clean build of configuration
+    -i | --install    - Install game to build/bin folder
+    --ninja           - Use NINJA as build system instead of MAKE
+    --cc <#version>   - Specify which GCC compiler <#version> to use. Ex: --cc 9
+    --clang           - Use Clang compiler"
     exit 0
     ;;
   -*)
