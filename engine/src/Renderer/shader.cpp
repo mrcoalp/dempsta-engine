@@ -10,7 +10,7 @@ namespace de {
 
         // Send the vertex shader source code to GL
         // Note that std::string's .c_str is NULL character terminated.
-        const auto* source = (const GLchar*) vertexSource.c_str();
+        const auto* source = vertexSource.c_str();
         glShaderSource(vertexShader, 1, &source, nullptr);
 
         // Compile the vertex shader
@@ -39,7 +39,7 @@ namespace de {
 
         // Send the fragment shader source code to GL
         // Note that std::string's .c_str is NULL character terminated.
-        source = (const GLchar*) fragmentSource.c_str();
+        source = fragmentSource.c_str();
         glShaderSource(fragmentShader, 1, &source, 0);
 
         // Compile the fragment shader
@@ -77,7 +77,7 @@ namespace de {
 
         // Note the different functions here: glGetProgram* instead of glGetShader*.
         GLint isLinked = 0;
-        glGetProgramiv(rendererId, GL_LINK_STATUS, (int*) &isLinked);
+        glGetProgramiv(rendererId, GL_LINK_STATUS, &isLinked);
         if (isLinked == GL_FALSE) {
             GLint maxLength = 0;
             glGetProgramiv(rendererId, GL_INFO_LOG_LENGTH, &maxLength);

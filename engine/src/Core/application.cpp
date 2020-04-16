@@ -3,7 +3,6 @@
 #include <glad/glad.h>
 #include "Input/input.h"
 #include "Core/log.h"
-#include "Core/core.h"
 
 namespace de {
     Application* Application::instance = nullptr;
@@ -11,13 +10,13 @@ namespace de {
     Application::Application() {
         if (instance) {
             LOG_ENGINE_CRITICAL("Application already exists! Aborting...");
-            throw;
+            throw std::runtime_error("Application already exists! Aborting...");
         }
 
         instance = this;
 
         window = std::make_unique<Window>(WindowProps());
-        window->SetEventCallback(DE_BIND_EVENT_FN(Application::OnEvent));
+        window->SetEventCallback([this](Event& e) { OnEvent(e); });
 
         imguiLayer = new ImGuiLayer();
         PushOverlay(imguiLayer);
@@ -72,8 +71,8 @@ namespace de {
 
     void Application::OnEvent(Event& e) {
         EventDispatcher _eventDispatcher(e);
-        _eventDispatcher.Dispatch<WindowCloseEvent>(DE_BIND_EVENT_FN(Application::onWindowClose));
-
+        _eventDispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent& event) { return onWindowClose(event); });
+        // Handle layer events
         for (auto _it = layerStack.rbegin(); _it != layerStack.rend(); ++_it) {
             (*_it)->OnEvent(e);
             if (e.Handled) {
@@ -108,7 +107,7 @@ namespace de {
     }
 
     bool Application::onWindowClose(WindowCloseEvent& event) {
-        LOG_ENGINE_DEBUG("{0}! Shutting down program...", event.ToString());
+        LOG_ENGINE_DEBUG("Shutting down program...");
         running = false;
         return true;
     }

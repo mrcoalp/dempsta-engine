@@ -24,19 +24,19 @@ while test $# -gt 0; do
     APPNAME=$1
     ;;
   -h | --help)
-    printf "Usage
+    echo "Usage
 
-  run.sh [options]
+    run.sh [options]
 
-  Runs the game by default with debug configuration.
-  If build folder doesn't exist, builds game before running.
+    Runs the game, by default, with debug configuration.
+    If build folder doesn't exist, builds game before running.
 
-  Options
-  \t-d | --debug\t\t- Run game with debug configuration
-  \t-r | --release\t\t- Run game with release configuration
-  \t-b | --build\t\t- Build configuration before running
-  \t-n | --name <name>\t- Specify executable name to run
-  \t-h | --help\t\t- Show help\n"
+Options
+    -d | --debug        - Run game with debug configuration
+    -r | --release      - Run game with release configuration
+    -b | --build        - Build configuration before running
+    -n | --name <name>  - Specify executable name to run
+    -h | --help         - Show help"
     exit 0
     ;;
   -*)

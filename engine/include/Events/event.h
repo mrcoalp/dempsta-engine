@@ -1,6 +1,7 @@
 #pragma  once
 
 #include "Core/pch.h"
+#include "Core/log.h"
 
 namespace de {
     /**
@@ -86,6 +87,7 @@ namespace de {
         bool Dispatch(const F& func) {
             if (event.GetEventType() == E::GetStaticEventType()) {
                 event.Handled = func(static_cast<E&>(event));
+                LOG_ENGINE_DEBUG("Received event: {0}", event.ToString());
                 return true;
             }
             return false;
