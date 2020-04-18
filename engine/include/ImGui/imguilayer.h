@@ -17,9 +17,6 @@ namespace de {
 
         void End();
 
-        // TODO(MPINTO): Remove after proper implementation
-        void OnImGuiRender() override;
-
     private:
         float time = 0.0f;
     };

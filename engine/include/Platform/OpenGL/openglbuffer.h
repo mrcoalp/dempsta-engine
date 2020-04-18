@@ -3,34 +3,39 @@
 #include "Renderer/buffer.h"
 
 namespace de {
-    class OpenGLVertexBuffer : public VertexBuffer {
-    public:
-        OpenGLVertexBuffer(float* vertices, uint32_t size);
+class OpenGLVertexBuffer : public VertexBuffer {
+public:
+    OpenGLVertexBuffer(float* vertices, uint32_t size);
 
-        ~OpenGLVertexBuffer() override;
+    ~OpenGLVertexBuffer() override;
 
-        void Bind() const override;
+    void Bind() const override;
 
-        void UnBind() const override;
+    void UnBind() const override;
 
-    private:
-        uint32_t rendererId;
-    };
+    void SetLayout(const BufferLayout& layout) override { m_layout = layout; };
 
-    class OpenGLIndexBuffer : public IndexBuffer {
-    public:
-        OpenGLIndexBuffer(uint32_t* indices, uint32_t count);
+    [[nodiscard]] inline const BufferLayout& GetLayout() const override { return m_layout; }
 
-        ~OpenGLIndexBuffer() override;
+private:
+    uint32_t m_rendererId;
+    BufferLayout m_layout;
+};
 
-        void Bind() const override;
+class OpenGLIndexBuffer : public IndexBuffer {
+public:
+    OpenGLIndexBuffer(uint32_t* indices, uint32_t count);
 
-        void UnBind() const override;
+    ~OpenGLIndexBuffer() override;
 
-        [[nodiscard]] inline uint32_t GetCount() const override { return count; }
+    void Bind() const override;
 
-    private:
-        uint32_t rendererId;
-        uint32_t count;
-    };
-}
+    void UnBind() const override;
+
+    [[nodiscard]] inline uint32_t GetCount() const override { return m_count; }
+
+private:
+    uint32_t m_rendererId;
+    uint32_t m_count;
+};
+}  // namespace de

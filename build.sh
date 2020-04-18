@@ -88,7 +88,7 @@ cd $CONFIGURATION || exit 1
 # Run CMake
 cmake ../.. -DCMAKE_BUILD_TYPE=$CONFIGURATION -DCMAKE_INSTALL_PREFIX=./bin $NINJA
 if [ -z $NINJA ]; then
-  make
+  make -j 4
 else
   ninja
 fi
