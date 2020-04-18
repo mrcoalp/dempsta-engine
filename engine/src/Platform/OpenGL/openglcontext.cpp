@@ -6,14 +6,14 @@
 
 namespace de {
     OpenGLContext::OpenGLContext(GLFWwindow* windowHandle) : windowHandle(windowHandle) {
-        DE_ASSERT((int) (windowHandle != nullptr), "OpenGLContext")
+        DE_ASSERT((int) (windowHandle != nullptr), "OpenGLContext not initialized!")
     }
 
     void OpenGLContext::Init() {
         glfwMakeContextCurrent(windowHandle);
         // Initialize GLAD
         int _statusGLAD = gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
-        DE_ASSERT(_statusGLAD, "GLAD")
+        DE_ASSERT(_statusGLAD, "GLAD not initialized!")
 
         LOG_ENGINE_INFO("OpenGL Renderer:\n"
                         "\tVendor    - {0}\n"

@@ -2,76 +2,42 @@
 
 #include <glad/glad.h>
 
+#include "Core/core.h"
 #include "Core/log.h"
 #include "Input/input.h"
 
 namespace de {
-Application* Application::instance = nullptr;
-
-static GLenum ShaderDataTypeToOpenGLType(const ShaderDataType& type) {
-    switch (type) {
-        case ShaderDataType::None:
-            return -1;
-        case ShaderDataType::Vec:
-        case ShaderDataType::Vec2:
-        case ShaderDataType::Vec3:
-        case ShaderDataType::Vec4:
-        case ShaderDataType::Mat3:
-        case ShaderDataType::Mat4:
-            return GL_FLOAT;
-        case ShaderDataType::Int:
-        case ShaderDataType::Int2:
-        case ShaderDataType::Int3:
-        case ShaderDataType::Int4:
-            return GL_INT;
-        case ShaderDataType::Bool:
-            return GL_BOOL;
-    }
-}
+Application* Application::m_instance = nullptr;
 
 Application::Application() {
-    if (instance) {
-        LOG_ENGINE_CRITICAL("Application already exists! Aborting...");
-        throw std::runtime_error("Application already exists! Aborting...");
-    }
+    DE_ASSERT(m_instance == nullptr, "Application already exists! Aborting...")
 
-    instance = this;
+    m_instance = this;
 
-    window = std::make_unique<Window>(WindowProps());
-    window->SetEventCallback([this](Event& e) { OnEvent(e); });
+    m_window = std::make_unique<Window>(WindowProps());
+    m_window->SetEventCallback([this](Event& e) { OnEvent(e); });
 
-    imguiLayer = new ImGuiLayer();
-    PushOverlay(imguiLayer);
+    m_imguiLayer = new ImGuiLayer();
+    PushOverlay(m_imguiLayer);
 
-    glGenVertexArrays(1, &vertexArray);
-    glBindVertexArray(vertexArray);
+    m_vertexArray.reset(VertexArray::Create());
 
     float _vertices[3 * 7] = {-0.5f, -0.5f, 0.0f, 0.8f, 0.0f, 0.7f, 1.0f, 0.5f, -0.5f, 0.0f, 0.9f,
                               0.7f,  0.0f,  1.0f, 0.0f, 0.5f, 0.0f, 0.0f, 0.7f, 0.3f,  1.0f};
 
-    vertexBuffer.reset(VertexBuffer::Create(_vertices, sizeof(_vertices)));
+    std::shared_ptr<VertexBuffer> _vertexBuffer;
+    _vertexBuffer.reset(VertexBuffer::Create(_vertices, sizeof(_vertices)));
 
-    {
-        BufferLayout _layout = {{ShaderDataType::Vec3, "position"}, {ShaderDataType::Vec4, "color"}};
-        vertexBuffer->SetLayout(_layout);
-    }
-
-    auto _layout = vertexBuffer->GetLayout();
-    unsigned _i = 0;
-    for (const auto& element : _layout) {
-        glEnableVertexAttribArray(_i);
-        glVertexAttribPointer(_i, element.GetComponentCount(), ShaderDataTypeToOpenGLType(element.type),
-                              element.normalized ? GL_TRUE : GL_FALSE, _layout.GetStride(),
-                              (void*)(uintptr_t)element.offset);
-        ++_i;
-    }
+    BufferLayout _layout = {{ShaderDataType::Vec3, "position"}, {ShaderDataType::Vec4, "color"}};
+    _vertexBuffer->SetLayout(_layout);
+    m_vertexArray->AddVertexBuffer(_vertexBuffer);
 
     uint32_t _indices[3] = {0, 1, 2};
-    indexBuffer.reset(IndexBuffer::Create(_indices, sizeof(_indices) / sizeof(uint32_t)));
+    std::shared_ptr<IndexBuffer> _indexBuffer;
+    _indexBuffer.reset(IndexBuffer::Create(_indices, sizeof(_indices) / sizeof(uint32_t)));
+    m_vertexArray->AddIndexBuffer(_indexBuffer);
 
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(_indices), _indices, GL_STATIC_DRAW);
-
-    std::string vertexSrc = R"(
+    std::string _vertexSrc = R"(
             #version 330 core
 
             layout(location = 0) in vec3 position;
@@ -87,7 +53,7 @@ Application::Application() {
             }
         )";
 
-    std::string fragmentSrc = R"(
+    std::string _fragmentSrc = R"(
             #version 330 core
 
             layout(location = 0) out vec4 color;
@@ -101,7 +67,7 @@ Application::Application() {
             }
         )";
 
-    shader = std::make_unique<Shader>(vertexSrc, fragmentSrc);
+    m_shader = std::make_unique<Shader>(_vertexSrc, _fragmentSrc);
 }
 
 Application::~Application() = default;
@@ -110,7 +76,7 @@ void Application::OnEvent(Event& e) {
     EventDispatcher _eventDispatcher(e);
     _eventDispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent& event) { return onWindowClose(event); });
     // Handle layer events
-    for (auto _it = layerStack.rbegin(); _it != layerStack.rend(); ++_it) {
+    for (auto _it = m_layerStack.rbegin(); _it != m_layerStack.rend(); ++_it) {
         (*_it)->OnEvent(e);
         if (e.Handled) {
             break;
@@ -119,43 +85,43 @@ void Application::OnEvent(Event& e) {
 }
 
 void Application::Run() {
-    running = true;
+    m_running = true;
 
-    while (running) {
+    while (m_running) {
         glClearColor(0.2, 0.2, 0.2, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glBindVertexArray(vertexArray);
-        shader->Bind();
-        glDrawElements(GL_TRIANGLES, indexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
+        m_vertexArray->Bind();
+        m_shader->Bind();
+        glDrawElements(GL_TRIANGLES, m_vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 
-        for (auto& _layer : layerStack) {
+        for (auto& _layer : m_layerStack) {
             _layer->OnUpdate();
         }
         // Render ImGui layer
-        imguiLayer->Begin();
-        for (Layer* _layer : layerStack) {
+        m_imguiLayer->Begin();
+        for (Layer* _layer : m_layerStack) {
             _layer->OnImGuiRender();
         }
-        imguiLayer->End();
+        m_imguiLayer->End();
 
-        window->OnUpdate();
+        m_window->OnUpdate();
     }
 }
 
 bool Application::onWindowClose(WindowCloseEvent& event) {
-    LOG_ENGINE_DEBUG("Shutting down program...");
-    running = false;
+    LOG_ENGINE_TRACE("Shutting down program...");
+    m_running = false;
     return true;
 }
 
 void Application::PushLayer(Layer* layer) {
-    layerStack.PushLayer(layer);
+    m_layerStack.PushLayer(layer);
     layer->OnAttach();
 }
 
 void Application::PushOverlay(Layer* overlay) {
-    layerStack.PushOverlay(overlay);
+    m_layerStack.PushOverlay(overlay);
     overlay->OnAttach();
 }
 }  // namespace de

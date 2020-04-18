@@ -31,7 +31,7 @@ namespace de {
 
             // Use the infoLog as you see fit.
             LOG_ENGINE_ERROR(infoLog.data());
-            DE_ASSERT(0, "VertexShader")
+            DE_ASSERT(0, "VertexShader not initialized!")
         }
 
         // Create an empty fragment shader handle
@@ -60,7 +60,7 @@ namespace de {
             glDeleteShader(vertexShader);
 
             LOG_ENGINE_ERROR(infoLog.data());
-            DE_ASSERT(0, "FragmentShader")
+            DE_ASSERT(0, "FragmentShader not initialized!")
         }
 
         // Vertex and fragment shaders are successfully compiled.
@@ -93,7 +93,7 @@ namespace de {
             glDeleteShader(fragmentShader);
 
             LOG_ENGINE_ERROR(infoLog.data());
-            DE_ASSERT(0, "ProgramShader")
+            DE_ASSERT(0, "ProgramShader not initialized!")
         }
 
         // Always detach shaders after a successful link.

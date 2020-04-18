@@ -1,5 +1,5 @@
 #include "Renderer/renderer.h"
 
 namespace de {
-    RendererAPI Renderer::rendererApi = RendererAPI::OPENGL;
+    RendererAPI Renderer::rendererApi = RendererAPI::OpenGL;
 }
