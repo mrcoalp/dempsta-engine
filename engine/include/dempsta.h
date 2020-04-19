@@ -15,6 +15,7 @@
 #include "Events/mouseevent.h"
 #include "Input/input.h"
 #include "Renderer/buffer.h"
+#include "Renderer/camera.h"
 #include "Renderer/renderer.h"
 #include "Renderer/shader.h"
 #include "Renderer/vertexarray.h"
