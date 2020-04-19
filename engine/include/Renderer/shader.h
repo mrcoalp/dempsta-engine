@@ -1,23 +1,16 @@
 #pragma once
 
-#include <glm/glm.hpp>
-
 #include "Core/pch.h"
 
 namespace de {
 class Shader {
 public:
-    Shader(const std::string& vertexSource, const std::string& fragmentSource);
+    virtual ~Shader() = default;
 
-    ~Shader();
+    virtual void Bind() const = 0;
 
-    void Bind() const;
+    virtual void Unbind() const = 0;
 
-    void Unbind() const;
-
-    void UploadUniformMat4(const std::string& name, const glm::mat4& matrix);
-
-private:
-    uint32_t m_rendererId;
+    static Shader* Create(const std::string& vertexSource, const std::string& fragmentSource);
 };
 }  // namespace de

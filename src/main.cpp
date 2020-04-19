@@ -1,5 +1,7 @@
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
+#include "Platform/OpenGL/openglshader.h"
 #include "dempsta.h"
 
 class ExampleLayer : public de::Layer {
@@ -55,7 +57,7 @@ public:
             }
         )";
 
-        m_shader = std::make_unique<de::Shader>(_vertexSrc, _fragmentSrc);
+        m_shader.reset(de::Shader::Create(_vertexSrc, _fragmentSrc));
 
         m_squareVertexArray.reset(de::VertexArray::Create());
 
@@ -89,12 +91,14 @@ public:
 
             layout(location = 0) out vec4 color;
 
+            uniform vec3 u_color;
+
             void main() {
-                color = vec4(0, 0, 0.2, 0.1);
+                color = vec4(u_color, 0.1);
             }
         )";
 
-        m_squareShader = std::make_unique<de::Shader>(_vertexSquareSrc, _fragmentSquareSrc);
+        m_squareShader.reset(de::Shader::Create(_vertexSquareSrc, _fragmentSquareSrc));
     }
 
     void OnUpdate(const de::TimeStep& ts) final {
@@ -118,6 +122,8 @@ public:
         de::RenderCommand::Clear({0.2f, 0.2f, 0.2f, 1});
         de::Renderer::BeginScene(m_camera);
         static const glm::mat4 _transform = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.2f, 0.0f));
+        std::dynamic_pointer_cast<de::OpenGLShader>(m_squareShader)->Bind();
+        std::dynamic_pointer_cast<de::OpenGLShader>(m_squareShader)->UploadUniformVec3("u_color", m_squareColor);
         de::Renderer::Submit(m_squareShader, m_squareVertexArray, _transform);
         de::Renderer::Submit(m_shader, m_vertexArray);
         de::Renderer::EndScene();
@@ -126,8 +132,8 @@ public:
     void OnEvent(de::Event& e) final {}
 
     void OnImGuiRender() final {
-        ImGui::Begin("Debug Window");
-        ImGui::Text("Client app debug ImGui window.");
+        ImGui::Begin("Square settings");
+        ImGui::ColorEdit3("Color", glm::value_ptr(m_squareColor));
         ImGui::End();
     }
 
@@ -137,6 +143,7 @@ private:
     std::shared_ptr<de::Shader> m_squareShader;
     std::shared_ptr<de::VertexArray> m_squareVertexArray;
     de::OrthographicCamera m_camera;
+    glm::vec3 m_squareColor{0.0f, 0.0f, 0.2f};
 };
 
 class Game : public de::Application {
