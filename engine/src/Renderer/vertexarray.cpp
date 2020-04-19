@@ -7,11 +7,11 @@
 namespace de {
 VertexArray* VertexArray::Create() {
     switch (Renderer::GetApi()) {
-        case RendererAPI::None: {
+        case RendererAPI::API::None: {
             LOG_ENGINE_ERROR("NONE, for now, is not a valid renderer API!");
             return nullptr;
         }
-        case RendererAPI::OpenGL: {
+        case RendererAPI::API::OpenGL: {
             return new OpenGLVertexArray();
         }
         default: {

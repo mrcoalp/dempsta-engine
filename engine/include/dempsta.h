@@ -5,15 +5,18 @@
 #include <imgui.h>
 
 #include "Core/application.h"
-#include "Core/log.h"
-#include "Core/entry.h"
 #include "Core/core.h"
+#include "Core/entry.h"
 #include "Core/layer.h"
+#include "Core/log.h"
+#include "Events/applicationevent.h"
 #include "Events/event.h"
 #include "Events/keyevent.h"
-#include "Events/applicationevent.h"
 #include "Events/mouseevent.h"
 #include "Input/input.h"
 #include "Renderer/buffer.h"
+#include "Renderer/renderer.h"
+#include "Renderer/shader.h"
+#include "Renderer/vertexarray.h"
 
 #endif  // DEMPSTA_H

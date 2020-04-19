@@ -5,9 +5,6 @@
 #include "Core/window.h"
 #include "Events/applicationevent.h"
 #include "ImGui/imguilayer.h"
-#include "Renderer/buffer.h"
-#include "Renderer/shader.h"
-#include "Renderer/vertexarray.h"
 
 int main(int argc, char** argv);
 
@@ -69,8 +66,6 @@ private:
     bool m_running = false;
     LayerStack m_layerStack;
     ImGuiLayer* m_imguiLayer;
-    std::shared_ptr<Shader> m_shader;
-    std::shared_ptr<VertexArray> m_vertexArray;
 
     /**
      * @brief On window close event callback.

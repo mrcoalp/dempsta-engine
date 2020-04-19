@@ -1,13 +1,16 @@
 #pragma once
 
-namespace de {
-enum class RendererAPI { None = 0, OpenGL = 1 };
+#include "Renderer/rendercommand.h"
 
+namespace de {
 class Renderer {
 public:
-    inline static RendererAPI GetApi() { return rendererApi; }
+    static void BeginScene();
 
-private:
-    static RendererAPI rendererApi;
+    static void EndScene();
+
+    static void Submit(const std::shared_ptr<VertexArray>& vertexArray);
+
+    inline static RendererAPI::API GetApi() { return RendererAPI::GetApi(); }
 };
 }  // namespace de
