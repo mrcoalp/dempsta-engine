@@ -12,7 +12,7 @@ public:
         float _vertices[3 * 7] = {-0.5f, -0.5f, 0.0f, 0.8f, 0.0f, 0.7f, 1.0f, 0.5f, -0.5f, 0.0f, 0.9f,
                                   0.7f,  0.0f,  1.0f, 0.0f, 0.5f, 0.0f, 0.0f, 0.7f, 0.3f,  1.0f};
 
-        std::shared_ptr<de::VertexBuffer> _vertexBuffer;
+        de::Ref<de::VertexBuffer> _vertexBuffer;
         _vertexBuffer.reset(de::VertexBuffer::Create(_vertices, sizeof(_vertices)));
 
         de::BufferLayout _layout = {{de::ShaderDataType::Vec3, "position"}, {de::ShaderDataType::Vec4, "color"}};
@@ -20,7 +20,7 @@ public:
         m_vertexArray->AddVertexBuffer(_vertexBuffer);
 
         uint32_t _indices[3] = {0, 1, 2};
-        std::shared_ptr<de::IndexBuffer> _indexBuffer;
+        de::Ref<de::IndexBuffer> _indexBuffer;
         _indexBuffer.reset(de::IndexBuffer::Create(_indices, sizeof(_indices) / sizeof(uint32_t)));
         m_vertexArray->AddIndexBuffer(_indexBuffer);
 
@@ -138,10 +138,10 @@ public:
     }
 
 private:
-    std::shared_ptr<de::Shader> m_shader;
-    std::shared_ptr<de::VertexArray> m_vertexArray;
-    std::shared_ptr<de::Shader> m_squareShader;
-    std::shared_ptr<de::VertexArray> m_squareVertexArray;
+    de::Ref<de::Shader> m_shader;
+    de::Ref<de::VertexArray> m_vertexArray;
+    de::Ref<de::Shader> m_squareShader;
+    de::Ref<de::VertexArray> m_squareVertexArray;
     de::OrthographicCamera m_camera;
     glm::vec3 m_squareColor{0.0f, 0.0f, 0.2f};
 };

@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 
+#include "Core/core.h"
 #include "Renderer/camera.h"
 #include "Renderer/rendercommand.h"
 #include "Renderer/shader.h"
@@ -13,7 +14,7 @@ public:
 
     static void EndScene();
 
-    static void Submit(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertexArray,
+    static void Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray,
                        const glm::mat4& transform = glm::mat4(1.0f));
 
     inline static RendererAPI::API GetApi() { return RendererAPI::GetApi(); }

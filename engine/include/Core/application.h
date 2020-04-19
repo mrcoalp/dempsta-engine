@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/core.h"
 #include "Core/layer.h"
 #include "Core/layerstack.h"
 #include "Core/window.h"
@@ -59,7 +60,7 @@ private:
     /**
      * @brief Window object pointer.
      */
-    std::unique_ptr<Window> m_window;
+    Scope<Window> m_window;
     /**
      * @brief Whether or not the application is running.
      */
