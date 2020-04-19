@@ -102,27 +102,33 @@ public:
     }
 
     void OnEvent(de::Event& e) final {
-        // LOG_DEBUG("{0} {1}", GetName(), e.ToString());
-        if (e.GetEventType() == de::EventType::KeyPressed) {
-            auto& _event = (de::KeyEvent&)e;
-            // Move camera as a test
-            if (_event.GetKeyCode() == DE_KEY_W) {
-                glm::vec3 _position = m_camera.GetPosition() + glm::vec3(0.0f, 0.1f, 0.0f);
-                m_camera.SetPosition(_position);
-            }
-            if (_event.GetKeyCode() == DE_KEY_S) {
-                glm::vec3 _position = m_camera.GetPosition() + glm::vec3(0.0f, -0.1f, 0.0f);
-                m_camera.SetPosition(_position);
-            }
-            if (_event.GetKeyCode() == DE_KEY_A) {
-                glm::vec3 _position = m_camera.GetPosition() + glm::vec3(-0.1f, 0.0f, 0.0f);
-                m_camera.SetPosition(_position);
-            }
-            if (_event.GetKeyCode() == DE_KEY_D) {
-                glm::vec3 _position = m_camera.GetPosition() + glm::vec3(0.1f, 0.0f, 0.0f);
-                m_camera.SetPosition(_position);
-            }
+        de::EventDispatcher _dispatcher(e);
+        _dispatcher.Dispatch<de::KeyPressedEvent>(
+            [this](de::KeyPressedEvent& event) { return OnKeyPressedEvent(event); });
+    }
+
+    bool OnKeyPressedEvent(de::KeyPressedEvent& event) {
+        if (event.GetKeyCode() == DE_KEY_W) {
+            glm::vec3 _position = m_camera.GetPosition() + glm::vec3(0.0f, 0.1f, 0.0f);
+            m_camera.SetPosition(_position);
+            return true;
         }
+        if (event.GetKeyCode() == DE_KEY_S) {
+            glm::vec3 _position = m_camera.GetPosition() + glm::vec3(0.0f, -0.1f, 0.0f);
+            m_camera.SetPosition(_position);
+            return true;
+        }
+        if (event.GetKeyCode() == DE_KEY_A) {
+            glm::vec3 _position = m_camera.GetPosition() + glm::vec3(-0.1f, 0.0f, 0.0f);
+            m_camera.SetPosition(_position);
+            return true;
+        }
+        if (event.GetKeyCode() == DE_KEY_D) {
+            glm::vec3 _position = m_camera.GetPosition() + glm::vec3(0.1f, 0.0f, 0.0f);
+            m_camera.SetPosition(_position);
+            return true;
+        }
+        return false;
     }
 
     void OnImGuiRender() final {
