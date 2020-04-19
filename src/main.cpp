@@ -1,3 +1,5 @@
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "dempsta.h"
 
 class ExampleLayer : public de::Layer {
@@ -27,6 +29,7 @@ public:
             layout(location = 1) in vec4 color;
 
             uniform mat4 u_viewProjection;
+            uniform mat4 u_transform;
 
             out vec3 o_position;
             out vec4 o_color;
@@ -34,7 +37,7 @@ public:
             void main() {
                 o_position = position;
                 o_color = color;
-                gl_Position = u_viewProjection * vec4(position, 1.0);
+                gl_Position = u_viewProjection * u_transform * vec4(position, 1.0);
             }
         )";
 
@@ -74,9 +77,10 @@ public:
             layout(location = 0) in vec3 position;
 
             uniform mat4 u_viewProjection;
+            uniform mat4 u_transform;
 
             void main() {
-                gl_Position = u_viewProjection * vec4(position, 1.0);
+                gl_Position = u_viewProjection * u_transform * vec4(position, 1.0);
             }
         )";
 
@@ -94,7 +98,6 @@ public:
     }
 
     void OnUpdate(const de::TimeStep& ts) final {
-        LOG_TRACE((float)ts);
         if (de::Input::IsKeyPressed(DE_KEY_W)) {
             glm::vec3 _position = m_camera.GetPosition() + glm::vec3(0.0f, 1.0f * (float)ts, 0.0f);
             m_camera.SetPosition(_position);
@@ -114,7 +117,8 @@ public:
 
         de::RenderCommand::Clear({0.2f, 0.2f, 0.2f, 1});
         de::Renderer::BeginScene(m_camera);
-        de::Renderer::Submit(m_squareShader, m_squareVertexArray);
+        static const glm::mat4 _transform = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.2f, 0.0f));
+        de::Renderer::Submit(m_squareShader, m_squareVertexArray, _transform);
         de::Renderer::Submit(m_shader, m_vertexArray);
         de::Renderer::EndScene();
     }
