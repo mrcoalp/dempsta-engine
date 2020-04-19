@@ -61,10 +61,10 @@ public:
 
         m_squareVertexArray.reset(de::VertexArray::Create());
 
-        float _sqaureVertices[3 * 4] = {-0.75f, -0.75f, 0.0f, 0.75f,  -0.75f, 0.0f,
+        float _squareVertices[3 * 4] = {-0.75f, -0.75f, 0.0f, 0.75f,  -0.75f, 0.0f,
                                         0.75f,  0.75f,  0.0f, -0.75f, 0.75f,  0.0f};
 
-        _vertexBuffer.reset(de::VertexBuffer::Create(_sqaureVertices, sizeof(_sqaureVertices)));
+        _vertexBuffer.reset(de::VertexBuffer::Create(_squareVertices, sizeof(_squareVertices)));
         _layout = {{de::ShaderDataType::Vec3, "position"}};
         _vertexBuffer->SetLayout(_layout);
         m_squareVertexArray->AddVertexBuffer(_vertexBuffer);
