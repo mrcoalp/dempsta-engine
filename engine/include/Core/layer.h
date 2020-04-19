@@ -1,28 +1,29 @@
 #pragma once
 
 #include "Core/pch.h"
+#include "Core/timestep.h"
 #include "Events/event.h"
 
 namespace de {
-    class Layer {
-    public:
-        explicit Layer(std::string name = "Layer") : debugName(std::move(name)) {}
+class Layer {
+public:
+    explicit Layer(std::string name = "Layer") : debugName(std::move(name)) {}
 
-        virtual ~Layer() = default;
+    virtual ~Layer() = default;
 
-        virtual void OnAttach() {};
+    virtual void OnAttach(){};
 
-        virtual void OnDetach() {};
+    virtual void OnDetach(){};
 
-        virtual void OnUpdate() {};
+    virtual void OnUpdate(const TimeStep& ts){};
 
-        virtual void OnImGuiRender() {};
+    virtual void OnImGuiRender(){};
 
-        virtual void OnEvent(Event& event) {};
+    virtual void OnEvent(Event& event){};
 
-        [[nodiscard]] inline const std::string& GetName() const { return debugName; }
+    [[nodiscard]] inline const std::string& GetName() const { return debugName; }
 
-    protected:
-        std::string debugName;
-    };
-}
+protected:
+    std::string debugName;
+};
+}  // namespace de

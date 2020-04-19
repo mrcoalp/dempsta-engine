@@ -93,7 +93,25 @@ public:
         m_squareShader = std::make_unique<de::Shader>(_vertexSquareSrc, _fragmentSquareSrc);
     }
 
-    void OnUpdate() final {
+    void OnUpdate(const de::TimeStep& ts) final {
+        LOG_TRACE((float)ts);
+        if (de::Input::IsKeyPressed(DE_KEY_W)) {
+            glm::vec3 _position = m_camera.GetPosition() + glm::vec3(0.0f, 1.0f * (float)ts, 0.0f);
+            m_camera.SetPosition(_position);
+        }
+        if (de::Input::IsKeyPressed(DE_KEY_S)) {
+            glm::vec3 _position = m_camera.GetPosition() + glm::vec3(0.0f, -1.0f * (float)ts, 0.0f);
+            m_camera.SetPosition(_position);
+        }
+        if (de::Input::IsKeyPressed(DE_KEY_A)) {
+            glm::vec3 _position = m_camera.GetPosition() + glm::vec3(-1.0f * (float)ts, 0.0f, 0.0f);
+            m_camera.SetPosition(_position);
+        }
+        if (de::Input::IsKeyPressed(DE_KEY_D)) {
+            glm::vec3 _position = m_camera.GetPosition() + glm::vec3(1.0f * (float)ts, 0.0f, 0.0f);
+            m_camera.SetPosition(_position);
+        }
+
         de::RenderCommand::Clear({0.2f, 0.2f, 0.2f, 1});
         de::Renderer::BeginScene(m_camera);
         de::Renderer::Submit(m_squareShader, m_squareVertexArray);
@@ -101,35 +119,7 @@ public:
         de::Renderer::EndScene();
     }
 
-    void OnEvent(de::Event& e) final {
-        de::EventDispatcher _dispatcher(e);
-        _dispatcher.Dispatch<de::KeyPressedEvent>(
-            [this](de::KeyPressedEvent& event) { return OnKeyPressedEvent(event); });
-    }
-
-    bool OnKeyPressedEvent(de::KeyPressedEvent& event) {
-        if (event.GetKeyCode() == DE_KEY_W) {
-            glm::vec3 _position = m_camera.GetPosition() + glm::vec3(0.0f, 0.1f, 0.0f);
-            m_camera.SetPosition(_position);
-            return true;
-        }
-        if (event.GetKeyCode() == DE_KEY_S) {
-            glm::vec3 _position = m_camera.GetPosition() + glm::vec3(0.0f, -0.1f, 0.0f);
-            m_camera.SetPosition(_position);
-            return true;
-        }
-        if (event.GetKeyCode() == DE_KEY_A) {
-            glm::vec3 _position = m_camera.GetPosition() + glm::vec3(-0.1f, 0.0f, 0.0f);
-            m_camera.SetPosition(_position);
-            return true;
-        }
-        if (event.GetKeyCode() == DE_KEY_D) {
-            glm::vec3 _position = m_camera.GetPosition() + glm::vec3(0.1f, 0.0f, 0.0f);
-            m_camera.SetPosition(_position);
-            return true;
-        }
-        return false;
-    }
+    void OnEvent(de::Event& e) final {}
 
     void OnImGuiRender() final {
         ImGui::Begin("Debug Window");

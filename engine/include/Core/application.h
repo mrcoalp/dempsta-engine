@@ -66,6 +66,7 @@ private:
     bool m_running = false;
     LayerStack m_layerStack;
     ImGuiLayer* m_imguiLayer;
+    float m_lastFrameTime = 0.0f;
 
     /**
      * @brief On window close event callback.

@@ -34,6 +34,7 @@ Window::Window(const WindowProps& windowProps) {
     context->Init();
 
     glfwSetWindowUserPointer(window, &data);
+    // Set, by default, vsync to true
     SetVSync(true);
 
     LOG_ENGINE_TRACE("Created window \"{0}\" ({1}x{2})...", data.title, data.width, data.height);

@@ -1,5 +1,7 @@
 #include "Core/application.h"
 
+#include <GLFW/glfw3.h>
+
 #include "Core/core.h"
 #include "Core/log.h"
 #include "Input/input.h"
@@ -37,8 +39,12 @@ void Application::Run() {
     m_running = true;
 
     while (m_running) {
+        auto _time = (float)glfwGetTime();
+        TimeStep _ts(_time - m_lastFrameTime);
+        m_lastFrameTime = _time;
+
         for (auto& _layer : m_layerStack) {
-            _layer->OnUpdate();
+            _layer->OnUpdate(_ts);
         }
         // Render ImGui layer
         m_imguiLayer->Begin();
