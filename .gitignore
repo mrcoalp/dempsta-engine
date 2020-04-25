@@ -1,6 +1,15 @@
-.vscode/
+# Clion
 .idea/
-build/
 cmake-build-debug/
+
+# Code
+.vscode/
+
+
+# Visual Studio
+.vs/
+out/
+
+build/
 logs/
 *.ini
