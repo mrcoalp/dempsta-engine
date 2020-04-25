@@ -26,6 +26,6 @@ private:
         glm::mat4 projectionViewMatrix;
     };
 
-    static SceneData* s_sceneData;
+    static Ref<SceneData> s_sceneData;
 };
 }  // namespace de

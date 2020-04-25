@@ -5,14 +5,14 @@
 #include "Renderer/renderer.h"
 
 namespace de {
-VertexArray* VertexArray::Create() {
+Ref<VertexArray> VertexArray::Create() {
     switch (Renderer::GetApi()) {
         case RendererAPI::API::None: {
             LOG_ENGINE_ERROR("NONE, for now, is not a valid renderer API!");
             return nullptr;
         }
         case RendererAPI::API::OpenGL: {
-            return new OpenGLVertexArray();
+            return std::make_shared<OpenGLVertexArray>();
         }
         default: {
             LOG_ENGINE_ERROR("Not a valid renderer API was provided!");

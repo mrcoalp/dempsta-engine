@@ -20,6 +20,6 @@ public:
 
     [[nodiscard]] virtual const Ref<IndexBuffer>& GetIndexBuffer() const = 0;
 
-    static VertexArray* Create();
+    static Ref<VertexArray> Create();
 };
 }  // namespace de

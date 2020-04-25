@@ -3,5 +3,5 @@
 #include "Platform/OpenGL/openglrendererapi.h"
 
 namespace de {
-RendererAPI* RenderCommand::s_rendererApi = new OpenGLRendererAPI();
+Ref<RendererAPI> RenderCommand::s_rendererApi = std::make_shared<OpenGLRendererAPI>();
 }

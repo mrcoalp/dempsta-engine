@@ -3,7 +3,7 @@
 #include "Platform/OpenGL/openglshader.h"
 
 namespace de {
-Renderer::SceneData* Renderer::s_sceneData = new Renderer::SceneData();
+Ref<Renderer::SceneData> Renderer::s_sceneData = std::make_shared<Renderer::SceneData>();
 
 void Renderer::OnWindowResize(unsigned int width, unsigned int height) {
     RenderCommand::SetViewport(0, 0, width, height);

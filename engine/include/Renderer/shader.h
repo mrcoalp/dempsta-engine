@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/core.h"
 #include "Core/pch.h"
 
 namespace de {
@@ -11,6 +12,6 @@ public:
 
     virtual void Unbind() const = 0;
 
-    static Shader* Create(const std::string& vertexSource, const std::string& fragmentSource);
+    static Ref<Shader> Create(const std::string& vertexSource, const std::string& fragmentSource);
 };
 }  // namespace de

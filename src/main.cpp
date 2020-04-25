@@ -7,13 +7,13 @@
 class ExampleLayer : public de::Layer {
 public:
     explicit ExampleLayer(const std::string& name) : Layer(name), m_camera(-3.2f, 3.2f, -1.8f, 1.8f) {
-        m_vertexArray.reset(de::VertexArray::Create());
+        m_vertexArray = de::VertexArray::Create();
 
         float _vertices[3 * 7] = {-0.5f, -0.5f, 0.0f, 0.8f, 0.0f, 0.7f, 1.0f, 0.5f, -0.5f, 0.0f, 0.9f,
                                   0.7f,  0.0f,  1.0f, 0.0f, 0.5f, 0.0f, 0.0f, 0.7f, 0.3f,  1.0f};
 
         de::Ref<de::VertexBuffer> _vertexBuffer;
-        _vertexBuffer.reset(de::VertexBuffer::Create(_vertices, sizeof(_vertices)));
+        _vertexBuffer = de::VertexBuffer::Create(_vertices, sizeof(_vertices));
 
         de::BufferLayout _layout = {{de::ShaderDataType::Vec3, "position"}, {de::ShaderDataType::Vec4, "color"}};
         _vertexBuffer->SetLayout(_layout);
@@ -21,7 +21,7 @@ public:
 
         uint32_t _indices[3] = {0, 1, 2};
         de::Ref<de::IndexBuffer> _indexBuffer;
-        _indexBuffer.reset(de::IndexBuffer::Create(_indices, sizeof(_indices) / sizeof(uint32_t)));
+        _indexBuffer = de::IndexBuffer::Create(_indices, sizeof(_indices) / sizeof(uint32_t));
         m_vertexArray->AddIndexBuffer(_indexBuffer);
 
         std::string _vertexSrc = R"(
@@ -57,22 +57,22 @@ public:
             }
         )";
 
-        m_shader.reset(de::Shader::Create(_vertexSrc, _fragmentSrc));
+        m_shader = de::Shader::Create(_vertexSrc, _fragmentSrc);
 
-        m_squareVertexArray.reset(de::VertexArray::Create());
+        m_squareVertexArray = de::VertexArray::Create();
 
         float _squareVertices[5 * 4] = {
             -0.75f, -0.75f, 0.0f, 0.0f, 0.0f, 0.75f,  -0.75f, 0.0f, 1.0f, 0.0f,
             0.75f,  0.75f,  0.0f, 1.0f, 1.0f, -0.75f, 0.75f,  0.0f, 0.0f, 1.0f,
         };
 
-        _vertexBuffer.reset(de::VertexBuffer::Create(_squareVertices, sizeof(_squareVertices)));
+        _vertexBuffer = de::VertexBuffer::Create(_squareVertices, sizeof(_squareVertices));
         _layout = {{de::ShaderDataType::Vec3, "position"}, {de::ShaderDataType::Vec2, "texture"}};
         _vertexBuffer->SetLayout(_layout);
         m_squareVertexArray->AddVertexBuffer(_vertexBuffer);
 
         uint32_t _squareIndices[6] = {0, 1, 2, 2, 3, 0};
-        _indexBuffer.reset(de::IndexBuffer::Create(_squareIndices, sizeof(_squareIndices) / sizeof(uint32_t)));
+        _indexBuffer = de::IndexBuffer::Create(_squareIndices, sizeof(_squareIndices) / sizeof(uint32_t));
         m_squareVertexArray->AddIndexBuffer(_indexBuffer);
 
         std::string _vertexSquareSrc = R"(
@@ -100,7 +100,7 @@ public:
             }
         )";
 
-        m_squareShader.reset(de::Shader::Create(_vertexSquareSrc, _fragmentSquareSrc));
+        m_squareShader = de::Shader::Create(_vertexSquareSrc, _fragmentSquareSrc);
 
         std::string _vertexTextureSrc = R"(
             #version 330 core
@@ -133,7 +133,7 @@ public:
             }
         )";
 
-        m_textureShader.reset(de::Shader::Create(_vertexTextureSrc, _fragmentTextureSrc));
+        m_textureShader = de::Shader::Create(_vertexTextureSrc, _fragmentTextureSrc);
         m_texture = de::Texture2D::Create("assets/textures/dog.jpg");
 
         std::dynamic_pointer_cast<de::OpenGLShader>(m_textureShader)->Bind();
