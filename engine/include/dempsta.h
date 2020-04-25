@@ -21,5 +21,6 @@
 #include "Renderer/shader.h"
 #include "Renderer/texture.h"
 #include "Renderer/vertexarray.h"
+#include "Utils/fileutils.h"
 
 #endif  // DEMPSTA_H

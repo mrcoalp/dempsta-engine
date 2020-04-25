@@ -1,12 +1,23 @@
 #pragma once
 
+#include <glad/glad.h>
+
 #include <glm/glm.hpp>
 
 #include "Renderer/shader.h"
 
+#define VERTEX_SHADER "vertex"
+#define TESS_CONTROL_SHADER "tess_control"
+#define TESS_EVALUATION_SHADER "tess_evaluation"
+#define GEOMETRY_SHADER "geometry"
+#define FRAGMENT_SHADER "fragment"
+#define COMPUTE_SHADER "compute"
+
 namespace de {
 class OpenGLShader : public Shader {
 public:
+    explicit OpenGLShader(const std::string& filepath);
+
     OpenGLShader(const std::string& vertexSource, const std::string& fragmentSource);
 
     ~OpenGLShader() override;
@@ -26,6 +37,10 @@ public:
     void UploadUniformMat4(const std::string& name, const glm::mat4& matrix) const;
 
 private:
+    void compile(const std::unordered_map<GLenum, std::string>& sources);
+
+    static std::unordered_map<GLenum, std::string> processFileData(const std::string& fileSource);
+
     uint32_t m_rendererId;
 };
 }  // namespace de

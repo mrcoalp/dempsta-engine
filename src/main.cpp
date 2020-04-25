@@ -7,7 +7,7 @@
 class ExampleLayer : public de::Layer {
 public:
     explicit ExampleLayer(const std::string& name) : Layer(name), m_camera(-3.2f, 3.2f, -1.8f, 1.8f) {
-        m_vertexArray = de::VertexArray::Create();
+        m_triangleVertexArray = de::VertexArray::Create();
 
         float _vertices[3 * 7] = {-0.5f, -0.5f, 0.0f, 0.8f, 0.0f, 0.7f, 1.0f, 0.5f, -0.5f, 0.0f, 0.9f,
                                   0.7f,  0.0f,  1.0f, 0.0f, 0.5f, 0.0f, 0.0f, 0.7f, 0.3f,  1.0f};
@@ -16,46 +16,13 @@ public:
 
         de::BufferLayout _layout = {{de::ShaderDataType::Vec3, "position"}, {de::ShaderDataType::Vec4, "color"}};
         _vertexBuffer->SetLayout(_layout);
-        m_vertexArray->AddVertexBuffer(_vertexBuffer);
+        m_triangleVertexArray->AddVertexBuffer(_vertexBuffer);
 
         unsigned _indices[3] = {0, 1, 2};
         de::Ref<de::IndexBuffer> _indexBuffer = de::IndexBuffer::Create(_indices, sizeof(_indices) / sizeof(unsigned));
-        m_vertexArray->AddIndexBuffer(_indexBuffer);
+        m_triangleVertexArray->AddIndexBuffer(_indexBuffer);
 
-        std::string _vertexSrc = R"(
-            #version 330 core
-
-            layout(location = 0) in vec3 position;
-            layout(location = 1) in vec4 color;
-
-            uniform mat4 u_viewProjection;
-            uniform mat4 u_transform;
-
-            out vec3 o_position;
-            out vec4 o_color;
-
-            void main() {
-                o_position = position;
-                o_color = color;
-                gl_Position = u_viewProjection * u_transform * vec4(position, 1.0);
-            }
-        )";
-
-        std::string _fragmentSrc = R"(
-            #version 330 core
-
-            layout(location = 0) out vec4 color;
-
-            in vec3 o_position;
-            in vec4 o_color;
-
-            void main() {
-                color = vec4(o_position * 0.5 + 0.5, 0.1);
-                color = o_color;
-            }
-        )";
-
-        m_shader = de::Shader::Create(_vertexSrc, _fragmentSrc);
+        m_triangleShader = de::Shader::Create("assets/shaders/triangle.glsl");
 
         m_squareVertexArray = de::VertexArray::Create();
 
@@ -73,66 +40,11 @@ public:
         _indexBuffer = de::IndexBuffer::Create(_squareIndices, sizeof(_squareIndices) / sizeof(unsigned));
         m_squareVertexArray->AddIndexBuffer(_indexBuffer);
 
-        std::string _vertexSquareSrc = R"(
-            #version 330 core
+        m_squareShader = de::Shader::Create("assets/shaders/square.glsl");
 
-            layout(location = 0) in vec3 position;
+        m_textureShader = de::Shader::Create("assets/shaders/texture.glsl");
 
-            uniform mat4 u_viewProjection;
-            uniform mat4 u_transform;
-
-            void main() {
-                gl_Position = u_viewProjection * u_transform * vec4(position, 1.0);
-            }
-        )";
-
-        std::string _fragmentSquareSrc = R"(
-            #version 330 core
-
-            layout(location = 0) out vec4 color;
-
-            uniform vec3 u_color;
-
-            void main() {
-                color = vec4(u_color, 0.1);
-            }
-        )";
-
-        m_squareShader = de::Shader::Create(_vertexSquareSrc, _fragmentSquareSrc);
-
-        std::string _vertexTextureSrc = R"(
-            #version 330 core
-
-            layout(location = 0) in vec3 position;
-            layout(location = 1) in vec2 texture;
-
-            out vec2 v_texture;
-
-            uniform mat4 u_viewProjection;
-            uniform mat4 u_transform;
-
-            void main() {
-                v_texture = texture;
-                gl_Position = u_viewProjection * u_transform * vec4(position, 1.0);
-            }
-        )";
-
-        std::string _fragmentTextureSrc = R"(
-            #version 330 core
-
-            layout(location = 0) out vec4 color;
-
-            in vec2 v_texture;
-
-            uniform sampler2D u_texture;
-
-            void main() {
-                color = texture(u_texture, v_texture);
-            }
-        )";
-
-        m_textureShader = de::Shader::Create(_vertexTextureSrc, _fragmentTextureSrc);
-        m_texture = de::Texture2D::Create("assets/textures/dog.jpg");
+        m_dogTexture = de::Texture2D::Create("assets/textures/dog.jpg");
         m_maskTexture = de::Texture2D::Create("assets/textures/mask.png");
 
         std::dynamic_pointer_cast<de::OpenGLShader>(m_textureShader)->Bind();
@@ -166,7 +78,7 @@ public:
         de::Renderer::Submit(m_squareShader, m_squareVertexArray);
 
         // Texture
-        m_texture->Bind();
+        m_dogTexture->Bind();
         static const glm::mat4 _transform = glm::translate(glm::mat4(1.0f), glm::vec3(1.5f, 0.0f, 0.0f));
         de::Renderer::Submit(m_textureShader, m_squareVertexArray, _transform);
 
@@ -176,7 +88,7 @@ public:
                              _transformMask * glm::scale(glm::mat4(1.0f), glm::vec3(0.3f)));
 
         // Triangle
-        de::Renderer::Submit(m_shader, m_vertexArray);
+        de::Renderer::Submit(m_triangleShader, m_triangleVertexArray);
         de::Renderer::EndScene();
     }
 
@@ -189,13 +101,12 @@ public:
     }
 
 private:
-    de::Ref<de::Shader> m_shader;
-    de::Ref<de::VertexArray> m_vertexArray;
-    de::Ref<de::Shader> m_squareShader, m_textureShader;
+    de::Ref<de::Shader> m_triangleShader, m_squareShader, m_textureShader;
+    de::Ref<de::VertexArray> m_triangleVertexArray;
     de::Ref<de::VertexArray> m_squareVertexArray;
     de::OrthographicCamera m_camera;
     glm::vec3 m_squareColor{0.0f, 0.0f, 0.2f};
-    de::Ref<de::Texture2D> m_texture, m_maskTexture;
+    de::Ref<de::Texture2D> m_dogTexture, m_maskTexture;
 };
 
 class Game : public de::Application {
