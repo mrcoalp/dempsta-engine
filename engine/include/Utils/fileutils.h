@@ -6,7 +6,7 @@ namespace de {
 class FileUtils {
 public:
     static std::string ReadFile(const std::string& filePath) {
-        std::ifstream _if(filePath, std::ios::binary);
+        std::ifstream _if(filePath);
         std::string _result;
         if (_if.is_open()) {
             _if.seekg(0, std::ios::end);

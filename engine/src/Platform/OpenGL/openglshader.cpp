@@ -125,21 +125,20 @@ void OpenGLShader::compile(const std::unordered_map<GLenum, std::string>& source
             glDeleteShader(_shader);
 
             // Use the infoLog as you see fit.
-            LOG_ENGINE_ERROR(_infoLog.data());
-            DE_ASSERT(0, "{0} not initialized!", ShaderTypeToString(source.first))
+            DE_ASSERT(0, "{0} shader not initialized: {1}", ShaderTypeToString(source.first), _infoLog.data())
         }
 
         // Add shader id to vector
         _shaders.push_back(_shader);
     }
 
-    // Vertex and fragment shaders are successfully compiled.
+    // Shaders are successfully compiled.
     // Now time to link them together into a program.
-    // Get a program object.
+    // Get a program object and assign as your renderer id
     m_rendererId = glCreateProgram();
 
+    // Attach our shaders to our program
     for (const auto& shader : _shaders) {
-        // Attach our shaders to our program
         glAttachShader(m_rendererId, shader);
     }
 
@@ -165,8 +164,7 @@ void OpenGLShader::compile(const std::unordered_map<GLenum, std::string>& source
             glDeleteShader(shader);
         }
 
-        LOG_ENGINE_ERROR(infoLog.data());
-        DE_ASSERT(0, "ProgramShader not initialized!")
+        DE_ASSERT(0, "ProgramShader not initialized: {0}", infoLog.data())
     }
 
     // Always detach shaders after a successful link.
