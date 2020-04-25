@@ -5,7 +5,26 @@ CONFIGURATION=Debug
 # Install game?
 INSTALL=0
 # Use Ninja?
-NINJA=
+BUILD_SYSTEM=-GNinja
+
+usage() {
+  echo "Usage
+
+    build.sh [options]
+
+    Builds the game, by default, with debug configuration.
+
+Options
+    -h | --help       - Show help
+    -d | --debug      - Build game with debug configuration
+    -r | --release    - Build game with release configuration
+    -c | --clean      - Clean build of configuration
+    -i | --install    - Install game to build/bin folder
+    --ninja           - Use Ninja as build system (default)
+    --make            - Use Make as build system
+    --cc <#version>   - Specify which GCC compiler <#version> to use. Ex: --cc 9
+    --clang           - Use Clang compiler"
+}
 
 # Check for arguments
 while test $# -gt 0; do
@@ -23,7 +42,10 @@ while test $# -gt 0; do
     INSTALL=1
     ;;
   --ninja)
-    NINJA=-GNinja
+    BUILD_SYSTEM=-GNinja
+    ;;
+  --make)
+    BUILD_SYSTEM=
     ;;
   --cc)
     export CC=/usr/bin/gcc-$2
@@ -35,21 +57,7 @@ while test $# -gt 0; do
     export CXX=/usr/bin/clang++
     ;;
   -h | --help)
-    echo "Usage
-
-    build.sh [options]
-
-    Builds the game, by default, with debug configuration.
-
-Options
-    -h | --help       - Show help
-    -d | --debug      - Build game with debug configuration
-    -r | --release    - Build game with release configuration
-    -c | --clean      - Clean build of configuration
-    -i | --install    - Install game to build/bin folder
-    --ninja           - Use NINJA as build system instead of MAKE
-    --cc <#version>   - Specify which GCC compiler <#version> to use. Ex: --cc 9
-    --clang           - Use Clang compiler"
+    usage
     exit 0
     ;;
   -*)
@@ -86,8 +94,9 @@ fi
 cd $CONFIGURATION || exit 1
 
 # Run CMake
-cmake ../.. -DCMAKE_BUILD_TYPE=$CONFIGURATION -DCMAKE_INSTALL_PREFIX=./bin $NINJA
-if [ -z $NINJA ]; then
+cmake ../.. $BUILD_SYSTEM -DCMAKE_BUILD_TYPE=$CONFIGURATION -DCMAKE_INSTALL_PREFIX=./bin
+
+if [ -z $BUILD_SYSTEM ]; then
   make -j 4
 else
   ninja
@@ -95,7 +104,7 @@ fi
 
 # Install game
 if [ $INSTALL = 1 ]; then
-  if [ -z $NINJA ]; then
+  if [ -z $BUILD_SYSTEM ]; then
     make install
   else
     ninja install
