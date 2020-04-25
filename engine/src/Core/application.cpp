@@ -28,8 +28,7 @@ void Application::OnEvent(Event& e) {
     EventDispatcher _eventDispatcher(e);
     _eventDispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent& event) { return onWindowClose(event); });
     _eventDispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent& event) { return onWindowResize(event); });
-    _eventDispatcher.Dispatch<WindowIconifyEvent>(
-        [this](WindowIconifyEvent& event) { return onWindowIconify(event); });
+    _eventDispatcher.Dispatch<WindowIconifyEvent>([this](WindowIconifyEvent& event) { return onWindowIconify(event); });
 
     // Handle layer events
     for (auto _it = m_layerStack.rbegin(); _it != m_layerStack.rend(); ++_it) {
@@ -65,20 +64,12 @@ void Application::Run() {
 }
 
 bool Application::onWindowClose(WindowCloseEvent& event) {
-    LOG_ENGINE_TRACE("Shutting down program...");
     m_running = false;
     return true;
 }
 
 bool Application::onWindowResize(WindowResizeEvent& event) {
-    if (event.GetWidth() == 0 || event.GetHeight() == 0) {
-        m_minimized = true;
-        return false;
-    }
-
-    m_minimized = false;
     Renderer::OnWindowResize(event.GetWidth(), event.GetHeight());
-
     return false;
 }
 

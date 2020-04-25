@@ -17,7 +17,7 @@ endif ()
 
 message("Building game...")
 
-if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
+if (${CMAKE_BUILD_TYPE} MATCHES Debug)
     message("-- Build type: Debug")
     message("Adding Debug flag...")
     add_definitions(-DNDEBUG)
