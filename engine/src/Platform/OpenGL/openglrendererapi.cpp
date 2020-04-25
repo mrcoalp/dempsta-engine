@@ -3,6 +3,11 @@
 #include <glad/glad.h>
 
 namespace de {
+void OpenGLRendererAPI::Init() {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
 void OpenGLRendererAPI::SetViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height) {
     glViewport(x, y, width, height);
 }

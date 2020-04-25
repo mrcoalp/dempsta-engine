@@ -18,6 +18,8 @@ Application::Application() {
     m_window = std::make_unique<Window>(WindowProps());
     m_window->SetEventCallback([this](Event& e) { OnEvent(e); });
 
+    Renderer::Init();
+
     m_imguiLayer = new ImGuiLayer();
     PushOverlay(m_imguiLayer);
 }

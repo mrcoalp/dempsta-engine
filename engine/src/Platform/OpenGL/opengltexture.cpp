@@ -14,14 +14,26 @@ OpenGLTexture2D::OpenGLTexture2D(const std::string& filePath) : m_filePath(fileP
     m_width = width;
     m_height = height;
 
+    GLenum _internalFormat = 0;
+    GLenum _dataFormat = 0;
+
+    if (channels == 3) {
+        _internalFormat = GL_RGB8;
+        _dataFormat = GL_RGB;
+    } else if (channels == 4) {
+        _internalFormat = GL_RGBA8;
+        _dataFormat = GL_RGBA;
+    }
+
+    DE_ASSERT(_internalFormat && _dataFormat, "Invalid RGB formats!")
+
     glCreateTextures(GL_TEXTURE_2D, 1, &m_rendererId);
-    glTextureStorage2D(m_rendererId, 1, GL_RGB8, m_width, m_height);
+    glTextureStorage2D(m_rendererId, 1, _internalFormat, m_width, m_height);
 
     glTextureParameteri(m_rendererId, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTextureParameteri(m_rendererId, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    glTextureSubImage2D(m_rendererId, 0, 0, 0, m_width, m_height, channels == 3 ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE,
-                        data);
+    glTextureSubImage2D(m_rendererId, 0, 0, 0, m_width, m_height, _dataFormat, GL_UNSIGNED_BYTE, data);
 
     stbi_image_free(data);
 }

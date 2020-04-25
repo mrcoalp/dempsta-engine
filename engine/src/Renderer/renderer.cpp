@@ -5,6 +5,10 @@
 namespace de {
 Ref<Renderer::SceneData> Renderer::s_sceneData = std::make_shared<Renderer::SceneData>();
 
+void Renderer::Init() {
+    RenderCommand::Init();
+}
+
 void Renderer::OnWindowResize(unsigned int width, unsigned int height) {
     RenderCommand::SetViewport(0, 0, width, height);
 }

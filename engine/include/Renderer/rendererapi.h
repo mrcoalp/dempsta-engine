@@ -10,6 +10,8 @@ class RendererAPI {
 public:
     enum class API { None = 0, OpenGL = 1 };
 
+    virtual void Init() = 0;
+
     virtual void SetViewport(unsigned x, unsigned y, unsigned width, unsigned height) = 0;
 
     virtual void Clear(glm::vec4& color) = 0;

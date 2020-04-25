@@ -12,16 +12,14 @@ public:
         float _vertices[3 * 7] = {-0.5f, -0.5f, 0.0f, 0.8f, 0.0f, 0.7f, 1.0f, 0.5f, -0.5f, 0.0f, 0.9f,
                                   0.7f,  0.0f,  1.0f, 0.0f, 0.5f, 0.0f, 0.0f, 0.7f, 0.3f,  1.0f};
 
-        de::Ref<de::VertexBuffer> _vertexBuffer;
-        _vertexBuffer = de::VertexBuffer::Create(_vertices, sizeof(_vertices));
+        de::Ref<de::VertexBuffer> _vertexBuffer = de::VertexBuffer::Create(_vertices, sizeof(_vertices));
 
         de::BufferLayout _layout = {{de::ShaderDataType::Vec3, "position"}, {de::ShaderDataType::Vec4, "color"}};
         _vertexBuffer->SetLayout(_layout);
         m_vertexArray->AddVertexBuffer(_vertexBuffer);
 
-        uint32_t _indices[3] = {0, 1, 2};
-        de::Ref<de::IndexBuffer> _indexBuffer;
-        _indexBuffer = de::IndexBuffer::Create(_indices, sizeof(_indices) / sizeof(uint32_t));
+        unsigned _indices[3] = {0, 1, 2};
+        de::Ref<de::IndexBuffer> _indexBuffer = de::IndexBuffer::Create(_indices, sizeof(_indices) / sizeof(unsigned));
         m_vertexArray->AddIndexBuffer(_indexBuffer);
 
         std::string _vertexSrc = R"(
@@ -71,8 +69,8 @@ public:
         _vertexBuffer->SetLayout(_layout);
         m_squareVertexArray->AddVertexBuffer(_vertexBuffer);
 
-        uint32_t _squareIndices[6] = {0, 1, 2, 2, 3, 0};
-        _indexBuffer = de::IndexBuffer::Create(_squareIndices, sizeof(_squareIndices) / sizeof(uint32_t));
+        unsigned _squareIndices[6] = {0, 1, 2, 2, 3, 0};
+        _indexBuffer = de::IndexBuffer::Create(_squareIndices, sizeof(_squareIndices) / sizeof(unsigned));
         m_squareVertexArray->AddIndexBuffer(_indexBuffer);
 
         std::string _vertexSquareSrc = R"(
@@ -135,6 +133,7 @@ public:
 
         m_textureShader = de::Shader::Create(_vertexTextureSrc, _fragmentTextureSrc);
         m_texture = de::Texture2D::Create("assets/textures/dog.jpg");
+        m_maskTexture = de::Texture2D::Create("assets/textures/mask.png");
 
         std::dynamic_pointer_cast<de::OpenGLShader>(m_textureShader)->Bind();
         std::dynamic_pointer_cast<de::OpenGLShader>(m_textureShader)->UploadUniformInt("u_texture", 0);
@@ -160,14 +159,22 @@ public:
 
         de::RenderCommand::Clear({0.2f, 0.2f, 0.2f, 1});
         de::Renderer::BeginScene(m_camera);
+
         // Square
         std::dynamic_pointer_cast<de::OpenGLShader>(m_squareShader)->Bind();
         std::dynamic_pointer_cast<de::OpenGLShader>(m_squareShader)->UploadUniformVec3("u_color", m_squareColor);
         de::Renderer::Submit(m_squareShader, m_squareVertexArray);
+
         // Texture
         m_texture->Bind();
         static const glm::mat4 _transform = glm::translate(glm::mat4(1.0f), glm::vec3(1.5f, 0.0f, 0.0f));
         de::Renderer::Submit(m_textureShader, m_squareVertexArray, _transform);
+
+        m_maskTexture->Bind();
+        static const glm::mat4 _transformMask = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.5f, 0.0f));
+        de::Renderer::Submit(m_textureShader, m_squareVertexArray,
+                             _transformMask * glm::scale(glm::mat4(1.0f), glm::vec3(0.3f)));
+
         // Triangle
         de::Renderer::Submit(m_shader, m_vertexArray);
         de::Renderer::EndScene();
@@ -188,7 +195,7 @@ private:
     de::Ref<de::VertexArray> m_squareVertexArray;
     de::OrthographicCamera m_camera;
     glm::vec3 m_squareColor{0.0f, 0.0f, 0.2f};
-    de::Ref<de::Texture2D> m_texture;
+    de::Ref<de::Texture2D> m_texture, m_maskTexture;
 };
 
 class Game : public de::Application {

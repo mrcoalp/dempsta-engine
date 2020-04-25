@@ -7,7 +7,7 @@
 
 namespace de {
 OpenGLContext::OpenGLContext(GLFWwindow* windowHandle) : windowHandle(windowHandle) {
-    DE_ASSERT((int)(windowHandle != nullptr), "OpenGLContext not initialized!")
+    DE_ASSERT(windowHandle != nullptr, "OpenGLContext not initialized!")
 }
 
 void OpenGLContext::Init() {

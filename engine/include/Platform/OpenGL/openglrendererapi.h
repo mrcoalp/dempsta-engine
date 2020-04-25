@@ -8,6 +8,8 @@ class OpenGLRendererAPI : public RendererAPI {
 public:
     OpenGLRendererAPI() = default;
 
+    void Init() override;
+
     void SetViewport(unsigned x, unsigned y, unsigned width, unsigned height) override;
 
     void Clear(glm::vec4& color) override;

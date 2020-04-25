@@ -43,7 +43,7 @@ OpenGLShader::OpenGLShader(const std::string& vertexSource, const std::string& f
     // Send the fragment shader source code to GL
     // Note that std::string's .c_str is NULL character terminated.
     source = fragmentSource.c_str();
-    glShaderSource(fragmentShader, 1, &source, 0);
+    glShaderSource(fragmentShader, 1, &source, nullptr);
 
     // Compile the fragment shader
     glCompileShader(fragmentShader);
