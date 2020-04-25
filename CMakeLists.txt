@@ -33,7 +33,12 @@ file(GLOB_RECURSE SOURCES src/*.h src/*.cpp)
 add_executable(game_test ${SOURCES})
 
 target_link_libraries(game_test PRIVATE dempsta)
+# Copy assets folder to binary destination
+file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 
+# Install custom instructions
 install(TARGETS game_test
         RUNTIME DESTINATION .
         LIBRARY DESTINATION lib)
+# Copy assets folder to installation dir root
+install(DIRECTORY assets DESTINATION .)
