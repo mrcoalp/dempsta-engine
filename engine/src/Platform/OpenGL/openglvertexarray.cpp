@@ -23,6 +23,10 @@ static GLenum ShaderDataTypeToOpenGLType(const ShaderDataType& type) {
             return GL_INT;
         case ShaderDataType::Bool:
             return GL_BOOL;
+        default: {
+            LOG_ENGINE_ERROR("Invalid ShaderDataType: {0}", type);
+            return -1;
+        }
     }
 }
 

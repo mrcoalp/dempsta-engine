@@ -10,6 +10,8 @@
 namespace de {
 class Renderer {
 public:
+    static void OnWindowResize(unsigned width, unsigned height);
+
     static void BeginScene(OrthographicCamera& camera);
 
     static void EndScene();

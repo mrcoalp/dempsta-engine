@@ -54,6 +54,12 @@ void Window::setGLFWCallbacks() {
         data.EventCallback(_event);
     });
 
+    glfwSetWindowIconifyCallback(window, [](GLFWwindow* pWwindow, int iconify) {
+        WindowData& data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
+        WindowIconifyEvent _event(iconify);
+        data.EventCallback(_event);
+    });
+
     glfwSetWindowCloseCallback(window, [](GLFWwindow* pWwindow) {
         WindowData& data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
         WindowCloseEvent _event;

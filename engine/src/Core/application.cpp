@@ -5,6 +5,7 @@
 #include "Core/core.h"
 #include "Core/log.h"
 #include "Input/input.h"
+#include "Renderer/renderer.h"
 
 namespace de {
 Application* Application::m_instance = nullptr;
@@ -26,6 +27,10 @@ Application::~Application() = default;
 void Application::OnEvent(Event& e) {
     EventDispatcher _eventDispatcher(e);
     _eventDispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent& event) { return onWindowClose(event); });
+    _eventDispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent& event) { return onWindowResize(event); });
+    _eventDispatcher.Dispatch<WindowIconifyEvent>(
+        [this](WindowIconifyEvent& event) { return onWindowIconify(event); });
+
     // Handle layer events
     for (auto _it = m_layerStack.rbegin(); _it != m_layerStack.rend(); ++_it) {
         (*_it)->OnEvent(e);
@@ -43,8 +48,10 @@ void Application::Run() {
         TimeStep _ts(_time - m_lastFrameTime);
         m_lastFrameTime = _time;
 
-        for (auto& _layer : m_layerStack) {
-            _layer->OnUpdate(_ts);
+        if (!m_minimized) {
+            for (auto& _layer : m_layerStack) {
+                _layer->OnUpdate(_ts);
+            }
         }
         // Render ImGui layer
         m_imguiLayer->Begin();
@@ -61,6 +68,23 @@ bool Application::onWindowClose(WindowCloseEvent& event) {
     LOG_ENGINE_TRACE("Shutting down program...");
     m_running = false;
     return true;
+}
+
+bool Application::onWindowResize(WindowResizeEvent& event) {
+    if (event.GetWidth() == 0 || event.GetHeight() == 0) {
+        m_minimized = true;
+        return false;
+    }
+
+    m_minimized = false;
+    Renderer::OnWindowResize(event.GetWidth(), event.GetHeight());
+
+    return false;
+}
+
+bool Application::onWindowIconify(WindowIconifyEvent& event) {
+    m_minimized = event.GetIconify();
+    return false;
 }
 
 void Application::PushLayer(Layer* layer) {

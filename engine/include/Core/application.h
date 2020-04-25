@@ -68,6 +68,7 @@ private:
     LayerStack m_layerStack;
     ImGuiLayer* m_imguiLayer;
     float m_lastFrameTime = 0.0f;
+    bool m_minimized = false;
 
     /**
      * @brief On window close event callback.
@@ -75,6 +76,20 @@ private:
      * @return
      */
     bool onWindowClose(WindowCloseEvent& event);
+
+    /**
+     * On window resize event callback.
+     * @param event
+     * @return
+     */
+    bool onWindowResize(WindowResizeEvent& event);
+
+    /**
+     * On window iconify/minimized event callback.
+     * @param event
+     * @return
+     */
+    bool onWindowIconify(WindowIconifyEvent& event);
 
     /**
      * @brief Main function entry.

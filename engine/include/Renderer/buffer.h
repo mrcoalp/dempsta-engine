@@ -2,6 +2,7 @@
 
 #include <utility>
 
+#include "Core/log.h"
 #include "Core/pch.h"
 
 namespace de {
@@ -29,6 +30,10 @@ static uint32_t ShaderDataTypeSize(ShaderDataType type) {
             return 4 * 4 * 4;
         case ShaderDataType::Bool:
             return 1;
+        default: {
+            LOG_ENGINE_ERROR("Invalid ShaderDataType: {0}", type);
+            return -1;
+        }
     }
 }
 
@@ -64,6 +69,10 @@ struct BufferElement {
                 return 4 * 4;
             case ShaderDataType::Bool:
                 return 1;
+            default: {
+                LOG_ENGINE_ERROR("Invalid ShaderDataType: {0}", type);
+                return -1;
+            }
         }
     }
 };
