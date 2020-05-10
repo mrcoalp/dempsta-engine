@@ -18,13 +18,15 @@ class OpenGLShader : public Shader {
 public:
     explicit OpenGLShader(const std::string& filepath);
 
-    OpenGLShader(const std::string& vertexSource, const std::string& fragmentSource);
+    OpenGLShader(std::string  name, const std::string& vertexSource, const std::string& fragmentSource);
 
     ~OpenGLShader() override;
 
     void Bind() const override;
 
     void Unbind() const override;
+
+    [[nodiscard]] inline const std::string& GetName() const override { return m_name; }
 
     void UploadUniformInt(const std::string& name, int value) const;
 
@@ -37,10 +39,11 @@ public:
     void UploadUniformMat4(const std::string& name, const glm::mat4& matrix) const;
 
 private:
+    uint32_t m_rendererId;
+    std::string m_name;
+
     void compile(const std::unordered_map<GLenum, std::string>& sources);
 
     static std::unordered_map<GLenum, std::string> processFileData(const std::string& fileSource);
-
-    uint32_t m_rendererId;
 };
 }  // namespace de

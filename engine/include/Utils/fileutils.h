@@ -20,5 +20,34 @@ public:
         }
         return _result;
     }
+
+    static std::string GetFileNameWithExtension(std::string filepath) {
+        // Remove directory if present.
+        const size_t _lastSlashIndex = filepath.find_last_of("\\/");
+        if (std::string::npos != _lastSlashIndex) {
+            filepath.erase(0, _lastSlashIndex + 1);
+        }
+        return filepath;
+    }
+
+    static std::string GetFileName(const std::string& filepath) {
+        std::string _fileNameWithExtension = GetFileNameWithExtension(filepath);
+        // Remove extension if present.
+        const size_t _periodIndex = _fileNameWithExtension.rfind('.');
+        if (std::string::npos != _periodIndex) {
+            _fileNameWithExtension.erase(_periodIndex);
+        }
+        return _fileNameWithExtension;
+    }
+
+    static std::string GetFileExtension(const std::string& filepath) {
+        std::string _fileNameWithExtension = GetFileNameWithExtension(filepath);
+        // Remove filename.
+        const size_t _periodIndex = _fileNameWithExtension.rfind('.');
+        if (std::string::npos != _periodIndex) {
+            _fileNameWithExtension.erase(0, _periodIndex + 1);
+        }
+        return _fileNameWithExtension;
+    }
 };
 }  // namespace de

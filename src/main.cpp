@@ -22,8 +22,6 @@ public:
         de::Ref<de::IndexBuffer> _indexBuffer = de::IndexBuffer::Create(_indices, sizeof(_indices) / sizeof(unsigned));
         m_triangleVertexArray->AddIndexBuffer(_indexBuffer);
 
-        m_triangleShader = de::Shader::Create("assets/shaders/triangle.glsl");
-
         m_squareVertexArray = de::VertexArray::Create();
 
         float _squareVertices[5 * 4] = {
@@ -40,15 +38,16 @@ public:
         _indexBuffer = de::IndexBuffer::Create(_squareIndices, sizeof(_squareIndices) / sizeof(unsigned));
         m_squareVertexArray->AddIndexBuffer(_indexBuffer);
 
-        m_squareShader = de::Shader::Create("assets/shaders/square.glsl");
-
-        m_textureShader = de::Shader::Create("assets/shaders/texture.glsl");
+        // Load shaders
+        m_shaderLib.Load("assets/shaders/triangle.glsl");
+        m_shaderLib.Load("assets/shaders/square.glsl");
+        auto _textureShader = m_shaderLib.Load("assets/shaders/texture.glsl");
 
         m_dogTexture = de::Texture2D::Create("assets/textures/dog.jpg");
         m_maskTexture = de::Texture2D::Create("assets/textures/mask.png");
 
-        std::dynamic_pointer_cast<de::OpenGLShader>(m_textureShader)->Bind();
-        std::dynamic_pointer_cast<de::OpenGLShader>(m_textureShader)->UploadUniformInt("u_texture", 0);
+        std::dynamic_pointer_cast<de::OpenGLShader>(_textureShader)->Bind();
+        std::dynamic_pointer_cast<de::OpenGLShader>(_textureShader)->UploadUniformInt("u_texture", 0);
     }
 
     void OnUpdate(const de::TimeStep& ts) final {
@@ -73,22 +72,24 @@ public:
         de::Renderer::BeginScene(m_camera);
 
         // Square
-        std::dynamic_pointer_cast<de::OpenGLShader>(m_squareShader)->Bind();
-        std::dynamic_pointer_cast<de::OpenGLShader>(m_squareShader)->UploadUniformVec3("u_color", m_squareColor);
-        de::Renderer::Submit(m_squareShader, m_squareVertexArray);
+        auto _squareShader = m_shaderLib.Get("square");
+        std::dynamic_pointer_cast<de::OpenGLShader>(_squareShader)->Bind();
+        std::dynamic_pointer_cast<de::OpenGLShader>(_squareShader)->UploadUniformVec3("u_color", m_squareColor);
+        de::Renderer::Submit(_squareShader, m_squareVertexArray);
 
         // Texture
+        auto _textureShader = m_shaderLib.Get("texture");
         m_dogTexture->Bind();
         static const glm::mat4 _transform = glm::translate(glm::mat4(1.0f), glm::vec3(1.5f, 0.0f, 0.0f));
-        de::Renderer::Submit(m_textureShader, m_squareVertexArray, _transform);
+        de::Renderer::Submit(_textureShader, m_squareVertexArray, _transform);
 
         m_maskTexture->Bind();
         static const glm::mat4 _transformMask = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.5f, 0.0f));
-        de::Renderer::Submit(m_textureShader, m_squareVertexArray,
+        de::Renderer::Submit(_textureShader, m_squareVertexArray,
                              _transformMask * glm::scale(glm::mat4(1.0f), glm::vec3(0.3f)));
 
         // Triangle
-        de::Renderer::Submit(m_triangleShader, m_triangleVertexArray);
+        de::Renderer::Submit(m_shaderLib.Get("triangle"), m_triangleVertexArray);
         de::Renderer::EndScene();
     }
 
@@ -101,7 +102,7 @@ public:
     }
 
 private:
-    de::Ref<de::Shader> m_triangleShader, m_squareShader, m_textureShader;
+    de::ShaderLibrary m_shaderLib;
     de::Ref<de::VertexArray> m_triangleVertexArray;
     de::Ref<de::VertexArray> m_squareVertexArray;
     de::OrthographicCamera m_camera;

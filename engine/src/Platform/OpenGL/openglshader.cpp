@@ -1,6 +1,7 @@
 #include "Platform/OpenGL/openglshader.h"
 
 #include <glm/gtc/type_ptr.hpp>
+#include <utility>
 
 #include "Core/core.h"
 #include "Utils/fileutils.h"
@@ -45,9 +46,13 @@ static std::string ShaderTypeToString(const GLenum& type) {
     }
 }
 
-OpenGLShader::OpenGLShader(const std::string& filepath) { compile(processFileData(FileUtils::ReadFile(filepath))); }
+OpenGLShader::OpenGLShader(const std::string& filepath) {
+    m_name = FileUtils::GetFileName(filepath);
+    compile(processFileData(FileUtils::ReadFile(filepath)));
+}
 
-OpenGLShader::OpenGLShader(const std::string& vertexSource, const std::string& fragmentSource) {
+OpenGLShader::OpenGLShader(std::string name, const std::string& vertexSource, const std::string& fragmentSource)
+    : m_name(std::move(name)) {
     std::unordered_map<GLenum, std::string> _sources;
     _sources.emplace(GL_VERTEX_SHADER, vertexSource);
     _sources.emplace(GL_FRAGMENT_SHADER, fragmentSource);
@@ -97,6 +102,7 @@ void OpenGLShader::UploadUniformMat4(const std::string& name, const glm::mat4& m
 
 void OpenGLShader::compile(const std::unordered_map<GLenum, std::string>& sources) {
     std::vector<GLuint> _shaders;
+    _shaders.reserve(sources.size());
 
     for (const auto& source : sources) {
         // Create an empty shader handle
@@ -125,11 +131,11 @@ void OpenGLShader::compile(const std::unordered_map<GLenum, std::string>& source
             glDeleteShader(_shader);
 
             // Use the infoLog as you see fit.
-            DE_ASSERT(0, "{0} shader not initialized: {1}", ShaderTypeToString(source.first), _infoLog.data())
+            DE_ASSERT(0, "{0} shader not initialized: '{1}'", ShaderTypeToString(source.first), _infoLog.data())
         }
 
         // Add shader id to vector
-        _shaders.push_back(_shader);
+        _shaders.emplace_back(_shader);
     }
 
     // Shaders are successfully compiled.
@@ -164,7 +170,7 @@ void OpenGLShader::compile(const std::unordered_map<GLenum, std::string>& source
             glDeleteShader(shader);
         }
 
-        DE_ASSERT(0, "ProgramShader not initialized: {0}", infoLog.data())
+        DE_ASSERT(0, "ProgramShader not initialized: '{0}'", infoLog.data())
     }
 
     // Always detach shaders after a successful link.
@@ -175,7 +181,7 @@ void OpenGLShader::compile(const std::unordered_map<GLenum, std::string>& source
 
 std::unordered_map<GLenum, std::string> OpenGLShader::processFileData(const std::string& fileSource) {
     std::unordered_map<GLenum, std::string> _sources;
-    const char* _typeToken = "#type";
+    constexpr const char* _typeToken = "#type";
     size_t _typeTokenLength = strlen(_typeToken);
     size_t _position = fileSource.find(_typeToken, 0);
 
@@ -185,7 +191,7 @@ std::unordered_map<GLenum, std::string> OpenGLShader::processFileData(const std:
 
         size_t _begin = _position + _typeTokenLength + 1;
         std::string _type = fileSource.substr(_begin, _eol - _begin);
-        DE_ASSERT(ShaderTypeFromString(_type), "Invalid shader type: {0}", _type)
+        DE_ASSERT(ShaderTypeFromString(_type), "Invalid shader type: '{0}'", _type)
 
         size_t _nextLinePosition = fileSource.find_first_of('\n', _eol);
         _position = fileSource.find(_typeToken, _nextLinePosition);
