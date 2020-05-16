@@ -2,10 +2,16 @@
 
 #include <glm/glm.hpp>
 
+#include "Core/timestep.h"
+#include "Events/applicationevent.h"
+#include "Events/mouseevent.h"
+
 namespace de {
 class OrthographicCamera {
 public:
     OrthographicCamera(float left, float right, float bottom, float top);
+
+    void SetProjection(float left, float right, float bottom, float top);
 
     [[nodiscard]] inline const glm::mat4& GetProjectionMatrix() const { return m_projectionMatrix; }
 
@@ -26,5 +32,28 @@ private:
     float m_rotation{0.0f};
 
     void updateViewMatrix();
+};
+
+class OrthographicCameraController {
+public:
+    explicit OrthographicCameraController(float aspectRatio);
+    OrthographicCameraController(float aspectRatio, bool rotation);
+
+    void OnUpdate(const TimeStep& ts);
+
+    void OnEvent(Event& e);
+
+    [[nodiscard]] inline const OrthographicCamera& GetCamera() const { return m_camera; }
+
+    [[nodiscard]] inline OrthographicCamera& GetCamera() { return m_camera; }
+
+private:
+    bool onMouseScrolled(MouseScrolledEvent& e);
+    bool onWindowResized(WindowResizeEvent& e);
+
+    float m_aspectRatio;
+    float m_zoomLevel = 1.0f;
+    bool m_rotation;
+    OrthographicCamera m_camera;
 };
 }  // namespace de

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "event.h"
+
 namespace de {
     class MouseMovedEvent : public Event {
     public:

@@ -6,7 +6,7 @@
 
 class ExampleLayer : public de::Layer {
 public:
-    explicit ExampleLayer(const std::string& name) : Layer(name), m_camera(-3.2f, 3.2f, -1.8f, 1.8f) {
+    explicit ExampleLayer(const std::string& name) : Layer(name), m_cameraController(16.0f / 9.0f, true) {
         m_triangleVertexArray = de::VertexArray::Create();
 
         float _vertices[3 * 7] = {-0.5f, -0.5f, 0.0f, 0.8f, 0.0f, 0.7f, 1.0f, 0.5f, -0.5f, 0.0f, 0.9f,
@@ -51,25 +51,10 @@ public:
     }
 
     void OnUpdate(const de::TimeStep& ts) final {
-        if (de::Input::IsKeyPressed(DE_KEY_W)) {
-            glm::vec3 _position = m_camera.GetPosition() + glm::vec3(0.0f, 1.0f * (float)ts, 0.0f);
-            m_camera.SetPosition(_position);
-        }
-        if (de::Input::IsKeyPressed(DE_KEY_S)) {
-            glm::vec3 _position = m_camera.GetPosition() + glm::vec3(0.0f, -1.0f * (float)ts, 0.0f);
-            m_camera.SetPosition(_position);
-        }
-        if (de::Input::IsKeyPressed(DE_KEY_A)) {
-            glm::vec3 _position = m_camera.GetPosition() + glm::vec3(-1.0f * (float)ts, 0.0f, 0.0f);
-            m_camera.SetPosition(_position);
-        }
-        if (de::Input::IsKeyPressed(DE_KEY_D)) {
-            glm::vec3 _position = m_camera.GetPosition() + glm::vec3(1.0f * (float)ts, 0.0f, 0.0f);
-            m_camera.SetPosition(_position);
-        }
+        m_cameraController.OnUpdate(ts);
 
         de::RenderCommand::Clear({0.2f, 0.2f, 0.2f, 1});
-        de::Renderer::BeginScene(m_camera);
+        de::Renderer::BeginScene(m_cameraController.GetCamera());
 
         // Square
         auto _squareShader = m_shaderLib.Get("square");
@@ -93,7 +78,9 @@ public:
         de::Renderer::EndScene();
     }
 
-    void OnEvent(de::Event& e) final {}
+    void OnEvent(de::Event& e) final {
+        m_cameraController.OnEvent(e);
+    }
 
     void OnImGuiRender() final {
         ImGui::Begin("Square settings");
@@ -105,7 +92,7 @@ private:
     de::ShaderLibrary m_shaderLib;
     de::Ref<de::VertexArray> m_triangleVertexArray;
     de::Ref<de::VertexArray> m_squareVertexArray;
-    de::OrthographicCamera m_camera;
+    de::OrthographicCameraController m_cameraController;
     glm::vec3 m_squareColor{0.0f, 0.0f, 0.2f};
     de::Ref<de::Texture2D> m_dogTexture, m_maskTexture;
 };

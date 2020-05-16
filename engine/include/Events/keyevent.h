@@ -1,5 +1,7 @@
 #pragma once
 
+#include "event.h"
+
 namespace de {
     class KeyEvent : public Event {
     public:
