@@ -6,7 +6,6 @@
 
 #include "Core/application.h"
 #include "Core/core.h"
-#include "Core/entry.h"
 #include "Core/layer.h"
 #include "Core/log.h"
 #include "Core/timestep.h"
