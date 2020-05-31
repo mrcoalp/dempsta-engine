@@ -20,8 +20,10 @@ Application::Application() {
 
     Renderer::Init();
 
+#ifdef NDEBUG
     m_imguiLayer = new ImGuiLayer();
     PushOverlay(m_imguiLayer);
+#endif
 }
 
 Application::~Application() = default;
@@ -54,12 +56,14 @@ void Application::Run() {
                 _layer->OnUpdate(_ts);
             }
         }
+#ifdef NDEBUG
         // Render ImGui layer
         m_imguiLayer->Begin();
         for (const auto& _layer : m_layerStack) {
             _layer->OnImGuiRender();
         }
         m_imguiLayer->End();
+#endif
 
         m_window->OnUpdate();
     }

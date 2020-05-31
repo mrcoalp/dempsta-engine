@@ -9,6 +9,7 @@ cmake-build-debug/
 # Visual Studio
 .vs/
 out/
+CMakeSettings.json
 
 build/
 logs/
