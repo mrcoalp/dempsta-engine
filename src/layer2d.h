@@ -22,5 +22,5 @@ private:
     // temp(mpinto): remove after proper 2d render implementation
     de::Ref<de::Shader> m_squareShader;
     de::Ref<de::VertexArray> m_squareVertexArray;
-    glm::vec3 m_squareColor{0.0f, 0.0f, 0.2f};
+    glm::vec4 m_squareColor{0.0f, 0.0f, 0.2f, 1.0f};
 };

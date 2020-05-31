@@ -15,6 +15,6 @@ void main() { gl_Position = u_viewProjection * u_transform * vec4(position, 1.0)
 
 layout(location = 0) out vec4 color;
 
-uniform vec3 u_color;
+uniform vec4 u_color;
 
-void main() { color = vec4(u_color, 1.0); }
+void main() { color = u_color; }
