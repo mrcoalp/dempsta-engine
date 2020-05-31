@@ -6,6 +6,12 @@ namespace de {
 void OpenGLRendererAPI::Init() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    LOG_ENGINE_INFO(
+        "OpenGL Renderer Initialized:\n"
+        "\tVendor    - {0}\n"
+        "\tRenderer  - {1}\n"
+        "\tVersion   - {2}",
+        glGetString(GL_VENDOR), glGetString(GL_RENDERER), glGetString(GL_VERSION));
 }
 
 void OpenGLRendererAPI::SetViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height) {

@@ -11,10 +11,6 @@
 namespace de {
 static bool GLFWInitialized = false;
 
-static void GLFWOnError(int error, const char* description) {
-    LOG_ENGINE_ERROR("GLFW error ({0}): {2}", error, description);
-}
-
 Window::Window(const WindowProps& windowProps) {
     data.title = windowProps.title;
     data.width = windowProps.width;
@@ -44,50 +40,44 @@ Window::Window(const WindowProps& windowProps) {
 }
 
 void Window::setGLFWCallbacks() {
-    glfwSetErrorCallback(GLFWOnError);
+    glfwSetErrorCallback(
+        [](int error, const char* description) { LOG_ENGINE_ERROR("GLFW error ({0}): {2}", error, description); });
 
     glfwSetWindowSizeCallback(window, [](GLFWwindow* pWwindow, int width, int height) {
         WindowData& data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
         data.width = width;
         data.height = height;
-        WindowResizeEvent _event(width, height);
-        data.EventCallback(_event);
+        data.eventQueue.push(new WindowResizeEvent(width, height));
     });
 
     glfwSetWindowIconifyCallback(window, [](GLFWwindow* pWwindow, int iconify) {
         WindowData& data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
-        WindowIconifyEvent _event(iconify);
-        data.EventCallback(_event);
+        data.eventQueue.push(new WindowIconifyEvent(iconify));
     });
 
     glfwSetWindowCloseCallback(window, [](GLFWwindow* pWwindow) {
         WindowData& data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
-        WindowCloseEvent _event;
-        data.EventCallback(_event);
+        data.eventQueue.push(new WindowCloseEvent());
     });
 
     glfwSetCharCallback(window, [](GLFWwindow* pWwindow, unsigned int keyCode) {
         WindowData& data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
-        KeyTypedEvent _event(keyCode);
-        data.EventCallback(_event);
+        data.eventQueue.push(new KeyTypedEvent(keyCode));
     });
 
     glfwSetKeyCallback(window, [](GLFWwindow* pWwindow, int key, int scancode, int action, int mods) {
         WindowData& data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
         switch (action) {
             case GLFW_PRESS: {
-                KeyPressedEvent _event(key, 0);
-                data.EventCallback(_event);
+                data.eventQueue.push(new KeyPressedEvent(key, 0));
                 break;
             }
             case GLFW_RELEASE: {
-                KeyReleasedEvent _event(key);
-                data.EventCallback(_event);
+                data.eventQueue.push(new KeyReleasedEvent(key));
                 break;
             }
             case GLFW_REPEAT: {
-                KeyPressedEvent _event(key, 1);
-                data.EventCallback(_event);
+                data.eventQueue.push(new KeyPressedEvent(key, 1));
                 break;
             }
             default: {
@@ -101,13 +91,11 @@ void Window::setGLFWCallbacks() {
         WindowData& data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
         switch (action) {
             case GLFW_PRESS: {
-                MouseBtnPressedEvent _event(button);
-                data.EventCallback(_event);
+                data.eventQueue.push(new MouseBtnPressedEvent(button));
                 break;
             }
             case GLFW_RELEASE: {
-                MouseBtnReleasedEvent _event(button);
-                data.EventCallback(_event);
+                data.eventQueue.push(new MouseBtnReleasedEvent(button));
                 break;
             }
             default: {
@@ -119,14 +107,12 @@ void Window::setGLFWCallbacks() {
 
     glfwSetScrollCallback(window, [](GLFWwindow* pWwindow, double offsetX, double offsetY) {
         WindowData& data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
-        MouseScrolledEvent _event((float)offsetX, (float)offsetY);
-        data.EventCallback(_event);
+        data.eventQueue.push(new MouseScrolledEvent((float)offsetX, (float)offsetY));
     });
 
     glfwSetCursorPosCallback(window, [](GLFWwindow* pWwindow, double x, double y) {
         WindowData& data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
-        MouseMovedEvent _event((float)x, (float)y);
-        data.EventCallback(_event);
+        data.eventQueue.push(new MouseMovedEvent((float)x, (float)y));
     });
 
     LOG_ENGINE_TRACE("GLFW callbacks initialized!");
@@ -138,6 +124,13 @@ void Window::shutdown() { glfwDestroyWindow(window); }
 
 void Window::OnUpdate() {
     glfwPollEvents();
+
+    while (!data.eventQueue.empty()) {
+        data.EventCallback(*data.eventQueue.front());
+        delete data.eventQueue.front();
+        data.eventQueue.pop();
+    }
+
     context->SwapBuffers();
 }
 

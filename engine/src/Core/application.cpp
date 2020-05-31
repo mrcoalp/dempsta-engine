@@ -50,13 +50,13 @@ void Application::Run() {
         m_lastFrameTime = _time;
 
         if (!m_minimized) {
-            for (auto& _layer : m_layerStack) {
+            for (const auto& _layer : m_layerStack) {
                 _layer->OnUpdate(_ts);
             }
         }
         // Render ImGui layer
         m_imguiLayer->Begin();
-        for (Layer* _layer : m_layerStack) {
+        for (const auto& _layer : m_layerStack) {
             _layer->OnImGuiRender();
         }
         m_imguiLayer->End();
