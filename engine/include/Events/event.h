@@ -44,6 +44,8 @@ enum EventCategory {
  */
 class Event {
 public:
+    virtual ~Event() = default;
+
     /**
      * @brief Has event been handled?
      */
@@ -115,7 +117,7 @@ private:
  * @param e
  * @return
  */
-inline std::ostream& operator<<(std::ostream& os, Event& e) { return os << e.ToString(); }
+inline std::ostream& operator<<(std::ostream& os, const Event& e) { return os << e.ToString(); }
 
 // Macros to avoid boilerplate in event classes
 #define EVENT_CLASS_TYPE(type)                                                                     \

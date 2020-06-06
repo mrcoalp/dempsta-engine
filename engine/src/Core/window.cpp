@@ -44,40 +44,40 @@ void Window::setGLFWCallbacks() {
         [](int error, const char* description) { LOG_ENGINE_ERROR("GLFW error ({0}): {2}", error, description); });
 
     glfwSetWindowSizeCallback(window, [](GLFWwindow* pWwindow, int width, int height) {
-        WindowData& data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
-        data.width = width;
-        data.height = height;
-        data.eventQueue.push(new WindowResizeEvent(width, height));
+        WindowData& _data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
+        _data.width = width;
+        _data.height = height;
+        _data.eventQueue.push(new WindowResizeEvent(width, height));
     });
 
     glfwSetWindowIconifyCallback(window, [](GLFWwindow* pWwindow, int iconify) {
-        WindowData& data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
-        data.eventQueue.push(new WindowIconifyEvent(iconify));
+        WindowData& _data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
+        _data.eventQueue.push(new WindowIconifyEvent(iconify));
     });
 
     glfwSetWindowCloseCallback(window, [](GLFWwindow* pWwindow) {
-        WindowData& data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
-        data.eventQueue.push(new WindowCloseEvent());
+        WindowData& _data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
+        _data.eventQueue.push(new WindowCloseEvent());
     });
 
     glfwSetCharCallback(window, [](GLFWwindow* pWwindow, unsigned int keyCode) {
-        WindowData& data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
-        data.eventQueue.push(new KeyTypedEvent(keyCode));
+        WindowData& _data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
+        _data.eventQueue.push(new KeyTypedEvent((int)keyCode));
     });
 
     glfwSetKeyCallback(window, [](GLFWwindow* pWwindow, int key, int scancode, int action, int mods) {
-        WindowData& data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
+        WindowData& _data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
         switch (action) {
             case GLFW_PRESS: {
-                data.eventQueue.push(new KeyPressedEvent(key, 0));
+                _data.eventQueue.push(new KeyPressedEvent(key, 0));
                 break;
             }
             case GLFW_RELEASE: {
-                data.eventQueue.push(new KeyReleasedEvent(key));
+                _data.eventQueue.push(new KeyReleasedEvent(key));
                 break;
             }
             case GLFW_REPEAT: {
-                data.eventQueue.push(new KeyPressedEvent(key, 1));
+                _data.eventQueue.push(new KeyPressedEvent(key, 1));
                 break;
             }
             default: {
@@ -88,14 +88,14 @@ void Window::setGLFWCallbacks() {
     });
 
     glfwSetMouseButtonCallback(window, [](GLFWwindow* pWwindow, int button, int action, int mods) {
-        WindowData& data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
+        WindowData& _data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
         switch (action) {
             case GLFW_PRESS: {
-                data.eventQueue.push(new MouseBtnPressedEvent(button));
+                _data.eventQueue.push(new MouseBtnPressedEvent(button));
                 break;
             }
             case GLFW_RELEASE: {
-                data.eventQueue.push(new MouseBtnReleasedEvent(button));
+                _data.eventQueue.push(new MouseBtnReleasedEvent(button));
                 break;
             }
             default: {
@@ -106,13 +106,13 @@ void Window::setGLFWCallbacks() {
     });
 
     glfwSetScrollCallback(window, [](GLFWwindow* pWwindow, double offsetX, double offsetY) {
-        WindowData& data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
-        data.eventQueue.push(new MouseScrolledEvent((float)offsetX, (float)offsetY));
+        WindowData& _data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
+        _data.eventQueue.push(new MouseScrolledEvent((float)offsetX, (float)offsetY));
     });
 
     glfwSetCursorPosCallback(window, [](GLFWwindow* pWwindow, double x, double y) {
-        WindowData& data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
-        data.eventQueue.push(new MouseMovedEvent((float)x, (float)y));
+        WindowData& _data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
+        _data.eventQueue.push(new MouseMovedEvent((float)x, (float)y));
     });
 
     LOG_ENGINE_TRACE("GLFW callbacks initialized!");
