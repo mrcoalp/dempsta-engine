@@ -17,6 +17,7 @@
 #include "Renderer/buffer.h"
 #include "Renderer/camera.h"
 #include "Renderer/renderer.h"
+#include "Renderer/renderer2d.h"
 #include "Renderer/shader.h"
 #include "Renderer/texture.h"
 #include "Renderer/vertexarray.h"

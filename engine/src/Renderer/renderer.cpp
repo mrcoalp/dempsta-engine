@@ -1,12 +1,14 @@
 #include "Renderer/renderer.h"
 
 #include "Platform/OpenGL/openglshader.h"
+#include "Renderer/renderer2d.h"
 
 namespace de {
 Ref<Renderer::SceneData> Renderer::s_sceneData = std::make_shared<Renderer::SceneData>();
 
 void Renderer::Init() {
     RenderCommand::Init();
+    Renderer2D::Init();
 }
 
 void Renderer::OnWindowResize(unsigned int width, unsigned int height) {
@@ -14,7 +16,7 @@ void Renderer::OnWindowResize(unsigned int width, unsigned int height) {
 }
 
 void Renderer::BeginScene(OrthographicCamera& camera) {
-    s_sceneData->projectionViewMatrix = camera.GetProjectionMatrix() * camera.GetViewMatrix();
+    s_sceneData->projectionViewMatrix = camera.GetProjectionViewMatrix();
 }
 
 void Renderer::EndScene() {}

@@ -17,6 +17,8 @@ public:
 
     [[nodiscard]] inline const glm::mat4& GetViewMatrix() const { return m_viewMatrix; }
 
+    [[nodiscard]] inline glm::mat4 GetProjectionViewMatrix() const { return m_projectionMatrix * m_viewMatrix; }
+
     [[nodiscard]] inline const glm::vec3& GetPosition() const { return m_position; }
 
     [[nodiscard]] inline float GetRotation() const { return m_rotation; }

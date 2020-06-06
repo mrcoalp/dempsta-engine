@@ -18,13 +18,19 @@ class OpenGLShader : public Shader {
 public:
     explicit OpenGLShader(const std::string& filepath);
 
-    OpenGLShader(std::string  name, const std::string& vertexSource, const std::string& fragmentSource);
+    OpenGLShader(std::string name, const std::string& vertexSource, const std::string& fragmentSource);
 
     ~OpenGLShader() override;
 
     void Bind() const override;
 
     void Unbind() const override;
+
+    void SetMat4(const std::string& name, const glm::mat4& value) override;
+
+    void SetVec4(const std::string& name, const glm::vec4& value) override;
+
+    void SetVec3(const std::string& name, const glm::vec3& value) override;
 
     [[nodiscard]] inline const std::string& GetName() const override { return m_name; }
 

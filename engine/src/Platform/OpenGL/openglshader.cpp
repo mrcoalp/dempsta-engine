@@ -204,4 +204,9 @@ std::unordered_map<GLenum, std::string> OpenGLShader::processFileData(const std:
 
     return _sources;
 }
+void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& value) { UploadUniformMat4(name, value); }
+
+void OpenGLShader::SetVec4(const std::string& name, const glm::vec4& value) { UploadUniformVec4(name, value); }
+
+void OpenGLShader::SetVec3(const std::string& name, const glm::vec3& value) { UploadUniformVec3(name, value); }
 }  // namespace de
