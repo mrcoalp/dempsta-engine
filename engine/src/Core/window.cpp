@@ -47,17 +47,20 @@ void Window::setGLFWCallbacks() {
         WindowData& _data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
         _data.width = width;
         _data.height = height;
-        _data.eventQueue.push(new WindowResizeEvent(width, height));
+        WindowResizeEvent _event(width, height);
+        _data.EventCallback(_event);
     });
 
     glfwSetWindowIconifyCallback(window, [](GLFWwindow* pWwindow, int iconify) {
         WindowData& _data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
-        _data.eventQueue.push(new WindowIconifyEvent(iconify));
+        WindowIconifyEvent _event(iconify);
+        _data.EventCallback(_event);
     });
 
     glfwSetWindowCloseCallback(window, [](GLFWwindow* pWwindow) {
         WindowData& _data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);
-        _data.eventQueue.push(new WindowCloseEvent());
+        WindowCloseEvent _event;
+        _data.EventCallback(_event);
     });
 
     glfwSetCharCallback(window, [](GLFWwindow* pWwindow, unsigned int keyCode) {
