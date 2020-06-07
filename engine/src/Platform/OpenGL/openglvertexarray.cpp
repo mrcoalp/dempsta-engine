@@ -32,7 +32,7 @@ static GLenum ShaderDataTypeToOpenGLType(const ShaderDataType& type) {
 
 OpenGLVertexArray::OpenGLVertexArray() { glCreateVertexArrays(1, &m_rendererId); }
 
-OpenGLVertexArray::~OpenGLVertexArray() { glDeleteVertexArrays(1, &m_rendererId); };
+OpenGLVertexArray::~OpenGLVertexArray() { glDeleteVertexArrays(1, &m_rendererId); }
 
 void OpenGLVertexArray::Bind() const { glBindVertexArray(m_rendererId); }
 

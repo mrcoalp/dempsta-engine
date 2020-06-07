@@ -46,7 +46,7 @@ struct BufferElement {
     bool normalized;
 
     BufferElement(ShaderDataType type, std::string name, bool normalized = false)
-        : type(type), name(std::move(name)), size(ShaderDataTypeSize(type)), normalized(normalized), offset(0) {}
+        : type(type), name(std::move(name)), size(ShaderDataTypeSize(type)), offset(0), normalized(normalized) {}
 
     [[nodiscard]] uint32_t GetComponentCount() const {
         switch (type) {
@@ -127,7 +127,6 @@ public:
 class IndexBuffer {
 public:
     virtual ~IndexBuffer() = default;
-    ;
 
     virtual void Bind() const = 0;
 

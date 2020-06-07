@@ -55,7 +55,7 @@ private:
 
     float m_aspectRatio;
     float m_zoomLevel = 1.0f;
-    bool m_rotation;
     OrthographicCamera m_camera;
+    bool m_rotation;
 };
 }  // namespace de

@@ -7,7 +7,7 @@
 namespace de {
 OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height) : m_width(width), m_height(height), m_dataFormat(0) {
     GLenum _internalFormat = GL_RGBA8;
-    GLenum _dataFormat = m_dataFormat = GL_RGBA;
+    m_dataFormat = GL_RGBA;
 
     glCreateTextures(GL_TEXTURE_2D, 1, &m_rendererId);
     glTextureStorage2D(m_rendererId, 1, _internalFormat, m_width, m_height);
