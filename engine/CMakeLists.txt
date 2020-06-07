@@ -75,7 +75,7 @@ target_link_libraries(dempsta
 set_target_properties(dempsta PROPERTIES INSTALL_RPATH $ORIGIN)
 
 if (MSVC)
-    target_compile_options(dempsta PRIVATE /W4 /WX)
+    target_compile_options(dempsta PRIVATE /W4)
 else ()
     target_compile_options(dempsta PRIVATE -Wall -pedantic)
 endif ()
