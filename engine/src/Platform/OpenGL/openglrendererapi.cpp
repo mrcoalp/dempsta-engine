@@ -6,6 +6,7 @@ namespace de {
 void OpenGLRendererAPI::Init() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_DEPTH_TEST);
     LOG_ENGINE_INFO(
         "OpenGL Renderer Initialized:\n"
         "\tVendor    - {0}\n"

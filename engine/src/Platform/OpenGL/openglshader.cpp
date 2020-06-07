@@ -209,4 +209,6 @@ void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& value) { Up
 void OpenGLShader::SetVec4(const std::string& name, const glm::vec4& value) { UploadUniformVec4(name, value); }
 
 void OpenGLShader::SetVec3(const std::string& name, const glm::vec3& value) { UploadUniformVec3(name, value); }
+
+void OpenGLShader::SetInt(const std::string& name, int value) { UploadUniformInt(name, value); }
 }  // namespace de

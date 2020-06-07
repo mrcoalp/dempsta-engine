@@ -32,6 +32,8 @@ public:
 
     void SetVec3(const std::string& name, const glm::vec3& value) override;
 
+    void SetInt(const std::string& name, int value) override;
+
     [[nodiscard]] inline const std::string& GetName() const override { return m_name; }
 
     void UploadUniformInt(const std::string& name, int value) const;

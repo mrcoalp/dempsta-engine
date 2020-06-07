@@ -20,6 +20,8 @@ public:
 
     virtual void SetVec3(const std::string& name, const glm::vec3& value) = 0;
 
+    virtual void SetInt(const std::string& name, int value) = 0;
+
     [[nodiscard]] virtual const std::string& GetName() const = 0;
 
     static Ref<Shader> Create(const std::string& filePath);
