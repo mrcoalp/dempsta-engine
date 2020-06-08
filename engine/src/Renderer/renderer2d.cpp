@@ -69,6 +69,7 @@ void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, cons
 void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture) {
     DrawQuad(position, size, texture, glm::vec4(1.0f));
 }
+
 void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture,
                           const glm::vec4& tint) {
     DrawQuad({position.x, position.y, 0.0f}, size, texture, tint);
@@ -78,6 +79,50 @@ void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, cons
                           const glm::vec4& tint) {
     glm::mat4 _transform =
         glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
+    data.shader->SetMat4("u_transform", _transform);
+    data.shader->SetVec4("u_color", tint);
+    texture->Bind();
+    data.vertexArray->Bind();
+    RenderCommand::DrawIndexed(data.vertexArray);
+}
+
+void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size,
+                                 const glm::vec4& color) {
+    DrawRotatedQuad(rotation, {position.x, position.y, 0.0f}, size, color);
+}
+
+void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size,
+                                 const glm::vec4& color) {
+    glm::mat4 _transform = glm::translate(glm::mat4(1.0f), position) *
+                           glm::rotate(glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) *
+                           glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
+    data.shader->SetMat4("u_transform", _transform);
+    data.shader->SetVec4("u_color", color);
+    data.whiteTextureRef->Bind();
+    data.vertexArray->Bind();
+    RenderCommand::DrawIndexed(data.vertexArray);
+}
+
+void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size,
+                                 const Ref<Texture2D>& texture) {
+    DrawRotatedQuad(rotation, {position.x, position.y, 0.0f}, size, texture);
+}
+
+void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size,
+                                 const Ref<Texture2D>& texture) {
+    DrawRotatedQuad(rotation, position, size, texture, glm::vec4(1.0f));
+}
+
+void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size,
+                                 const Ref<Texture2D>& texture, const glm::vec4& tint) {
+    DrawRotatedQuad(rotation, {position.x, position.y, 0.0f}, size, texture, tint);
+}
+
+void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size,
+                                 const Ref<Texture2D>& texture, const glm::vec4& tint) {
+    glm::mat4 _transform = glm::translate(glm::mat4(1.0f), position) *
+                           glm::rotate(glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) *
+                           glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
     data.shader->SetMat4("u_transform", _transform);
     data.shader->SetVec4("u_color", tint);
     texture->Bind();
