@@ -19,6 +19,8 @@ public:
 
     [[nodiscard]] inline const BufferLayout& GetLayout() const override { return m_layout; }
 
+    void SetData(const void* data, uint32_t size) override;
+
 private:
     uint32_t m_rendererId;
     BufferLayout m_layout;

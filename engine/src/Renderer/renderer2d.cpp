@@ -10,7 +10,7 @@ namespace de {
 struct QuadVertex {
     glm::vec3 position;
     glm::vec4 color;
-    glm::vec2 textureCoord;
+    glm::vec2 texture;
 };
 
 struct Renderer2DData {
@@ -37,8 +37,8 @@ void Renderer2D::Init() {
     data.vertexBuffer = VertexBuffer::Create(data.maxVertices * sizeof(QuadVertex));
     BufferLayout _layout = {
         {ShaderDataType::Vec3, "position"},
-        {ShaderDataType::Vec2, "texture"},
-        {ShaderDataType::Vec4, "color"}
+        {ShaderDataType::Vec4, "color"},
+        {ShaderDataType::Vec2, "texture"}
     };
     data.vertexBuffer->SetLayout(_layout);
     data.vertexArray->AddVertexBuffer(data.vertexBuffer);
@@ -46,6 +46,21 @@ void Renderer2D::Init() {
     data.quadVertexBufferBase = new QuadVertex[data.maxVertices];
 
     auto* quadIndices = new uint32_t[data.maxIndices];
+
+    uint32_t offset = 0;
+    for (size_t i = 0; i < data.maxIndices; i += 6) {
+        // First triangle
+        quadIndices[i + 0] = offset + 0;
+        quadIndices[i + 1] = offset + 1;
+        quadIndices[i + 2] = offset + 2;
+        // Second triangle
+        quadIndices[i + 3] = offset + 2;
+        quadIndices[i + 4] = offset + 3;
+        quadIndices[i + 5] = offset + 0;
+        // Next quad
+        offset += 4;
+    }
+
     auto _indexBuffer = IndexBuffer::Create(quadIndices, data.maxIndices);
     data.vertexArray->AddIndexBuffer(_indexBuffer);
     delete[] quadIndices;
@@ -75,9 +90,7 @@ void Renderer2D::EndScene() {
     Flush();
 }
 
-void Renderer2D::Flush() {
-
-}
+void Renderer2D::Flush() { RenderCommand::DrawIndexed(data.vertexArray, data.quadIndexCount); }
 
 void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color) {
     DrawQuad({position.x, position.y, 0.0f}, size, color);
@@ -86,32 +99,32 @@ void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, cons
 void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color) {
     data.quadVertexBufferPtr->position = position;
     data.quadVertexBufferPtr->color = color;
-    data.quadVertexBufferPtr->textureCoord = {0.0f, 0.0f};
+    data.quadVertexBufferPtr->texture = {0.0f, 0.0f};
     ++data.quadVertexBufferPtr;
 
     data.quadVertexBufferPtr->position = {position.x + size.x, position.y, position.z};
     data.quadVertexBufferPtr->color = color;
-    data.quadVertexBufferPtr->textureCoord = {1.0f, 0.0f};
+    data.quadVertexBufferPtr->texture = {1.0f, 0.0f};
     ++data.quadVertexBufferPtr;
 
     data.quadVertexBufferPtr->position = {position.x + size.x, position.y + size.y, position.z};
     data.quadVertexBufferPtr->color = color;
-    data.quadVertexBufferPtr->textureCoord = {1.0f, 1.0f};
+    data.quadVertexBufferPtr->texture = {1.0f, 1.0f};
     ++data.quadVertexBufferPtr;
 
     data.quadVertexBufferPtr->position = {position.x, position.y + size.y, position.z};
     data.quadVertexBufferPtr->color = color;
-    data.quadVertexBufferPtr->textureCoord = {0.0f, 1.0f};
+    data.quadVertexBufferPtr->texture = {0.0f, 1.0f};
     ++data.quadVertexBufferPtr;
 
     data.quadIndexCount += 6;
 
-//    glm::mat4 _transform =
-//        glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
-//    data.shader->SetMat4("u_transform", _transform);
-//    data.whiteTextureRef->Bind();
-//    data.vertexArray->Bind();
-//    RenderCommand::DrawIndexed(data.vertexArray);
+    //    glm::mat4 _transform =
+    //        glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
+    //    data.shader->SetMat4("u_transform", _transform);
+    //    data.whiteTextureRef->Bind();
+    //    data.vertexArray->Bind();
+    //    RenderCommand::DrawIndexed(data.vertexArray);
 }
 
 void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture) {
