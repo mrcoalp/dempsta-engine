@@ -7,10 +7,26 @@
 #include "Renderer/vertexarray.h"
 
 namespace de {
+struct QuadVertex {
+    glm::vec3 position;
+    glm::vec4 color;
+    glm::vec2 textureCoord;
+};
+
 struct Renderer2DData {
+    // Max batch per draw call
+    const uint32_t maxQuads = 10000;
+    const uint32_t maxVertices = maxQuads * 4;
+    const uint32_t maxIndices = maxQuads * 6;
+
+    Ref<VertexBuffer> vertexBuffer;
     Ref<VertexArray> vertexArray;
     Ref<Shader> shader;
     Ref<Texture2D> whiteTextureRef;
+
+    uint32_t quadIndexCount = 0;
+    QuadVertex* quadVertexBufferBase = nullptr;
+    QuadVertex* quadVertexBufferPtr = nullptr;
 };
 
 static Renderer2DData data;
@@ -18,17 +34,21 @@ static Renderer2DData data;
 void Renderer2D::Init() {
     data.vertexArray = VertexArray::Create();
 
-    float _squareVertices[5 * 4] = {-1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,  -1.0f, 0.0f, 1.0f, 0.0f,
-                                    1.0f,  1.0f,  0.0f, 1.0f, 1.0f, -1.0f, 1.0f,  0.0f, 0.0f, 1.0f};
+    data.vertexBuffer = VertexBuffer::Create(data.maxVertices * sizeof(QuadVertex));
+    BufferLayout _layout = {
+        {ShaderDataType::Vec3, "position"},
+        {ShaderDataType::Vec2, "texture"},
+        {ShaderDataType::Vec4, "color"}
+    };
+    data.vertexBuffer->SetLayout(_layout);
+    data.vertexArray->AddVertexBuffer(data.vertexBuffer);
 
-    auto _vertexBuffer = VertexBuffer::Create(_squareVertices, sizeof(_squareVertices));
-    BufferLayout _layout = {{ShaderDataType::Vec3, "position"}, {ShaderDataType::Vec2, "texture"}};
-    _vertexBuffer->SetLayout(_layout);
-    data.vertexArray->AddVertexBuffer(_vertexBuffer);
+    data.quadVertexBufferBase = new QuadVertex[data.maxVertices];
 
-    unsigned _squareIndices[6] = {0, 1, 2, 2, 3, 0};
-    auto _indexBuffer = IndexBuffer::Create(_squareIndices, sizeof(_squareIndices) / sizeof(unsigned));
+    auto* quadIndices = new uint32_t[data.maxIndices];
+    auto _indexBuffer = IndexBuffer::Create(quadIndices, data.maxIndices);
     data.vertexArray->AddIndexBuffer(_indexBuffer);
+    delete[] quadIndices;
 
     data.whiteTextureRef = Texture2D::Create(1, 1);
     uint32_t _white = 0xffffffff;
@@ -44,22 +64,54 @@ void Renderer2D::Shutdown() {}
 void Renderer2D::BeginScene(const OrthographicCamera& camera) {
     data.shader->Bind();
     data.shader->SetMat4("u_viewProjection", camera.GetProjectionViewMatrix());
+    data.quadVertexBufferPtr = data.quadVertexBufferBase;
+    data.quadIndexCount = 0;
 }
 
-void Renderer2D::EndScene() {}
+void Renderer2D::EndScene() {
+    // Casting to a byte* gives the size in actual bytes
+    uint32_t size = (uint8_t*)data.quadVertexBufferPtr - (uint8_t*)data.quadVertexBufferBase;
+    data.vertexBuffer->SetData(data.quadVertexBufferBase, size);
+    Flush();
+}
+
+void Renderer2D::Flush() {
+
+}
 
 void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color) {
     DrawQuad({position.x, position.y, 0.0f}, size, color);
 }
 
 void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color) {
-    glm::mat4 _transform =
-        glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
-    data.shader->SetMat4("u_transform", _transform);
-    data.shader->SetVec4("u_color", color);
-    data.whiteTextureRef->Bind();
-    data.vertexArray->Bind();
-    RenderCommand::DrawIndexed(data.vertexArray);
+    data.quadVertexBufferPtr->position = position;
+    data.quadVertexBufferPtr->color = color;
+    data.quadVertexBufferPtr->textureCoord = {0.0f, 0.0f};
+    ++data.quadVertexBufferPtr;
+
+    data.quadVertexBufferPtr->position = {position.x + size.x, position.y, position.z};
+    data.quadVertexBufferPtr->color = color;
+    data.quadVertexBufferPtr->textureCoord = {1.0f, 0.0f};
+    ++data.quadVertexBufferPtr;
+
+    data.quadVertexBufferPtr->position = {position.x + size.x, position.y + size.y, position.z};
+    data.quadVertexBufferPtr->color = color;
+    data.quadVertexBufferPtr->textureCoord = {1.0f, 1.0f};
+    ++data.quadVertexBufferPtr;
+
+    data.quadVertexBufferPtr->position = {position.x, position.y + size.y, position.z};
+    data.quadVertexBufferPtr->color = color;
+    data.quadVertexBufferPtr->textureCoord = {0.0f, 1.0f};
+    ++data.quadVertexBufferPtr;
+
+    data.quadIndexCount += 6;
+
+//    glm::mat4 _transform =
+//        glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
+//    data.shader->SetMat4("u_transform", _transform);
+//    data.whiteTextureRef->Bind();
+//    data.vertexArray->Bind();
+//    RenderCommand::DrawIndexed(data.vertexArray);
 }
 
 void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture) {
