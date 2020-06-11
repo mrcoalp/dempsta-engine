@@ -14,8 +14,6 @@ public:
 
     static void EndScene();
 
-    static void Flush();
-
     // Primitives
     static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
     static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
@@ -41,7 +39,9 @@ public:
     static void ResetStatistics();
 
 private:
-    static void ResetBuffer();
-    static void CheckDrawCall();
+    static void resetBuffer();
+    static void flush();
+    static void checkDrawCall();
+    static float getOrAddUniqueTextureIndex(const Ref<Texture2D>& texture);
 };
 }  // namespace de

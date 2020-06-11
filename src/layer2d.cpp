@@ -4,11 +4,16 @@
 
 Layer2D::Layer2D() : Layer("2D"), m_cameraController(16.0f / 9.0f, true) {}
 
-void Layer2D::OnAttach() { m_texture = de::Texture2D::Create("assets/textures/mask.png"); }
+void Layer2D::OnAttach() {
+    m_texture = de::Texture2D::Create("assets/textures/mask.png");
+    m_dogTexture = de::Texture2D::Create("assets/textures/dog.jpg");
+}
 
 void Layer2D::OnDetach() {}
 
 void Layer2D::OnUpdate(const de::TimeStep& ts) {
+    static float xPosition = 0.0f;
+    xPosition = fmod((xPosition += (float)ts * 2.0f), 5.0f);
     m_cameraController.OnUpdate(ts);
     de::RenderCommand::Clear({0.2f, 0.2f, 0.2f, 1});
     de::Renderer2D::ResetStatistics();
@@ -20,9 +25,11 @@ void Layer2D::OnUpdate(const de::TimeStep& ts) {
         }
     }
 
-    de::Renderer2D::DrawQuad({-0.5f, -0.5f, 0.0f}, {1.0f, 1.0f}, m_squareColor);
+    de::Renderer2D::DrawQuad({xPosition, -0.5f, 0.0f}, {1.0f, 1.0f}, m_squareColor);
 
-    /*de::Renderer2D::DrawRotatedQuad(-20, {0.0f, 0.5f}, {0.2f, 0.2f}, m_texture, {1.0f, 0.0f, 0.0f, 1.0f});*/
+    de::Renderer2D::DrawQuad({0.0f, 0.0f}, {1.0f, 1.0f}, m_texture, {1.0f, 0.0f, 1.0f, 1.0f});
+    de::Renderer2D::DrawQuad({-1.0f, 0.0f}, {1.0f, 1.0f}, m_dogTexture);
+    de::Renderer2D::DrawQuad({1.0f, 0.0f}, {1.0f, 1.0f}, m_texture, {1.0f, 1.0f, 0.0f, 1.0f});
     de::Renderer2D::EndScene();
 }
 

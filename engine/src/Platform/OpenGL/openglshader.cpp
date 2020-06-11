@@ -70,6 +70,11 @@ void OpenGLShader::UploadUniformInt(const std::string& name, int value) const {
     glUniform1i(_location, value);
 }
 
+void OpenGLShader::UploadUniformIntArray(const std::string& name, const int* values, uint32_t count) const {
+    int _location = glGetUniformLocation(m_rendererId, name.c_str());
+    glUniform1iv(_location, count, values);
+}
+
 void OpenGLShader::UploadUniformVec(const std::string& name, float value) const {
     int _location = glGetUniformLocation(m_rendererId, name.c_str());
     glUniform1f(_location, value);
@@ -211,4 +216,8 @@ void OpenGLShader::SetVec4(const std::string& name, const glm::vec4& value) { Up
 void OpenGLShader::SetVec3(const std::string& name, const glm::vec3& value) { UploadUniformVec3(name, value); }
 
 void OpenGLShader::SetInt(const std::string& name, int value) { UploadUniformInt(name, value); }
+
+void OpenGLShader::SetIntArray(const std::string& name, const int* values, uint32_t count) {
+    UploadUniformIntArray(name, values, count);
+}
 }  // namespace de
