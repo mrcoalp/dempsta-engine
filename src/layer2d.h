@@ -18,6 +18,6 @@ public:
 
 private:
     de::OrthographicCameraController m_cameraController;
-    glm::vec4 m_squareColor{0.0f, 0.0f, 0.2f, 1.0f};
+    glm::vec4 m_squareColor{0.0f, 0.0f, 0.2f, 0.5f};
     de::Ref<de::Texture2D> m_texture;
 };

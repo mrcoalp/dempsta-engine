@@ -27,38 +27,38 @@ struct Renderer2DData {
     uint32_t quadIndexCount = 0;
     QuadVertex* quadVertexBufferBase = nullptr;
     QuadVertex* quadVertexBufferPtr = nullptr;
+
+    Renderer2D::Statistics statistics;
 };
 
 static Renderer2DData data;
+
+const Renderer2D::Statistics& Renderer2D::GetStatistics() { return data.statistics; }
+
+void Renderer2D::ResetStatistics() {
+    data.statistics.quads = 0;
+    data.statistics.drawCalls = 0;
+}
 
 void Renderer2D::Init() {
     data.vertexArray = VertexArray::Create();
 
     data.vertexBuffer = VertexBuffer::Create(data.maxVertices * sizeof(QuadVertex));
     BufferLayout _layout = {
-        {ShaderDataType::Vec3, "position"},
-        {ShaderDataType::Vec4, "color"},
-        {ShaderDataType::Vec2, "texture"}
-    };
+        {ShaderDataType::Vec3, "position"}, {ShaderDataType::Vec4, "color"}, {ShaderDataType::Vec2, "texture"}};
     data.vertexBuffer->SetLayout(_layout);
     data.vertexArray->AddVertexBuffer(data.vertexBuffer);
 
     data.quadVertexBufferBase = new QuadVertex[data.maxVertices];
 
     auto* quadIndices = new uint32_t[data.maxIndices];
-
+    constexpr const uint8_t indices[6] = {0, 1, 2, 2, 3, 0};
     uint32_t offset = 0;
-    for (size_t i = 0; i < data.maxIndices; i += 6) {
-        // First triangle
-        quadIndices[i + 0] = offset + 0;
-        quadIndices[i + 1] = offset + 1;
-        quadIndices[i + 2] = offset + 2;
-        // Second triangle
-        quadIndices[i + 3] = offset + 2;
-        quadIndices[i + 4] = offset + 3;
-        quadIndices[i + 5] = offset + 0;
-        // Next quad
-        offset += 4;
+
+    for (uint32_t i = 0; i < data.maxIndices; ++i) {
+        const uint8_t indicesIndex = i % 6;
+        quadIndices[i] = indices[indicesIndex] + offset;
+        if (indicesIndex == 5) offset += 4;  // Next quad
     }
 
     auto _indexBuffer = IndexBuffer::Create(quadIndices, data.maxIndices);
@@ -76,27 +76,41 @@ void Renderer2D::Init() {
 
 void Renderer2D::Shutdown() {}
 
-void Renderer2D::BeginScene(const OrthographicCamera& camera) {
-    data.shader->Bind();
-    data.shader->SetMat4("u_viewProjection", camera.GetProjectionViewMatrix());
+void Renderer2D::ResetBuffer() {
     data.quadVertexBufferPtr = data.quadVertexBufferBase;
     data.quadIndexCount = 0;
 }
 
-void Renderer2D::EndScene() {
+void Renderer2D::CheckDrawCall() {
+    if (data.quadIndexCount >= data.maxIndices) {
+        Flush();
+        ResetBuffer();
+    }
+}
+
+void Renderer2D::Flush() {
     // Casting to a byte* gives the size in actual bytes
     uint32_t size = (uint8_t*)data.quadVertexBufferPtr - (uint8_t*)data.quadVertexBufferBase;
     data.vertexBuffer->SetData(data.quadVertexBufferBase, size);
-    Flush();
+    RenderCommand::DrawIndexed(data.vertexArray, data.quadIndexCount);
+    ++data.statistics.drawCalls;
 }
 
-void Renderer2D::Flush() { RenderCommand::DrawIndexed(data.vertexArray, data.quadIndexCount); }
+void Renderer2D::BeginScene(const OrthographicCamera& camera) {
+    data.shader->Bind();
+    data.shader->SetMat4("u_viewProjection", camera.GetProjectionViewMatrix());
+    ResetBuffer();
+}
+
+void Renderer2D::EndScene() { Flush(); }
 
 void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color) {
     DrawQuad({position.x, position.y, 0.0f}, size, color);
 }
 
 void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color) {
+    CheckDrawCall();
+
     data.quadVertexBufferPtr->position = position;
     data.quadVertexBufferPtr->color = color;
     data.quadVertexBufferPtr->texture = {0.0f, 0.0f};
@@ -119,12 +133,7 @@ void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, cons
 
     data.quadIndexCount += 6;
 
-    //    glm::mat4 _transform =
-    //        glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
-    //    data.shader->SetMat4("u_transform", _transform);
-    //    data.whiteTextureRef->Bind();
-    //    data.vertexArray->Bind();
-    //    RenderCommand::DrawIndexed(data.vertexArray);
+    ++data.statistics.quads;
 }
 
 void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture) {
