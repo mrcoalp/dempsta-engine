@@ -136,7 +136,7 @@ void OpenGLShader::compile(const std::unordered_map<GLenum, std::string>& source
             glDeleteShader(_shader);
 
             // Use the infoLog as you see fit.
-            DE_ASSERT(0, "{0} shader not initialized: '{1}'", ShaderTypeToString(source.first), _infoLog.data())
+            DE_THROW("{0} shader not initialized: '{1}'", ShaderTypeToString(source.first), _infoLog.data())
         }
 
         // Add shader id to vector
@@ -175,7 +175,7 @@ void OpenGLShader::compile(const std::unordered_map<GLenum, std::string>& source
             glDeleteShader(shader);
         }
 
-        DE_ASSERT(0, "ProgramShader not initialized: '{0}'", infoLog.data())
+        DE_THROW("ProgramShader not initialized: '{0}'", infoLog.data())
     }
 
     // Always detach shaders after a successful link.

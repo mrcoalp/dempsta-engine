@@ -19,7 +19,7 @@ public:
 
     void SetData(void* data, uint32_t size) override;
 
-    void Bind(unsigned slot) const override;
+    void Bind(unsigned slot = 0) const override;
 
     [[nodiscard]] inline bool Equals(const Texture& other) const override {
         return ((OpenGLTexture2D&)other).GetRendererID() == m_rendererId;

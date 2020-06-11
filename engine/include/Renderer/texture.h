@@ -13,7 +13,7 @@ public:
 
     virtual void SetData(void* data, uint32_t size) = 0;
 
-    virtual void Bind(unsigned slot = 0) const = 0;
+    virtual void Bind(unsigned slot) const = 0;
 
     [[nodiscard]] virtual bool Equals(const Texture& other) const = 0;
 

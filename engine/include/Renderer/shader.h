@@ -42,9 +42,9 @@ public:
 
     Ref<Shader> Load(const std::string& name, const std::string& filepath);
 
-    const Ref<Shader>& Get(const std::string& name) const;
+    [[nodiscard]] const Ref<Shader>& Get(const std::string& name) const;
 
-    inline bool Exists(const std::string& name) const { return m_shaders.find(name) != m_shaders.end(); }
+    [[nodiscard]] inline bool Exists(const std::string& name) const { return m_shaders.find(name) != m_shaders.end(); }
 
 private:
     std::unordered_map<std::string, Ref<Shader>> m_shaders;

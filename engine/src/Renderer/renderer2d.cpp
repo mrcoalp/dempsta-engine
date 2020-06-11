@@ -30,6 +30,7 @@ struct Renderer2DData {
     uint32_t quadIndexCount = 0;
     QuadVertex* quadVertexBufferBase = nullptr;
     QuadVertex* quadVertexBufferPtr = nullptr;
+    glm::vec4 quadVerticesPosition[4];  // Handle transformations
 
     std::array<Ref<Texture2D>, maxTextureSlots> textures;
     uint32_t textureSlotIndex = 1;  // 0 is reserved for our white texture ref
@@ -47,6 +48,7 @@ void Renderer2D::ResetStatistics() {
 }
 
 void Renderer2D::Init() {
+    data.statistics.maxQuadsPerDraw = Renderer2DData::maxQuads;
     data.vertexArray = VertexArray::Create();
 
     data.vertexBuffer = VertexBuffer::Create(Renderer2DData::maxVertices * sizeof(QuadVertex));
@@ -54,7 +56,7 @@ void Renderer2D::Init() {
     BufferLayout _layout = {{ShaderDataType::Vec3, "position"},
                             {ShaderDataType::Vec4, "color"},
                             {ShaderDataType::Vec2, "texture"},
-                            {ShaderDataType::Vec, "textureIndex"}};
+                            {ShaderDataType::Float, "textureIndex"}};
 
     data.vertexBuffer->SetLayout(_layout);
     data.vertexArray->AddVertexBuffer(data.vertexBuffer);
@@ -89,6 +91,11 @@ void Renderer2D::Init() {
     data.shader->SetIntArray("u_textures", samplers, Renderer2DData::maxTextureSlots);
 
     data.textures[0] = data.whiteTextureRef;
+
+    data.quadVerticesPosition[0] = {-0.5f, -0.5f, 0.0f, 1.0f};
+    data.quadVerticesPosition[1] = {0.5f, -0.5f, 0.0f, 1.0f};
+    data.quadVerticesPosition[2] = {0.5f, 0.5f, 0.0f, 1.0f};
+    data.quadVerticesPosition[3] = {-0.5f, 0.5f, 0.0f, 1.0f};
 }
 
 void Renderer2D::Shutdown() {}
@@ -136,7 +143,7 @@ float Renderer2D::getOrAddUniqueTextureIndex(const Ref<Texture2D>& texture) {
     // Add texture to current index
     data.textures[data.textureSlotIndex] = texture;
     // return current index and increment after
-    return data.textureSlotIndex++;
+    return (float)data.textureSlotIndex++;
 }
 
 void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color) {
@@ -146,29 +153,19 @@ void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, cons
 void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color) {
     checkDrawCall();
 
-    data.quadVertexBufferPtr->position = position;
-    data.quadVertexBufferPtr->color = color;
-    data.quadVertexBufferPtr->texture = {0.0f, 0.0f};
-    data.quadVertexBufferPtr->textureIndex = 0.0f;
-    ++data.quadVertexBufferPtr;
+    glm::mat4 transform =
+        glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
-    data.quadVertexBufferPtr->position = {position.x + size.x, position.y, position.z};
-    data.quadVertexBufferPtr->color = color;
-    data.quadVertexBufferPtr->texture = {1.0f, 0.0f};
-    data.quadVertexBufferPtr->textureIndex = 0.0f;
-    ++data.quadVertexBufferPtr;
+    constexpr const float x[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+    constexpr const float y[4] = {0.0f, 0.0f, 1.0f, 1.0f};
 
-    data.quadVertexBufferPtr->position = {position.x + size.x, position.y + size.y, position.z};
-    data.quadVertexBufferPtr->color = color;
-    data.quadVertexBufferPtr->texture = {1.0f, 1.0f};
-    data.quadVertexBufferPtr->textureIndex = 0.0f;
-    ++data.quadVertexBufferPtr;
-
-    data.quadVertexBufferPtr->position = {position.x, position.y + size.y, position.z};
-    data.quadVertexBufferPtr->color = color;
-    data.quadVertexBufferPtr->texture = {0.0f, 1.0f};
-    data.quadVertexBufferPtr->textureIndex = 0.0f;
-    ++data.quadVertexBufferPtr;
+    for (uint8_t i = 0; i < 4; ++i) {
+        data.quadVertexBufferPtr->position = transform * data.quadVerticesPosition[i];
+        data.quadVertexBufferPtr->color = color;
+        data.quadVertexBufferPtr->texture = {x[i], y[i]};
+        data.quadVertexBufferPtr->textureIndex = 0.0f;
+        ++data.quadVertexBufferPtr;
+    }
 
     data.quadIndexCount += 6;
 
@@ -194,41 +191,23 @@ void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, cons
 
     float textureIndex = getOrAddUniqueTextureIndex(texture);
 
-    data.quadVertexBufferPtr->position = position;
-    data.quadVertexBufferPtr->color = tint;
-    data.quadVertexBufferPtr->texture = {0.0f, 0.0f};
-    data.quadVertexBufferPtr->textureIndex = textureIndex;
-    ++data.quadVertexBufferPtr;
+    glm::mat4 transform =
+        glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
-    data.quadVertexBufferPtr->position = {position.x + size.x, position.y, position.z};
-    data.quadVertexBufferPtr->color = tint;
-    data.quadVertexBufferPtr->texture = {1.0f, 0.0f};
-    data.quadVertexBufferPtr->textureIndex = textureIndex;
-    ++data.quadVertexBufferPtr;
+    constexpr const float x[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+    constexpr const float y[4] = {0.0f, 0.0f, 1.0f, 1.0f};
 
-    data.quadVertexBufferPtr->position = {position.x + size.x, position.y + size.y, position.z};
-    data.quadVertexBufferPtr->color = tint;
-    data.quadVertexBufferPtr->texture = {1.0f, 1.0f};
-    data.quadVertexBufferPtr->textureIndex = textureIndex;
-    ++data.quadVertexBufferPtr;
-
-    data.quadVertexBufferPtr->position = {position.x, position.y + size.y, position.z};
-    data.quadVertexBufferPtr->color = tint;
-    data.quadVertexBufferPtr->texture = {0.0f, 1.0f};
-    data.quadVertexBufferPtr->textureIndex = textureIndex;
-    ++data.quadVertexBufferPtr;
+    for (uint8_t i = 0; i < 4; ++i) {
+        data.quadVertexBufferPtr->position = transform * data.quadVerticesPosition[i];
+        data.quadVertexBufferPtr->color = tint;
+        data.quadVertexBufferPtr->texture = {x[i], y[i]};
+        data.quadVertexBufferPtr->textureIndex = textureIndex;
+        ++data.quadVertexBufferPtr;
+    }
 
     data.quadIndexCount += 6;
 
     ++data.statistics.quads;
-
-    /*glm::mat4 _transform =
-        glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
-    data.shader->SetMat4("u_transform", _transform);
-    data.shader->SetVec4("u_color", tint);
-    texture->Bind();
-    data.vertexArray->Bind();
-    RenderCommand::DrawIndexed(data.vertexArray);*/
 }
 
 void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size,
@@ -238,14 +217,26 @@ void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec2& position, cons
 
 void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size,
                                  const glm::vec4& color) {
-    glm::mat4 _transform = glm::translate(glm::mat4(1.0f), position) *
-                           glm::rotate(glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) *
-                           glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
-    data.shader->SetMat4("u_transform", _transform);
-    data.shader->SetVec4("u_color", color);
-    data.whiteTextureRef->Bind();
-    data.vertexArray->Bind();
-    RenderCommand::DrawIndexed(data.vertexArray);
+    checkDrawCall();
+
+    glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+                          glm::rotate(glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) *
+                          glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
+
+    constexpr const float x[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+    constexpr const float y[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+
+    for (uint8_t i = 0; i < 4; ++i) {
+        data.quadVertexBufferPtr->position = transform * data.quadVerticesPosition[i];
+        data.quadVertexBufferPtr->color = color;
+        data.quadVertexBufferPtr->texture = {x[i], y[i]};
+        data.quadVertexBufferPtr->textureIndex = 0.0f;
+        ++data.quadVertexBufferPtr;
+    }
+
+    data.quadIndexCount += 6;
+
+    ++data.statistics.quads;
 }
 
 void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size,
@@ -265,13 +256,27 @@ void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec2& position, cons
 
 void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size,
                                  const Ref<Texture2D>& texture, const glm::vec4& tint) {
-    glm::mat4 _transform = glm::translate(glm::mat4(1.0f), position) *
-                           glm::rotate(glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) *
-                           glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
-    data.shader->SetMat4("u_transform", _transform);
-    data.shader->SetVec4("u_color", tint);
-    texture->Bind();
-    data.vertexArray->Bind();
-    RenderCommand::DrawIndexed(data.vertexArray);
+    checkDrawCall();
+
+    float textureIndex = getOrAddUniqueTextureIndex(texture);
+
+    glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+                          glm::rotate(glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) *
+                          glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
+
+    constexpr const float x[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+    constexpr const float y[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+
+    for (uint8_t i = 0; i < 4; ++i) {
+        data.quadVertexBufferPtr->position = transform * data.quadVerticesPosition[i];
+        data.quadVertexBufferPtr->color = tint;
+        data.quadVertexBufferPtr->texture = {x[i], y[i]};
+        data.quadVertexBufferPtr->textureIndex = textureIndex;
+        ++data.quadVertexBufferPtr;
+    }
+
+    data.quadIndexCount += 6;
+
+    ++data.statistics.quads;
 }
 }  // namespace de

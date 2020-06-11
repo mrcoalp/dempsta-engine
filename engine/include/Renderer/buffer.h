@@ -7,14 +7,14 @@
 #include "Core/pch.h"
 
 namespace de {
-enum class ShaderDataType : uint8_t { None = 0, Vec, Vec2, Vec3, Vec4, Mat3, Mat4, Int, Int2, Int3, Int4, Bool };
+enum class ShaderDataType : uint8_t { None = 0, Float, Vec2, Vec3, Vec4, Mat3, Mat4, Int, Int2, Int3, Int4, Bool };
 
 static uint32_t ShaderDataTypeSize(ShaderDataType type) {
     switch (type) {
         case ShaderDataType::None:
             return 0;
         case ShaderDataType::Int:
-        case ShaderDataType::Vec:
+        case ShaderDataType::Float:
             return 4;
         case ShaderDataType::Int2:
         case ShaderDataType::Vec2:
@@ -32,8 +32,7 @@ static uint32_t ShaderDataTypeSize(ShaderDataType type) {
         case ShaderDataType::Bool:
             return 1;
         default: {
-            LOG_ENGINE_ERROR("Invalid ShaderDataType: {0}", type);
-            return -1;
+            DE_THROW("Invalid ShaderDataType: {0}", type);
         }
     }
 }
@@ -53,7 +52,8 @@ struct BufferElement {
             case ShaderDataType::None:
                 return 0;
             case ShaderDataType::Int:
-            case ShaderDataType::Vec:
+            case ShaderDataType::Float:
+            case ShaderDataType::Bool:
                 return 1;
             case ShaderDataType::Int2:
             case ShaderDataType::Vec2:
@@ -68,11 +68,8 @@ struct BufferElement {
                 return 3 * 3;
             case ShaderDataType::Mat4:
                 return 4 * 4;
-            case ShaderDataType::Bool:
-                return 1;
             default: {
-                LOG_ENGINE_ERROR("Invalid ShaderDataType: {0}", type);
-                return -1;
+                DE_THROW("Invalid ShaderDataType: {0}", type);
             }
         }
     }
