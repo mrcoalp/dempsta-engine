@@ -8,8 +8,8 @@ namespace de {
 static GLenum ShaderDataTypeToOpenGLType(const ShaderDataType& type) {
     switch (type) {
         case ShaderDataType::None:
-            return -1;
-        case ShaderDataType::Vec:
+            return 0;
+        case ShaderDataType::Float:
         case ShaderDataType::Vec2:
         case ShaderDataType::Vec3:
         case ShaderDataType::Vec4:
@@ -24,8 +24,7 @@ static GLenum ShaderDataTypeToOpenGLType(const ShaderDataType& type) {
         case ShaderDataType::Bool:
             return GL_BOOL;
         default: {
-            LOG_ENGINE_ERROR("Invalid ShaderDataType: {0}", type);
-            return -1;
+            DE_THROW("Invalid ShaderDataType: {0}", type);
         }
     }
 }

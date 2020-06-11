@@ -27,16 +27,15 @@ public:
     void Unbind() const override;
 
     void SetMat4(const std::string& name, const glm::mat4& value) override;
-
     void SetVec4(const std::string& name, const glm::vec4& value) override;
-
     void SetVec3(const std::string& name, const glm::vec3& value) override;
-
     void SetInt(const std::string& name, int value) override;
+    void SetIntArray(const std::string& name, const int* values, uint32_t count) override;
 
     [[nodiscard]] inline const std::string& GetName() const override { return m_name; }
 
     void UploadUniformInt(const std::string& name, int value) const;
+    void UploadUniformIntArray(const std::string& name, const int* values, uint32_t count) const;
 
     void UploadUniformVec(const std::string& name, float value) const;
     void UploadUniformVec2(const std::string& name, const glm::vec2& values) const;

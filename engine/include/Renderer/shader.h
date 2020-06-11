@@ -22,6 +22,8 @@ public:
 
     virtual void SetInt(const std::string& name, int value) = 0;
 
+    virtual void SetIntArray(const std::string& name, const int* values, uint32_t count) = 0;
+
     [[nodiscard]] virtual const std::string& GetName() const = 0;
 
     static Ref<Shader> Create(const std::string& filePath);
@@ -40,9 +42,9 @@ public:
 
     Ref<Shader> Load(const std::string& name, const std::string& filepath);
 
-    const Ref<Shader>& Get(const std::string& name) const;
+    [[nodiscard]] const Ref<Shader>& Get(const std::string& name) const;
 
-    inline bool Exists(const std::string& name) const { return m_shaders.find(name) != m_shaders.end(); }
+    [[nodiscard]] inline bool Exists(const std::string& name) const { return m_shaders.find(name) != m_shaders.end(); }
 
 private:
     std::unordered_map<std::string, Ref<Shader>> m_shaders;

@@ -5,6 +5,8 @@
 namespace de {
 class OpenGLVertexBuffer : public VertexBuffer {
 public:
+    explicit OpenGLVertexBuffer(uint32_t size);
+
     OpenGLVertexBuffer(float* vertices, uint32_t size);
 
     ~OpenGLVertexBuffer() override;
@@ -16,6 +18,8 @@ public:
     void SetLayout(const BufferLayout& layout) override { m_layout = layout; };
 
     [[nodiscard]] inline const BufferLayout& GetLayout() const override { return m_layout; }
+
+    void SetData(const void* data, uint32_t size) override;
 
 private:
     uint32_t m_rendererId;

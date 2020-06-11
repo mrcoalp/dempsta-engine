@@ -70,6 +70,11 @@ void OpenGLShader::UploadUniformInt(const std::string& name, int value) const {
     glUniform1i(_location, value);
 }
 
+void OpenGLShader::UploadUniformIntArray(const std::string& name, const int* values, uint32_t count) const {
+    int _location = glGetUniformLocation(m_rendererId, name.c_str());
+    glUniform1iv(_location, count, values);
+}
+
 void OpenGLShader::UploadUniformVec(const std::string& name, float value) const {
     int _location = glGetUniformLocation(m_rendererId, name.c_str());
     glUniform1f(_location, value);
@@ -131,7 +136,7 @@ void OpenGLShader::compile(const std::unordered_map<GLenum, std::string>& source
             glDeleteShader(_shader);
 
             // Use the infoLog as you see fit.
-            DE_ASSERT(0, "{0} shader not initialized: '{1}'", ShaderTypeToString(source.first), _infoLog.data())
+            DE_THROW("{0} shader not initialized: '{1}'", ShaderTypeToString(source.first), _infoLog.data())
         }
 
         // Add shader id to vector
@@ -170,7 +175,7 @@ void OpenGLShader::compile(const std::unordered_map<GLenum, std::string>& source
             glDeleteShader(shader);
         }
 
-        DE_ASSERT(0, "ProgramShader not initialized: '{0}'", infoLog.data())
+        DE_THROW("ProgramShader not initialized: '{0}'", infoLog.data())
     }
 
     // Always detach shaders after a successful link.
@@ -211,4 +216,8 @@ void OpenGLShader::SetVec4(const std::string& name, const glm::vec4& value) { Up
 void OpenGLShader::SetVec3(const std::string& name, const glm::vec3& value) { UploadUniformVec3(name, value); }
 
 void OpenGLShader::SetInt(const std::string& name, int value) { UploadUniformInt(name, value); }
+
+void OpenGLShader::SetIntArray(const std::string& name, const int* values, uint32_t count) {
+    UploadUniformIntArray(name, values, count);
+}
 }  // namespace de

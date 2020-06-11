@@ -50,10 +50,6 @@ OpenGLTexture2D::OpenGLTexture2D(const std::string& filePath) : m_filePath(fileP
 
 OpenGLTexture2D::~OpenGLTexture2D() { glDeleteTextures(1, &m_rendererId); }
 
-unsigned OpenGLTexture2D::GetWidth() const { return m_width; }
-
-unsigned OpenGLTexture2D::GetHeight() const { return m_height; }
-
 void OpenGLTexture2D::SetData(void* data, uint32_t size) {
     uint32_t _bytesPerPixel = m_dataFormat == GL_RGB ? 3 : 4;
     DE_ASSERT(size == m_width * m_height * _bytesPerPixel, "Size must be entire texture!")
