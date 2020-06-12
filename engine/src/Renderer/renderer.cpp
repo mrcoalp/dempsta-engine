@@ -4,7 +4,7 @@
 #include "Renderer/renderer2d.h"
 
 namespace de {
-Ref<Renderer::SceneData> Renderer::s_sceneData = de::CreateRef<Renderer::SceneData>();
+Ref<Renderer::SceneData> Renderer::s_sceneData = CreateRef<Renderer::SceneData>();
 
 void Renderer::Init() {
     RenderCommand::Init();

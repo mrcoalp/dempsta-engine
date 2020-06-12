@@ -12,7 +12,7 @@ Ref<VertexBuffer> VertexBuffer::Create(uint32_t size) {
             return nullptr;
         }
         case RendererAPI::API::OpenGL: {
-            return de::CreateRef<OpenGLVertexBuffer>(size);
+            return CreateRef<OpenGLVertexBuffer>(size);
         }
         default: {
             LOG_ENGINE_ERROR("Not a valid renderer API was provided!");
@@ -28,7 +28,7 @@ Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size) {
             return nullptr;
         }
         case RendererAPI::API::OpenGL: {
-            return de::CreateRef<OpenGLVertexBuffer>(vertices, size);
+            return CreateRef<OpenGLVertexBuffer>(vertices, size);
         }
         default: {
             LOG_ENGINE_ERROR("Not a valid renderer API was provided!");
@@ -44,7 +44,7 @@ Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t count) {
             return nullptr;
         }
         case RendererAPI::API::OpenGL: {
-            return de::CreateRef<OpenGLIndexBuffer>(indices, count);
+            return CreateRef<OpenGLIndexBuffer>(indices, count);
         }
         default: {
             LOG_ENGINE_ERROR("Not a valid renderer API was provided!");
