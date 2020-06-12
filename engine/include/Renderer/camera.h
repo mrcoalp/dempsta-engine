@@ -52,12 +52,16 @@ public:
     void OnEvent(Event& e);
 
     [[nodiscard]] inline const OrthographicCamera& GetCamera() const { return m_camera; }
+
     [[nodiscard]] inline OrthographicCamera& GetCamera() { return m_camera; }
 
+    [[nodiscard]] inline float GetAspectRatio() const { return m_aspectRatio; }
+
     [[nodiscard]] inline float GetZoomLevel() const { return m_zoomLevel; }
-    inline void SetZoomLevel(float value) { m_zoomLevel = value; }
 
     [[nodiscard]] inline const OrthographicCameraBounds& GetBounds() const { return m_bounds; }
+
+    inline void SetZoomLevel(float value) { m_zoomLevel = value; }
 
 private:
     bool onMouseScrolled(MouseScrolledEvent& e);

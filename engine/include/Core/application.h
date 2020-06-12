@@ -51,6 +51,8 @@ public:
      */
     [[nodiscard]] inline Window& GetWindow() const { return *m_window; }
 
+    void Close();
+
 private:
     /**
      * @brief Application instance.

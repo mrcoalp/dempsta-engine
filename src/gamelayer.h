@@ -22,4 +22,5 @@ private:
     de::Ref<de::SubTexture2D> m_spriteTree;
     de::Ref<de::SubTexture2D> m_spriteBarrel;
     de::Quad m_quad;
+    de::Ref<de::FrameBuffer> m_frameBuffer;
 };

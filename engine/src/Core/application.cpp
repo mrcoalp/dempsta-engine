@@ -29,14 +29,14 @@ Application::Application() {
 Application::~Application() = default;
 
 void Application::OnEvent(Event& e) {
-    EventDispatcher _eventDispatcher(e);
-    _eventDispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent& event) { return onWindowClose(event); });
-    _eventDispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent& event) { return onWindowResize(event); });
-    _eventDispatcher.Dispatch<WindowIconifyEvent>([this](WindowIconifyEvent& event) { return onWindowIconify(event); });
+    EventDispatcher eventDispatcher(e);
+    eventDispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent& event) { return onWindowClose(event); });
+    eventDispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent& event) { return onWindowResize(event); });
+    eventDispatcher.Dispatch<WindowIconifyEvent>([this](WindowIconifyEvent& event) { return onWindowIconify(event); });
 
     // Handle layer events
-    for (auto _it = m_layerStack.rbegin(); _it != m_layerStack.rend(); ++_it) {
-        (*_it)->OnEvent(e);
+    for (auto it = m_layerStack.rbegin(); it != m_layerStack.rend(); ++it) {
+        (*it)->OnEvent(e);
         if (e.Handled) {
             break;
         }
@@ -69,8 +69,10 @@ void Application::Run() {
     }
 }
 
+void Application::Close() { m_running = false; }
+
 bool Application::onWindowClose(WindowCloseEvent& event) {
-    m_running = false;
+    Close();
     return true;
 }
 

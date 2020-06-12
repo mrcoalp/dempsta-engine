@@ -13,6 +13,7 @@
 #include "Events/mouseevent.h"
 #include "Input/input.h"
 #include "Renderer/camera.h"
+#include "Renderer/framebuffer.h"
 #include "Renderer/renderer.h"
 #include "Renderer/renderer2d.h"
 #include "Renderer/texture.h"
