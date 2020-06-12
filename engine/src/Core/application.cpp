@@ -15,7 +15,7 @@ Application::Application() {
 
     m_instance = this;
 
-    m_window = std::make_unique<Window>(WindowProps());
+    m_window = CreateScope<Window>(WindowProps());
     m_window->SetEventCallback([this](Event& e) { OnEvent(e); });
 
     Renderer::Init();

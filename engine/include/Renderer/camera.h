@@ -7,6 +7,12 @@
 #include "Events/mouseevent.h"
 
 namespace de {
+struct OrthographicCameraBounds {
+    float left, right, bottom, top;
+    [[nodiscard]] inline float GetWidth() const { return right - left; }
+    [[nodiscard]] inline float GetHeight() const { return top - bottom; }
+};
+
 class OrthographicCamera {
 public:
     OrthographicCamera(float left, float right, float bottom, float top);
@@ -46,8 +52,12 @@ public:
     void OnEvent(Event& e);
 
     [[nodiscard]] inline const OrthographicCamera& GetCamera() const { return m_camera; }
-
     [[nodiscard]] inline OrthographicCamera& GetCamera() { return m_camera; }
+
+    [[nodiscard]] inline float GetZoomLevel() const { return m_zoomLevel; }
+    inline void SetZoomLevel(float value) { m_zoomLevel = value; }
+
+    [[nodiscard]] inline const OrthographicCameraBounds& GetBounds() const { return m_bounds; }
 
 private:
     bool onMouseScrolled(MouseScrolledEvent& e);
@@ -55,6 +65,7 @@ private:
 
     float m_aspectRatio;
     float m_zoomLevel = 1.0f;
+    OrthographicCameraBounds m_bounds;
     OrthographicCamera m_camera;
     bool m_rotation;
 };

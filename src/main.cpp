@@ -2,13 +2,12 @@
 #include <Platform/OpenGL/openglshader.h>
 
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
-#include "layer2d.h"
+#include "gamelayer.h"
 
 class Game : public de::Application {
 public:
-    Game() { PushLayer(new Layer2D()); };
+    Game() { PushLayer(new GameLayer()); };
 
     ~Game() override = default;
 };
