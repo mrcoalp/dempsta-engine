@@ -31,12 +31,14 @@ void OrthographicCamera::updateViewMatrix() {
 
 OrthographicCameraController::OrthographicCameraController(float aspectRatio)
     : m_aspectRatio(aspectRatio),
-      m_camera(-m_aspectRatio * m_zoomLevel, m_aspectRatio * m_zoomLevel, -m_zoomLevel, m_zoomLevel),
+      m_bounds({-m_aspectRatio * m_zoomLevel, m_aspectRatio * m_zoomLevel, -m_zoomLevel, m_zoomLevel}),
+      m_camera(m_bounds.left, m_bounds.right, m_bounds.bottom, m_bounds.top),
       m_rotation(false) {}
 
 OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation)
     : m_aspectRatio(aspectRatio),
-      m_camera(-m_aspectRatio * m_zoomLevel, m_aspectRatio * m_zoomLevel, -m_zoomLevel, m_zoomLevel),
+      m_bounds({-m_aspectRatio * m_zoomLevel, m_aspectRatio * m_zoomLevel, -m_zoomLevel, m_zoomLevel}),
+      m_camera(m_bounds.left, m_bounds.right, m_bounds.bottom, m_bounds.top),
       m_rotation(rotation) {}
 
 void OrthographicCameraController::OnUpdate(const TimeStep& ts) {

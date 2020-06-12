@@ -12,7 +12,7 @@ Ref<Texture2D> Texture2D::Create(uint32_t width, uint32_t height) {
             return nullptr;
         }
         case RendererAPI::API::OpenGL: {
-            return std::make_shared<OpenGLTexture2D>(width, height);
+            return de::CreateRef<OpenGLTexture2D>(width, height);
         }
         default: {
             LOG_ENGINE_ERROR("Not a valid renderer API was provided!");
@@ -28,7 +28,7 @@ Ref<Texture2D> Texture2D::Create(const std::string& filePath) {
             return nullptr;
         }
         case RendererAPI::API::OpenGL: {
-            return std::make_shared<OpenGLTexture2D>(filePath);
+            return de::CreateRef<OpenGLTexture2D>(filePath);
         }
         default: {
             LOG_ENGINE_ERROR("Not a valid renderer API was provided!");

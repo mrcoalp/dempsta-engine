@@ -12,7 +12,7 @@ Ref<Shader> Shader::Create(const std::string& filePath) {
             return nullptr;
         }
         case RendererAPI::API::OpenGL: {
-            return std::make_shared<OpenGLShader>(filePath);
+            return de::CreateRef<OpenGLShader>(filePath);
         }
         default: {
             LOG_ENGINE_ERROR("Not a valid renderer API was provided!");
@@ -29,7 +29,7 @@ Ref<Shader> Shader::Create(const std::string& name, const std::string& vertexSou
             return nullptr;
         }
         case RendererAPI::API::OpenGL: {
-            return std::make_shared<OpenGLShader>(name, vertexSource, fragmentSource);
+            return de::CreateRef<OpenGLShader>(name, vertexSource, fragmentSource);
         }
         default: {
             LOG_ENGINE_ERROR("Not a valid renderer API was provided!");
