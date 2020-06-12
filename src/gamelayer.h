@@ -21,4 +21,5 @@ private:
     de::Ref<de::Atlas2D> m_spriteSheet;
     de::Ref<de::SubTexture2D> m_spriteTree;
     de::Ref<de::SubTexture2D> m_spriteBarrel;
+    de::Quad m_quad;
 };
