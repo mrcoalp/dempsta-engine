@@ -3,8 +3,9 @@
 GameLayer::GameLayer() : de::Layer("GameLayer"), m_cameraController(16.0f / 9.0f) {}
 
 void GameLayer::OnAttach() {
-    m_spriteSheet = de::CreateRef<de::Atlas>("assets/textures/RPGpack_sheet_2X.png", glm::vec2({128.0f, 128.0f}));
-    m_sprite = de::CreateRef<de::Sprite>(m_spriteSheet, glm::vec2({0.0f, 1.0f}), glm::vec2({1.0f, 2.0f}));
+    m_spriteSheet = de::CreateRef<de::Atlas2D>("assets/textures/RPGpack_sheet_2X.png", glm::vec2({128.0f, 128.0f}));
+    m_spriteTree = de::SubTexture2D::CreateSprite(m_spriteSheet, glm::vec2({0.0f, 1.0f}), glm::vec2({1.0f, 2.0f}));
+    m_spriteBarrel = de::SubTexture2D::CreateSprite(m_spriteSheet, glm::vec2({8.0f, 0.0f}));
 }
 
 void GameLayer::OnDetach() {}
@@ -13,7 +14,8 @@ void GameLayer::OnUpdate(const de::TimeStep& ts) {
     de::RenderCommand::Clear({0.4f, 0.4f, 0.2f, 1});
     de::Renderer2D::ResetStatistics();
     de::Renderer2D::BeginScene(m_cameraController.GetCamera());
-    de::Renderer2D::DrawQuad({0.0f, 0.0f}, {0.5f, 1.0f}, m_sprite);
+    de::Renderer2D::DrawQuad({0.0f, 0.0f}, {0.5f, 1.0f}, m_spriteTree);
+    de::Renderer2D::DrawQuad({0.5f, 0.0f}, {0.5f, 0.5f}, m_spriteBarrel);
     de::Renderer2D::EndScene();
 }
 

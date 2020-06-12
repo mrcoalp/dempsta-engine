@@ -6,19 +6,19 @@ namespace de {
 class FileUtils {
 public:
     static std::string ReadFile(const std::string& filePath) {
-        std::ifstream _if(filePath);
-        std::string _result;
-        if (_if.is_open()) {
-            _if.seekg(0, std::ios::end);
-            _result.resize(_if.tellg());
-            _if.seekg(0, std::ios::beg);
-            _if.read(&_result[0], _result.size());
-            _if.close();
+        std::ifstream ifStream(filePath);
+        std::string result;
+        if (ifStream.is_open()) {
+            ifStream.seekg(0, std::ios::end);
+            result.resize(static_cast<unsigned int>(ifStream.tellg()));
+            ifStream.seekg(0, std::ios::beg);
+            ifStream.read(&result[0], result.size());
+            ifStream.close();
         } else {
             LOG_ENGINE_ERROR("Failed to open file: '{0}'", filePath);
             return "";
         }
-        return _result;
+        return result;
     }
 
     static std::string GetFileNameWithExtension(std::string filepath) {
