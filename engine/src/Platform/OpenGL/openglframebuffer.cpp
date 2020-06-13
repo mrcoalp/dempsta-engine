@@ -24,10 +24,12 @@ void OpenGLFrameBuffer::Create() {
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, m_config.width, m_config.height);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_depthAttachment, 0);
 
-    DE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
+    uint32_t status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    DE_ASSERT(status == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete! Error: {0:#X}", status);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+
 void OpenGLFrameBuffer::Bind() { glBindFramebuffer(GL_FRAMEBUFFER, m_rendererID); }
 
 void OpenGLFrameBuffer::Unbind() { glBindFramebuffer(GL_FRAMEBUFFER, 0); }

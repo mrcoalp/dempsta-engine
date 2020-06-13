@@ -3,7 +3,6 @@
 GameLayer::GameLayer() : de::Layer("GameLayer"), m_cameraController(16.0f / 9.0f) {}
 
 void GameLayer::OnAttach() {
-    de::Application::GetInstance().GetWindow().SetVSync(false);
     m_spriteSheet = de::CreateRef<de::Atlas2D>("assets/textures/RPGpack_sheet_2X.png", glm::vec2({128.0f, 128.0f}));
     m_spriteTree = de::SubTexture2D::CreateSprite(m_spriteSheet, glm::vec2({0.0f, 1.0f}), glm::vec2({1.0f, 2.0f}));
     m_spriteBarrel = de::SubTexture2D::CreateSprite(m_spriteSheet, glm::vec2({8.0f, 0.0f}));
@@ -14,7 +13,6 @@ void GameLayer::OnAttach() {
 void GameLayer::OnDetach() {}
 
 void GameLayer::OnUpdate(const de::TimeStep& ts) {
-    // LOG_DEBUG("{0} FPS", 1.0f / (float)ts);
     m_cameraController.OnUpdate(ts);
     m_frameBuffer->Bind();
     de::RenderCommand::Clear({0.4f, 0.4f, 0.2f, 1});
