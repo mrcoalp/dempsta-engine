@@ -105,19 +105,14 @@ void GameLayer::OnImGuiRender() {
     ImGui::Begin("ViewPort");
     float contentWidth = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
     float contentHeight = ImGui::GetWindowContentRegionMax().y - ImGui::GetWindowContentRegionMin().y;
-    float fBufferWidth, fBufferHeight;
-
-    if (m_frameBuffer->GetConfig().width >= m_frameBuffer->GetConfig().height) {
-        fBufferWidth =
-            contentWidth > m_frameBuffer->GetConfig().width ? m_frameBuffer->GetConfig().width : contentWidth;
-        fBufferHeight = fBufferWidth / m_cameraController.GetAspectRatio();
-    } else {
-        fBufferHeight =
-            contentHeight > m_frameBuffer->GetConfig().height ? m_frameBuffer->GetConfig().height : contentHeight;
-        fBufferWidth = fBufferHeight / m_cameraController.GetAspectRatio();
+    if ((uint32_t)contentHeight != m_frameBuffer->GetConfig().height ||
+        (uint32_t)contentWidth != m_frameBuffer->GetConfig().width) {
+        // Handle ImGui ViewPort resize
+        de::WindowResizeEvent event((uint32_t)contentWidth, (uint32_t)contentHeight);
+        de::Application::GetInstance().OnEvent(event);  // TODO(MPINTO): Create Application::EventQueue?
     }
 
-    ImGui::Image((void*)m_frameBuffer->GetColorAttachment(), {fBufferWidth, fBufferHeight}, {0, 1}, {1, 0});
+    ImGui::Image((void*)m_frameBuffer->GetColorAttachment(), {contentWidth, contentHeight}, {0, 1}, {1, 0});
     ImGui::End();
 
     ImGui::End();
