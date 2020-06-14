@@ -23,4 +23,7 @@ private:
     de::Ref<de::SubTexture2D> m_spriteBarrel;
     de::Quad m_quad;
     de::Ref<de::FrameBuffer> m_frameBuffer;
+    de::TimeStep m_ts;
+    float m_timeAccumulator = 0.0f;
+    float m_fps = 0.0f;
 };

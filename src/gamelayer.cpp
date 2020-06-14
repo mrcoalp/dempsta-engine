@@ -13,6 +13,13 @@ void GameLayer::OnAttach() {
 void GameLayer::OnDetach() {}
 
 void GameLayer::OnUpdate(const de::TimeStep& ts) {
+    m_ts = ts;
+    m_timeAccumulator += (float)ts;
+    // Update fps every half second
+    if (m_timeAccumulator >= 0.5f) {
+        m_timeAccumulator = 0.0f;
+        m_fps = 1.0f / (float)ts;
+    }
     m_cameraController.OnUpdate(ts);
     m_frameBuffer->Bind();
     de::RenderCommand::Clear({0.4f, 0.4f, 0.2f, 1});
@@ -98,9 +105,11 @@ void GameLayer::OnImGuiRender() {
     ImGui::Text("Drawn Quads: %d", stats.quads);
     ImGui::Text("Drawn Vertices: %d", stats.GetDrawnVertices());
     ImGui::Text("Drawn Indices: %d", stats.GetDrawnIndices());
+    ImGui::Text("Time Per Frame: %.6f", (float)m_ts);
+    ImGui::Text("FPS: %.0f", m_fps);
     ImGui::End();
 
-    ImGui::Begin("ViewPort");
+    ImGui::Begin("ViewPort", &p_open, ImGuiWindowFlags_NoCollapse);
     float contentWidth = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
     float contentHeight = ImGui::GetWindowContentRegionMax().y - ImGui::GetWindowContentRegionMin().y;
     if ((uint32_t)contentHeight != m_frameBuffer->GetConfig().height ||
