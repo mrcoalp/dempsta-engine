@@ -109,7 +109,9 @@ void GameLayer::OnImGuiRender() {
     ImGui::Text("FPS: %.0f", m_fps);
     ImGui::End();
 
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(100.0f, 100.0f));
     ImGui::Begin("ViewPort", &p_open, ImGuiWindowFlags_NoCollapse);
+    ImGui::PopStyleVar();
     float contentWidth = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
     float contentHeight = ImGui::GetWindowContentRegionMax().y - ImGui::GetWindowContentRegionMin().y;
     if ((uint32_t)contentHeight != m_frameBuffer->GetConfig().height ||

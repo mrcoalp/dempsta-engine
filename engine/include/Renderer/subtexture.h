@@ -17,7 +17,7 @@ public:
 
     [[nodiscard]] inline constexpr const glm::vec2& GetCellSize() const { return m_cellSize; }
 
-    inline void SetCellSize(const glm::vec2& value) { m_cellSize = value; }
+    inline constexpr void SetCellSize(const glm::vec2& value) { m_cellSize = value; }
 
 private:
     Ref<Texture2D> m_texture;
@@ -44,7 +44,7 @@ public:
      * Getter for the texture used in atlas
      * @return Atlas Texture2D
      */
-    [[nodiscard]] inline constexpr const Ref<Texture2D>& GetTexture() const { return m_atlas->GetTexture(); }
+    [[nodiscard]] inline const Ref<Texture2D>& GetTexture() const { return m_atlas->GetTexture(); }
 
     /**
      * Creates a subTexture based on coords in spriteSheet/atlas. Defaults to a cell of one by one.
