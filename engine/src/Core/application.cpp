@@ -25,7 +25,7 @@ Application::Application() {
 #endif
 }
 
-Application::~Application() { SM::CloseState(); };
+Application::~Application() { SM::CloseState(); }
 
 void Application::OnEvent(Event& e) {
     EventDispatcher eventDispatcher(e);

@@ -3,6 +3,9 @@
 #include <lua.hpp>
 #include <string>
 
+#include "Scripting/luaclass.h"
+#include "Scripting/marshalling.h"
+
 namespace lua {
 typedef int (*lua_CFunction)(lua_State* L);
 
@@ -25,12 +28,12 @@ public:
 
     template <typename R>
     [[nodiscard]] static inline R GetValue(const int index = 1) {
-        return Lua::GetValue(Lua::Type<R>{}, state, index);
+        return MS::GetValue(lua::Type<R>{}, state, index);
     }
 
     template <typename R>
     static void PushValue(R value) {
-        Lua::PushValue(state, value);
+        MS::PushValue(state, value);
     }
 
 private:

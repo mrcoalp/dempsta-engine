@@ -212,7 +212,7 @@ private:
 
             if (_index >> 8u) {  // Try to set a func
                 char c[128];
-                sprintf_s(c, "Trying to set the method [%s] of class [%s]",
+                sprintf(c, "Trying to set the method [%s] of class [%s]",
                         (*obj)->T::Binding.GetMethods()[_index ^ (1u << 8u)].name, T::Binding.GetName());
                 luaL_error(L, c);
                 return 0;
