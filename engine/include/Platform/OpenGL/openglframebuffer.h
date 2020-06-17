@@ -20,9 +20,11 @@ public:
 
     void Create();
 
+    void Destroy();
+
 private:
     FrameBufferConfig m_config;
-    uint32_t m_rendererID;
+    uint32_t m_rendererID = 0;
     uint32_t m_colorAttachment, m_depthAttachment;
 };
 }  // namespace de

@@ -61,6 +61,9 @@ add_subdirectory(external/glm)
 # Add stb_image
 add_subdirectory(external/stb_image)
 
+# Add lua
+add_subdirectory(external/lua)
+
 target_include_directories(dempsta PUBLIC include)
 
 target_link_libraries(dempsta
@@ -70,7 +73,8 @@ target_link_libraries(dempsta
         glad
         glm
         imgui
-        stb_image)
+        stb_image
+        lua)
 
 set_target_properties(dempsta PROPERTIES INSTALL_RPATH $ORIGIN)
 

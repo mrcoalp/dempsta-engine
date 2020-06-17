@@ -5,9 +5,13 @@
 namespace de {
 OpenGLFrameBuffer::OpenGLFrameBuffer(const FrameBufferConfig& config) : m_config(config) { Create(); }
 
-OpenGLFrameBuffer::~OpenGLFrameBuffer() { glDeleteFramebuffers(1, &m_rendererID); }
+OpenGLFrameBuffer::~OpenGLFrameBuffer() { Destroy(); }
 
 void OpenGLFrameBuffer::Create() {
+    if (m_rendererID) {
+        Destroy();
+    }
+
     glCreateFramebuffers(1, &m_rendererID);
     glBindFramebuffer(GL_FRAMEBUFFER, m_rendererID);
 
@@ -28,6 +32,12 @@ void OpenGLFrameBuffer::Create() {
     DE_ASSERT(status == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete! Error: {0:#X}", status);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void OpenGLFrameBuffer::Destroy() {
+    glDeleteFramebuffers(1, &m_rendererID);
+    glDeleteTextures(1, &m_colorAttachment);
+    glDeleteTextures(1, &m_depthAttachment);
 }
 
 void OpenGLFrameBuffer::Bind() { glBindFramebuffer(GL_FRAMEBUFFER, m_rendererID); }

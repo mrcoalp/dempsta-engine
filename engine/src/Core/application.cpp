@@ -2,10 +2,8 @@
 
 #include <GLFW/glfw3.h>
 
-#include "Core/core.h"
-#include "Core/log.h"
-#include "Input/input.h"
 #include "Renderer/renderer.h"
+#include "Scripting/scriptmanager.h"
 
 namespace de {
 Application* Application::m_instance = nullptr;
@@ -19,6 +17,7 @@ Application::Application() {
     m_window->SetEventCallback([this](Event& e) { OnEvent(e); });
 
     Renderer::Init();
+    SM::Init();
 
 #ifdef NDEBUG
     m_imguiLayer = new ImGuiLayer();
@@ -26,7 +25,7 @@ Application::Application() {
 #endif
 }
 
-Application::~Application() = default;
+Application::~Application() { SM::CloseState(); };
 
 void Application::OnEvent(Event& e) {
     EventDispatcher eventDispatcher(e);

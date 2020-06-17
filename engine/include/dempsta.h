@@ -17,6 +17,8 @@
 #include "Renderer/renderer.h"
 #include "Renderer/renderer2d.h"
 #include "Renderer/texture.h"
+#include "Scripting/binding.h"
+#include "Scripting/scriptmanager.h"
 #include "Utils/fileutils.h"
 
 #endif  // DEMPSTA_H
