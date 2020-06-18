@@ -40,14 +40,14 @@ private:
     static lua::Binding<_class> Binding;
 // TODO(MPINTO): Change to support all data types and not only primitives
 // NOTE(MPINTO): Marshalling is needed when using this macro
-#define LUA_PROPERTY(_property, _type)                        \
-    int Get_##_property(lua_State* L) {                       \
+#define LUA_PROPERTY(_property, _type)                       \
+    int Get_##_property(lua_State* L) {                      \
         MS::PushValue(L, _property);                         \
-        return 1;                                             \
-    }                                                         \
-    int Set_##_property(lua_State* L) {                       \
+        return 1;                                            \
+    }                                                        \
+    int Set_##_property(lua_State* L) {                      \
         _property = MS::GetValue(lua::Type<_type>{}, L, -1); \
-        return 0;                                             \
+        return 0;                                            \
     }
 #define LUA_PROXY_METHOD(_name) int _name(lua_State* L)
 #define LUA_DEFINE_BINDING(_class) lua::Binding<_class> _class::Binding = lua::Binding<_class>(#_class)
