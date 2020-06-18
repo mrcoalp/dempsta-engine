@@ -1,7 +1,5 @@
 #include "gamelayer.h"
 
-#include "Scripting/marshalling.h"
-
 class Script {
 public:
     explicit Script(lua_State* L) : m_prop(SM::GetValue<int>()) {}
