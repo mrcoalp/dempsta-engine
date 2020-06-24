@@ -10,7 +10,7 @@ build-project:
     - tags
     - master
   script:
-    - sh build.sh
+    - sh build.sh --make
   artifacts:
     paths:
       - build/

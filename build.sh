@@ -94,20 +94,20 @@ fi
 cd $CONFIGURATION || exit 1
 
 # Run CMake
-cmake ../.. $BUILD_SYSTEM -DCMAKE_BUILD_TYPE=$CONFIGURATION -DCMAKE_INSTALL_PREFIX=./bin
+cmake ../.. $BUILD_SYSTEM -DCMAKE_BUILD_TYPE=$CONFIGURATION -DCMAKE_INSTALL_PREFIX=./bin || exit 1
 
 if [ -z $BUILD_SYSTEM ]; then
-  make -j 4
+  make -j 4 || exit 1
 else
-  ninja
+  ninja || exit 1
 fi
 
 # Install game
 if [ $INSTALL = 1 ]; then
   if [ -z $BUILD_SYSTEM ]; then
-    make install
+    make install || exit 1
   else
-    ninja install
+    ninja install || exit 1
   fi
 fi
 
