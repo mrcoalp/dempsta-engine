@@ -2,6 +2,9 @@
 stages:
   - build
 
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
 build-project:
   stage: build
   image: mrcoalp/gcc-cmake-xorg:latest
