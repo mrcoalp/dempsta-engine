@@ -13,7 +13,11 @@ build-project:
     - tags
     - master
   script:
-    - sh build.sh --make
+    # Debug build
+    - sh build.sh --make -i
+    # Release build
+    - sh build.sh --make -i -r
   artifacts:
     paths:
-      - build/
+      - build/Debug/bin/
+      - build/Release/bin/
