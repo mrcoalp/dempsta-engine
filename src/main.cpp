@@ -3,11 +3,11 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "gamelayer.h"
+#include "dempstaeditor.h"
 
 class Game : public de::Application {
 public:
-    Game() { PushLayer(new GameLayer()); };
+    Game() { PushLayer(new DempstaEditor()); };
 
     ~Game() override = default;
 };

@@ -1,4 +1,4 @@
-#include "gamelayer.h"
+#include "dempstaeditor.h"
 
 class Script {
 public:
@@ -29,9 +29,9 @@ LUA_ADD_PROPERTY(m_bool)
 LUA_ADD_PROPERTY(m_string)
 LUA_ADD_METHOD(GetProp);
 
-GameLayer::GameLayer() : de::Layer("GameLayer"), m_cameraController(16.0f / 9.0f) {}
+DempstaEditor::DempstaEditor() : de::Layer("DempstaEditor"), m_cameraController(16.0f / 9.0f) {}
 
-void GameLayer::OnAttach() {
+void DempstaEditor::OnAttach() {
     SM::RegisterClass<Script>();
     SM::LoadFile("assets/scripts/script.lua");
     m_spriteSheet = de::CreateRef<de::Atlas2D>("assets/textures/RPGpack_sheet_2X.png", glm::vec2({128.0f, 128.0f}));
@@ -41,9 +41,9 @@ void GameLayer::OnAttach() {
     m_frameBuffer = de::FrameBuffer::Create(fConfig);
 }
 
-void GameLayer::OnDetach() {}
+void DempstaEditor::OnDetach() {}
 
-void GameLayer::OnUpdate(const de::TimeStep& ts) {
+void DempstaEditor::OnUpdate(const de::TimeStep& ts) {
     m_ts = ts;
     m_timeAccumulator += (float)ts;
     // Update fps every half second
@@ -51,8 +51,10 @@ void GameLayer::OnUpdate(const de::TimeStep& ts) {
         m_timeAccumulator = 0.0f;
         m_fps = 1.0f / (float)ts;
     }
-    m_cameraController.OnUpdate(ts);
-    m_frameBuffer->Bind();
+    if (m_editingMode) m_cameraController.OnUpdate(ts);
+
+    if (m_editingMode) m_frameBuffer->Bind();
+
     de::RenderCommand::Clear({0.4f, 0.4f, 0.2f, 1});
     de::Renderer2D::ResetStatistics();
 
@@ -72,19 +74,33 @@ void GameLayer::OnUpdate(const de::TimeStep& ts) {
     de::Renderer2D::DrawRotatedQuad(rotation, {-1.0f, 0.f}, {1.0f, 1.0f}, m_spriteBarrel);
 
     de::Renderer2D::EndScene();
-    m_frameBuffer->Unbind();
+
+    if (m_editingMode) m_frameBuffer->Unbind();
 }
 
-void GameLayer::OnEvent(de::Event& e) {
+void DempstaEditor::OnEvent(de::Event& e) {
     de::EventDispatcher eventDispatcher(e);
-    eventDispatcher.Dispatch<de::WindowResizeEvent>([this](de::WindowResizeEvent& event) {
-        m_frameBuffer->Resize(event.GetWidth(), event.GetHeight());
+
+    eventDispatcher.Dispatch<de::KeyPressedEvent>([this](de::KeyPressedEvent& event) {
+        if (event.GetKeyCode() == DE_KEY_TAB) {
+            m_editingMode = !m_editingMode;
+            LOG_TRACE("Editing Mode: {}", m_editingMode);
+            if (!m_editingMode) {
+                const auto& window = de::Application::GetInstance().GetWindow();
+                de::Renderer::OnWindowResize(window.GetWidth(), window.GetHeight());
+                m_cameraController.OnResize(window.GetWidth(), window.GetHeight());
+            }
+        }
         return false;
     });
+
     m_cameraController.OnEvent(e);
 }
 
-void GameLayer::OnImGuiRender() {
+void DempstaEditor::OnImGuiRender() {
+    // Render only in editing mode
+    if (!m_editingMode) return;
+
     static bool opt_fullscreen_persistant = true;
     bool opt_fullscreen = opt_fullscreen_persistant;
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
@@ -149,8 +165,9 @@ void GameLayer::OnImGuiRender() {
     if ((uint32_t)contentHeight != m_frameBuffer->GetConfig().height ||
         (uint32_t)contentWidth != m_frameBuffer->GetConfig().width) {
         // Handle ImGui ViewPort resize
-        de::WindowResizeEvent event((uint32_t)contentWidth, (uint32_t)contentHeight);
-        de::Application::GetInstance().OnEvent(event);  // TODO(MPINTO): Create Application::EventQueue?
+        m_frameBuffer->Resize((uint32_t)contentWidth, (uint32_t)contentHeight);
+        de::Renderer::OnWindowResize((uint32_t)contentWidth, (uint32_t)contentHeight);
+        m_cameraController.OnResize((uint32_t)contentWidth, (uint32_t)contentHeight);
     }
 
     ImGui::Image((void*)m_frameBuffer->GetColorAttachment(), {contentWidth, contentHeight}, {0, 1}, {1, 0});

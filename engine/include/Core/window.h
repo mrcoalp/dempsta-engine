@@ -40,7 +40,7 @@ public:
      * @brief Getter for the window width.
      * @return Window width.
      */
-    [[nodiscard]] inline unsigned int GetWidth() const { return data.height; }
+    [[nodiscard]] inline unsigned int GetWidth() const { return data.width; }
 
     /**
      * @brief Getter for the window height.

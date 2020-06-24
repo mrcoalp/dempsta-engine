@@ -3,21 +3,21 @@
 #include "Core/layer.h"
 
 namespace de {
-    class ImGuiLayer : public Layer {
-    public:
-        ImGuiLayer();
+class ImGuiLayer : public Layer {
+public:
+    ImGuiLayer();
 
-        ~ImGuiLayer() override;
+    ~ImGuiLayer() override;
 
-        void OnAttach() override;
+    void OnAttach() override;
 
-        void OnDetach() override;
+    void OnDetach() override;
 
-        void Begin();
+    void Begin();
 
-        void End();
+    void End();
 
-    private:
-        float time = 0.0f;
-    };
-}
+private:
+    float time = 0.0f;
+};
+}  // namespace de

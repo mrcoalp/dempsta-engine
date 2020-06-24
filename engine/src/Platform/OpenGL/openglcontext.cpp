@@ -1,6 +1,7 @@
 #include "Platform/OpenGL/openglcontext.h"
 
 #include <glad/glad.h>
+// GLFW must come after
 #include <GLFW/glfw3.h>
 
 #include "Core/core.h"

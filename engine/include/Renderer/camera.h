@@ -63,6 +63,8 @@ public:
 
     inline void SetZoomLevel(float value) { m_zoomLevel = value; }
 
+    void OnResize(uint32_t width, uint32_t height);
+
 private:
     bool onMouseScrolled(MouseScrolledEvent& e);
     bool onWindowResized(WindowResizeEvent& e);

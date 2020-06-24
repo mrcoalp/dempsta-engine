@@ -77,6 +77,15 @@ void OrthographicCameraController::OnEvent(Event& e) {
     _dispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent& event) { return onWindowResized(event); });
 }
 
+void OrthographicCameraController::OnResize(uint32_t width, uint32_t height) {
+    if (height == 0) {
+        LOG_ENGINE_WARN("Tried to resize camera with an invalid height");
+        return;
+    }
+    m_aspectRatio = (float)width / (float)height;
+    m_camera.SetProjection(-m_aspectRatio * m_zoomLevel, m_aspectRatio * m_zoomLevel, -m_zoomLevel, m_zoomLevel);
+}
+
 bool OrthographicCameraController::onMouseScrolled(MouseScrolledEvent& e) {
     m_zoomLevel -= e.GetOffsetY() * 0.25f;
     m_zoomLevel = std::max(m_zoomLevel, 0.25f);
@@ -89,8 +98,7 @@ bool OrthographicCameraController::onWindowResized(WindowResizeEvent& e) {
     if (e.GetHeight() == 0) {
         return false;
     }
-    m_aspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
-    m_camera.SetProjection(-m_aspectRatio * m_zoomLevel, m_aspectRatio * m_zoomLevel, -m_zoomLevel, m_zoomLevel);
+    OnResize(e.GetWidth(), e.GetHeight());
     return false;
 }
 }  // namespace de

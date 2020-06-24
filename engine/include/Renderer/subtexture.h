@@ -61,7 +61,8 @@ public:
      * @param spriteSize Vec2 with the number of cells the sprite will contain
      * @return A sprite/subTexture
      */
-    static Ref<SubTexture2D> CreateSprite(const Ref<Atlas2D>& spriteSheet, const glm::vec2& coords, const glm::vec2& spriteSize);
+    static Ref<SubTexture2D> CreateSprite(const Ref<Atlas2D>& spriteSheet, const glm::vec2& coords,
+                                          const glm::vec2& spriteSize);
 
 private:
     glm::vec2 m_textureCoords[4];
