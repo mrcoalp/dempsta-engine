@@ -2,7 +2,7 @@
 
 class Script {
 public:
-    explicit Script(lua_State* L) : m_prop(SM::GetValue<int>()) {}
+    explicit Script(lua_State*) : m_prop(SM::GetValue<int>()) {}
 
     LUA_DECLARE_CLASS(Script)
 
@@ -34,7 +34,7 @@ DempstaEditor::DempstaEditor() : de::Layer("DempstaEditor"), m_cameraController(
 void DempstaEditor::OnAttach() {
     SM::RegisterClass<Script>();
     SM::LoadFile("assets/scripts/script.lua");
-    m_spriteSheet = de::CreateRef<de::Atlas2D>("assets/textures/RPGpack_sheet_2X.png", glm::vec2({128.0f, 128.0f}));
+    m_spriteSheet = de::CreateRef<de::Atlas2D>("assets/textures/RPGpack_sheet_2X.png", glm::vec2(128.0f));
     m_spriteTree = de::SubTexture2D::CreateSprite(m_spriteSheet, glm::vec2({0.0f, 1.0f}), glm::vec2({1.0f, 2.0f}));
     m_spriteBarrel = de::SubTexture2D::CreateSprite(m_spriteSheet, glm::vec2({8.0f, 0.0f}));
     de::FrameBufferConfig fConfig = {1280, 720};

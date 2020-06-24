@@ -1,0 +1,16 @@
+# Name the stages involved in the pipeline
+stages:
+  - build
+
+build-project:
+  stage: build
+  image: mrcoalp/gcc-cmake-xorg:latest
+  only:
+    - merge_requests
+    - tags
+    - master
+  script:
+    - sh build.sh
+  artifacts:
+    paths:
+      - build/
