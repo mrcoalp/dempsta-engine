@@ -18,7 +18,8 @@ Ref<SubTexture2D> SubTexture2D::CreateSprite(const Ref<Atlas2D>& spriteSheet, co
     return CreateSprite(spriteSheet, coords, {1.0f, 1.0f});
 }
 
-Ref<SubTexture2D> SubTexture2D::CreateSprite(const Ref<Atlas2D>& spriteSheet, const glm::vec2& coords, const glm::vec2& spriteSize) {
+Ref<SubTexture2D> SubTexture2D::CreateSprite(const Ref<Atlas2D>& spriteSheet, const glm::vec2& coords,
+                                             const glm::vec2& spriteSize) {
     const glm::vec2 min = {(coords.x * spriteSheet->GetCellSize().x) / (float)spriteSheet->GetWidth(),
                            (coords.y * spriteSheet->GetCellSize().y) / (float)spriteSheet->GetHeight()};
     const glm::vec2 max = {

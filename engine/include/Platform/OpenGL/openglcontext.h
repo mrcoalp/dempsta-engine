@@ -5,15 +5,15 @@
 struct GLFWwindow;
 
 namespace de {
-    class OpenGLContext : public Context {
-    public:
-        explicit OpenGLContext(GLFWwindow* windowHandle);
+class OpenGLContext : public Context {
+public:
+    explicit OpenGLContext(GLFWwindow* windowHandle);
 
-        void Init() final;
+    void Init() final;
 
-        void SwapBuffers() final;
+    void SwapBuffers() final;
 
-    private:
-        GLFWwindow* windowHandle;
-    };
-}
+private:
+    GLFWwindow* windowHandle;
+};
+}  // namespace de

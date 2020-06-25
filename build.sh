@@ -6,6 +6,8 @@ CONFIGURATION=Debug
 INSTALL=0
 # Use Ninja?
 BUILD_SYSTEM=-GNinja
+# Only generate compilation db
+CHECK_ONLY=0
 
 usage() {
   echo "Usage
@@ -23,7 +25,8 @@ Options
     --ninja           - Use Ninja as build system (default)
     --make            - Use Make as build system
     --cc <#version>   - Specify which GCC compiler <#version> to use. Ex: --cc 9
-    --clang           - Use Clang compiler"
+    --clang           - Use Clang compiler
+    --check           - Only generate compilation database"
 }
 
 # Check for arguments
@@ -55,6 +58,9 @@ while test $# -gt 0; do
   --clang)
     export CC=/usr/bin/clang
     export CXX=/usr/bin/clang++
+    ;;
+  --check)
+    CHECK_ONLY=1
     ;;
   -h | --help)
     usage
@@ -94,7 +100,11 @@ fi
 cd $CONFIGURATION || exit 1
 
 # Run CMake
-cmake ../.. $BUILD_SYSTEM -DCMAKE_BUILD_TYPE=$CONFIGURATION -DCMAKE_INSTALL_PREFIX=./bin || exit 1
+cmake ../.. $BUILD_SYSTEM -DCMAKE_BUILD_TYPE=$CONFIGURATION -DCMAKE_INSTALL_PREFIX=./bin -DCMAKE_EXPORT_COMPILE_COMMANDS=ON || exit 1
+
+if [ $CHECK_ONLY = 1 ]; then
+  exit 0
+fi
 
 if [ -z $BUILD_SYSTEM ]; then
   make -j 4 || exit 1

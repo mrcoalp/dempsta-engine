@@ -1,9 +1,23 @@
 # Name the stages involved in the pipeline
 stages:
+  - check
   - build
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
+
+run-checks:
+  stage: check
+  image: mrcoalp/gcc-cmake-xorg:latest
+    only:
+      - merge_requests
+      - master
+    script:
+      - sh build.sh --make --check
+      - sh check.sh
+    artifacts:
+      paths:
+        - tidy_coverage.txt
 
 build-project:
   stage: build
