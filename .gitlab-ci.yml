@@ -9,15 +9,15 @@ variables:
 run-checks:
   stage: check
   image: mrcoalp/gcc-cmake-xorg:latest
-    only:
-      - merge_requests
-      - master
-    script:
-      - sh build.sh --make --check
-      - sh check.sh
-    artifacts:
-      paths:
-        - tidy_coverage.txt
+  only:
+    - merge_requests
+    - master
+  script:
+    - sh build.sh --make --check
+    - sh check.sh
+  artifacts:
+    paths:
+      - tidy_coverage.txt
 
 build-project:
   stage: build
