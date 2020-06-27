@@ -29,7 +29,7 @@ LUA_ADD_PROPERTY(m_bool)
 LUA_ADD_PROPERTY(m_string)
 LUA_ADD_METHOD(GetProp);
 
-DempstaEditor::DempstaEditor() : de::Layer("DempstaEditor"), m_cameraController(16.0f / 9.0f) {}
+DempstaEditor::DempstaEditor() : de::Layer("DempstaEditor"), m_cameraController(16.0f / 9.0f, true) {}
 
 void DempstaEditor::OnAttach() {
     SM::RegisterClass<Script>();

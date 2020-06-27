@@ -4,6 +4,7 @@
 
 #include "Input/input.h"
 #include "Input/keycodes.h"
+#include "Input/mousebuttoncodes.h"
 
 namespace de {
 OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top)
@@ -42,33 +43,33 @@ OrthographicCameraController::OrthographicCameraController(float aspectRatio, bo
       m_rotation(rotation) {}
 
 void OrthographicCameraController::OnUpdate(const TimeStep& ts) {
-    if (Input::IsKeyPressed(DE_KEY_W)) {
-        glm::vec3 _position = m_camera.GetPosition() + glm::vec3(0.0f, m_zoomLevel * (float)ts, 0.0f);
+#ifdef NDEBUG
+    static glm::vec3 movementOffset = {0.0f, 0.0f, 0.0f};
+
+    if (Input::IsMouseButtonPressed(DE_MOUSE_BUTTON_LEFT) && Input::IsKeyPressed(DE_KEY_LEFT_CONTROL)) {
+        if (m_previousMousePosition == std::pair<float, float>(0.0f, 0.0f)) {
+            m_previousMousePosition = Input::GetMousePosition();
+        }
+        movementOffset = {m_previousMousePosition.first - Input::GetMouseX(),
+                          Input::GetMouseY() - m_previousMousePosition.second, 0.0f};
+        m_previousMousePosition = Input::GetMousePosition();
+        glm::vec3 _position = m_camera.GetPosition() + (m_zoomLevel * (float)ts * movementOffset * 0.2f);
         m_camera.SetPosition(_position);
-    }
-    if (Input::IsKeyPressed(DE_KEY_S)) {
-        glm::vec3 _position = m_camera.GetPosition() + glm::vec3(0.0f, -m_zoomLevel * (float)ts, 0.0f);
-        m_camera.SetPosition(_position);
-    }
-    if (Input::IsKeyPressed(DE_KEY_A)) {
-        glm::vec3 _position = m_camera.GetPosition() + glm::vec3(-m_zoomLevel * (float)ts, 0.0f, 0.0f);
-        m_camera.SetPosition(_position);
-    }
-    if (Input::IsKeyPressed(DE_KEY_D)) {
-        glm::vec3 _position = m_camera.GetPosition() + glm::vec3(m_zoomLevel * (float)ts, 0.0f, 0.0f);
-        m_camera.SetPosition(_position);
+    } else {
+        m_previousMousePosition = {0.0f, 0.0f};
     }
 
     if (m_rotation) {
-        if (Input::IsKeyPressed(DE_KEY_Q)) {
+        if (Input::IsKeyPressed(DE_KEY_Q) && Input::IsKeyPressed(DE_KEY_LEFT_CONTROL)) {
             float _rotation = m_camera.GetRotation() + 180.0f * (float)ts;
             m_camera.SetRotation(_rotation);
         }
-        if (Input::IsKeyPressed(DE_KEY_E)) {
+        if (Input::IsKeyPressed(DE_KEY_E) && Input::IsKeyPressed(DE_KEY_LEFT_CONTROL)) {
             float _rotation = m_camera.GetRotation() - 180.0f * (float)ts;
             m_camera.SetRotation(_rotation);
         }
     }
+#endif
 }
 
 void OrthographicCameraController::OnEvent(Event& e) {

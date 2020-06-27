@@ -74,5 +74,8 @@ private:
     OrthographicCameraBounds m_bounds;
     OrthographicCamera m_camera;
     bool m_rotation;
+#ifdef NDEBUG
+    std::pair<float, float> m_previousMousePosition;
+#endif
 };
 }  // namespace de

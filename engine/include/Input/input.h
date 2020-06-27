@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Core/pch.h"
-#include "Input/keycodes.h"
-#include "Input/mousebuttoncodes.h"
 
 namespace de {
 class Input {

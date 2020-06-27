@@ -12,6 +12,8 @@
 #include "Events/keyevent.h"
 #include "Events/mouseevent.h"
 #include "Input/input.h"
+#include "Input/keycodes.h"
+#include "Input/mousebuttoncodes.h"
 #include "Renderer/camera.h"
 #include "Renderer/framebuffer.h"
 #include "Renderer/renderer.h"
