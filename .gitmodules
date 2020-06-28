@@ -5,6 +5,7 @@
 [submodule "engine/external/glfw"]
 	path = engine/external/glfw
 	url = https://github.com/glfw/glfw.git
+	branch = 3.3-stable
 [submodule "engine/external/imgui"]
 	path = engine/external/imgui
 	url = https://github.com/mrcoalp/imgui.git
