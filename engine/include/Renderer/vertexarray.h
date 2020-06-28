@@ -6,7 +6,7 @@
 namespace de {
 class VertexArray {
 public:
-    ~VertexArray() = default;
+    virtual ~VertexArray() = default;
 
     virtual void Bind() const = 0;
 

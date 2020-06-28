@@ -11,6 +11,8 @@ struct FrameBufferConfig {
 
 class FrameBuffer {
 public:
+    virtual ~FrameBuffer() = default;
+
     static Ref<FrameBuffer> Create(const FrameBufferConfig& config);
 
     virtual void Bind() = 0;

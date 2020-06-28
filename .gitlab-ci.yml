@@ -18,6 +18,7 @@ run-checks:
   artifacts:
     paths:
       - tidy_coverage.txt
+      - format_coverage.txt
 
 build-project:
   stage: build

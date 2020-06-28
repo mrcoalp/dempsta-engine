@@ -43,6 +43,15 @@ while test $# -gt 0; do
   shift
 done
 
+find engine/src -regex '.*\.\(cpp\)' | xargs clang-format -output-replacements-xml | grep "<replacement " >'format_coverage.txt'
+find engine/include -regex '.*\.\(h\)' | xargs clang-format -output-replacements-xml | grep "<replacement " >>'format_coverage.txt'
+find src -regex '.*\.\(cpp\|h\)' | xargs clang-format -output-replacements-xml | grep "<replacement " >>'format_coverage.txt'
+
+# Check if format_coverage.txt exists and is not empty
+if [ -s format_coverage.txt ]; then
+  echo -e '\033[1;33mStyle corrections must be made. Please use clang-format and commit again!\033[0m'
+fi
+
 mv build/Debug/compile_commands.json . || exit 1
 find engine/src -regex '.*\.\(cpp\)' | xargs clang-tidy $FIX >'tidy_coverage.txt' || exit 1
 find src -regex '.*\.\(cpp\|h\)' | xargs clang-tidy $FIX >>'tidy_coverage.txt' || exit 1

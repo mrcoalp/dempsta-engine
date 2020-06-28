@@ -11,7 +11,7 @@ public:
     OpenGLTexture2D(uint32_t width, uint32_t height);
     explicit OpenGLTexture2D(const std::string& filePath);
 
-    ~OpenGLTexture2D();
+    ~OpenGLTexture2D() override;
 
     [[nodiscard]] inline uint32_t GetWidth() const override { return m_width; }
 

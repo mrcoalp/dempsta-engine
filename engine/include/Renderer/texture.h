@@ -5,7 +5,7 @@
 namespace de {
 class Texture {
 public:
-    ~Texture() = default;
+    virtual ~Texture() = default;
 
     [[nodiscard]] virtual unsigned GetWidth() const = 0;
 

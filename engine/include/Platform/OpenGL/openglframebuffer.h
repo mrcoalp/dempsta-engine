@@ -6,7 +6,7 @@ namespace de {
 class OpenGLFrameBuffer : public FrameBuffer {
 public:
     explicit OpenGLFrameBuffer(const FrameBufferConfig& config);
-    ~OpenGLFrameBuffer();
+    ~OpenGLFrameBuffer() override;
 
     void Bind() override;
 

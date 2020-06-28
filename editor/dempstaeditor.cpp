@@ -170,7 +170,7 @@ void DempstaEditor::OnImGuiRender() {
         m_cameraController.OnResize((uint32_t)contentWidth, (uint32_t)contentHeight);
     }
 
-    ImGui::Image((void*)m_frameBuffer->GetColorAttachment(), {contentWidth, contentHeight}, {0, 1}, {1, 0});
+    ImGui::Image((void*)(uintptr_t)m_frameBuffer->GetColorAttachment(), {contentWidth, contentHeight}, {0, 1}, {1, 0});
     ImGui::End();
 
     ImGui::End();

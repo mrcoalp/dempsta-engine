@@ -8,7 +8,7 @@ class OpenGLVertexArray : public VertexArray {
 public:
     OpenGLVertexArray();
 
-    ~OpenGLVertexArray();
+    ~OpenGLVertexArray() override;
 
     void Bind() const override;
 

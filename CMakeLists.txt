@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(game_test)
+project(dempsta_editor)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -28,16 +28,16 @@ endif ()
 
 add_subdirectory(engine)
 
-file(GLOB_RECURSE SOURCES src/*.h src/*.cpp)
+file(GLOB_RECURSE SOURCES editor/*.h editor/*.cpp)
 
-add_executable(game_test ${SOURCES})
+add_executable(dempsta_editor ${SOURCES})
 
-target_link_libraries(game_test PRIVATE dempsta)
+target_link_libraries(dempsta_editor PRIVATE dempsta)
 # Copy assets folder to binary destination
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 
 # Install custom instructions
-install(TARGETS game_test
+install(TARGETS dempsta_editor
         RUNTIME DESTINATION .
         LIBRARY DESTINATION lib)
 # Copy assets folder to installation dir root
