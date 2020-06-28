@@ -45,7 +45,7 @@ done
 
 find engine/src -regex '.*\.\(cpp\)' | xargs clang-format -output-replacements-xml | grep "<replacement " >'format_coverage.txt'
 find engine/include -regex '.*\.\(h\)' | xargs clang-format -output-replacements-xml | grep "<replacement " >>'format_coverage.txt'
-find src -regex '.*\.\(cpp\|h\)' | xargs clang-format -output-replacements-xml | grep "<replacement " >>'format_coverage.txt'
+find editor -regex '.*\.\(cpp\|h\)' | xargs clang-format -output-replacements-xml | grep "<replacement " >>'format_coverage.txt'
 
 # Check if format_coverage.txt exists and is not empty
 if [ -s format_coverage.txt ]; then
@@ -54,7 +54,7 @@ fi
 
 mv build/Debug/compile_commands.json . || exit 1
 find engine/src -regex '.*\.\(cpp\)' | xargs clang-tidy $FIX >'tidy_coverage.txt' || exit 1
-find src -regex '.*\.\(cpp\|h\)' | xargs clang-tidy $FIX >>'tidy_coverage.txt' || exit 1
+find editor -regex '.*\.\(cpp\|h\)' | xargs clang-tidy $FIX >>'tidy_coverage.txt' || exit 1
 mv compile_commands.json build/Debug/
 
 # Check if tidy_coverage.txt exists and is not empty
@@ -65,7 +65,7 @@ fi
 if [ $FORMAT = 1 ]; then
   find engine/src -regex '.*\.\(cpp\)' | xargs clang-format -i
   find engine/include -regex '.*\.\(h\)' | xargs clang-format -i
-  find src -regex '.*\.\(cpp\|h\)' | xargs clang-format -i
+  find editor -regex '.*\.\(cpp\|h\)' | xargs clang-format -i
   echo -e '\033[0;32mRan clang-format!\033[0m'
 fi
 
