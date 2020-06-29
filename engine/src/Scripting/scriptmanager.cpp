@@ -39,4 +39,13 @@ bool ScriptManager::LoadFile(const std::string& filePath) {
 }
 
 void ScriptManager::RegisterFunction(const char* name, lua_CFunction fn) { lua_register(state, name, fn); }
+
+void ScriptManager::CallFunction(const char* name) {
+    lua_getglobal(state, name);
+    if (lua_isfunction(state, -1)) {
+        lua_call(state, 0, 0);
+    } else {
+        LOG_ENGINE_WARN("Tried to call an invalid Lua function: {}", name);
+    }
+}
 }  // namespace lua

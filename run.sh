@@ -3,7 +3,7 @@
 # Default is debug build
 CONFIGURATION=Debug
 # Give a different name to your app
-APPNAME=game_test
+APPNAME=dempsta_editor
 # Build before running?
 BUILD=0
 
