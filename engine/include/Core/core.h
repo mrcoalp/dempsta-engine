@@ -2,6 +2,7 @@
 
 #include "Core/log.h"
 
+/** Runtime Dempsta assert. */
 #define DE_ASSERT(status, ...)            \
     if ((status) == 0) {                  \
         LOG_ENGINE_CRITICAL(__VA_ARGS__); \
