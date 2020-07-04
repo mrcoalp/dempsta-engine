@@ -1,3 +1,6 @@
+// Avoid min max windows definition
+#define NOMINMAX
+
 #include "Renderer/camera.h"
 
 #include <glm/gtc/matrix_transform.hpp>
