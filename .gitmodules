@@ -1,7 +1,3 @@
-[submodule "engine/external/spdlog"]
-	path = engine/external/spdlog
-	url = https://github.com/gabime/spdlog.git
-	branch = v1.x
 [submodule "engine/external/glfw"]
 	path = engine/external/glfw
 	url = https://github.com/glfw/glfw.git
@@ -10,6 +6,3 @@
 	path = engine/external/imgui
 	url = https://github.com/mrcoalp/imgui.git
 	branch = docking
-[submodule "engine/external/glm"]
-	path = engine/external/glm
-	url = https://github.com/g-truc/glm.git

@@ -18,10 +18,8 @@ endif ()
 
 if (BUILD_SHARED_LIBS)
     set(LIB_TYPE SHARED)
-    set(SPDLOG_BUILD_SHARED ON CACHE INTERNAL "")
 else ()
     set(LIB_TYPE STATIC)
-    set(SPDLOG_BUILD_SHARED OFF CACHE INTERNAL "")
 endif ()
 
 if (${CMAKE_BUILD_TYPE} MATCHES Debug)
@@ -37,9 +35,6 @@ file(GLOB_RECURSE SOURCES src/*.cpp)
 add_library(dempsta ${LIB_TYPE} ${SOURCES})
 
 # Add spdlog
-#cmake_policy(SET CMP0072 NEW)
-set(SPDLOG_BUILD_TESTING OFF CACHE INTERNAL "")
-set(SPDLOG_INSTALL ON CACHE BOOL "" FORCE)
 add_subdirectory(external/spdlog)
 
 # Add glfw
