@@ -1,5 +1,7 @@
 # Dempsta
 
+<center><img src="media/dempsta_icon.png" height="300"></center>
+
 ## README
 
 Dempsta is a personal project meant to learn step-by-step what it takes to build a game engine.
