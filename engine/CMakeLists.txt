@@ -36,28 +36,24 @@ add_library(dempsta ${LIB_TYPE} ${SOURCES})
 
 # Add spdlog
 add_subdirectory(external/spdlog)
-
 # Add glfw
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLFW_INSTALL ON CACHE BOOL "" FORCE)
 add_subdirectory(external/glfw)
-
 # Add glad
 add_subdirectory(external/glad)
-
 # Add imgui
 add_subdirectory(external/imgui)
-
 # Add glm
 add_subdirectory(external/glm)
-
 # Add stb_image
 add_subdirectory(external/stb_image)
-
 # Add lua
 add_subdirectory(external/lua)
+# Add EnTT
+add_subdirectory(external/entt)
 
 target_include_directories(dempsta PUBLIC include)
 
@@ -69,7 +65,8 @@ target_link_libraries(dempsta
         glm
         imgui
         stb_image
-        lua)
+        lua
+        entt)
 
 set_target_properties(dempsta PROPERTIES INSTALL_RPATH $ORIGIN)
 
