@@ -39,9 +39,9 @@ while test $# -gt 0; do
     shift
 done
 
-cd build/Debug/test || exit 1
+cd build/Debug/bin/test || exit 1
 if [ $COVERAGE = 1 ]; then
-    ./dempsta_editor_tst | tee '../../../test_coverage.txt' || exit 1
+    ./dempsta_editor_tst > >(tee ../../../../test_coverage.txt) 2>&1 || exit 1
 else
     ./dempsta_editor_tst || exit 1
 fi
