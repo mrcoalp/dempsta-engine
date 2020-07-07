@@ -2,6 +2,7 @@
 stages:
   - check
   - build
+  - test
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
@@ -19,6 +20,7 @@ run-checks:
     paths:
       - tidy_coverage.txt
       - format_coverage.txt
+    expire_in: 1 week
 
 build-project:
   stage: build
@@ -28,11 +30,26 @@ build-project:
     - tags
     - master
   script:
-    # Debug build
-    - sh build.sh --make -i
+    # Debug build with tests
+    - sh build.sh --make -i -t
     # Release build
     - sh build.sh --make -i -r
   artifacts:
     paths:
       - build/Debug/bin/
+      - build/Debug/test/
       - build/Release/bin/
+    expire_in: 1 week
+
+run-tests:
+  stage: test
+  image: mrcoalp/gcc-cmake-xorg:latest
+  only:
+    - merge_requests
+    - master
+  script:
+    - sh test.sh -c
+  artifacts:
+    paths:
+      - test_coverage.txt
+    expire_in: 1 week

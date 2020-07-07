@@ -15,4 +15,5 @@ logs/
 *.ini
 tidy_coverage.txt
 format_coverage.txt
+test_coverage.txt
 compile_commands.json

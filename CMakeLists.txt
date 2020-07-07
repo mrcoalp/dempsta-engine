@@ -3,6 +3,8 @@ project(dempsta_editor)
 
 set(CMAKE_CXX_STANDARD 17)
 
+option(BUILD_TESTS "Build test programs" OFF)
+
 # Handle rpath
 set(CMAKE_INSTALL_RPATH "$ORIGIN/lib")
 #set(CMAKE_SKIP_BUILD_RPATH FALSE)
@@ -31,6 +33,10 @@ add_subdirectory(engine)
 file(GLOB_RECURSE SOURCES editor/*.h editor/*.cpp)
 
 add_executable(dempsta_editor ${SOURCES})
+
+if(BUILD_TESTS)
+    add_subdirectory(test)
+endif()
 
 target_link_libraries(dempsta_editor PRIVATE dempsta)
 # Copy assets folder to binary destination

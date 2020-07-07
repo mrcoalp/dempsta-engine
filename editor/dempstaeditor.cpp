@@ -1,39 +1,8 @@
 #include "dempstaeditor.h"
 
-class Script {
-public:
-    explicit Script(lua_State*) : m_prop(SM::GetValue<int>()) {}
-
-    LUA_DECLARE_CLASS(Script)
-
-    LUA_PROPERTY(m_prop, int)
-
-    LUA_PROPERTY(m_bool, bool)
-
-    LUA_PROPERTY(m_string, std::string)
-
-    LUA_PROXY_METHOD(GetProp) {
-        SM::PushValue(m_prop + 10);
-        return 1;
-    }
-
-private:
-    int m_prop;
-    bool m_bool = false;
-    std::string m_string = "haha";
-};
-
-LUA_DEFINE_BINDING(Script)
-LUA_ADD_PROPERTY(m_prop)
-LUA_ADD_PROPERTY(m_bool)
-LUA_ADD_PROPERTY(m_string)
-LUA_ADD_METHOD(GetProp);
-
 DempstaEditor::DempstaEditor() : de::Layer("DempstaEditor"), m_cameraController(16.0f / 9.0f, true) {}
 
 void DempstaEditor::OnAttach() {
-    SM::RegisterClass<Script>();
-    SM::LoadFile("assets/scripts/script.lua");
     m_spriteSheet = de::CreateRef<de::Atlas2D>("assets/textures/RPGpack_sheet_2X.png", glm::vec2(128.0f));
     m_spriteTree = de::SubTexture2D::CreateSprite(m_spriteSheet, glm::vec2({0.0f, 1.0f}), glm::vec2({1.0f, 2.0f}));
     m_spriteBarrel = de::SubTexture2D::CreateSprite(m_spriteSheet, glm::vec2({8.0f, 0.0f}));

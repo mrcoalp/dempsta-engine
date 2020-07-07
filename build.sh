@@ -8,6 +8,8 @@ INSTALL=0
 BUILD_SYSTEM=-GNinja
 # Only generate compilation db
 CHECK_ONLY=0
+# Wether or not to build tests
+TESTS=OFF
 
 usage() {
   echo "Usage
@@ -26,7 +28,8 @@ Options
     --make            - Use Make as build system
     --cc <#version>   - Specify which GCC compiler <#version> to use. Ex: --cc 9
     --clang           - Use Clang compiler
-    --check           - Only generate compilation database"
+    --check           - Only generate compilation database
+    -t | --tests      - Build tests"
 }
 
 # Check for arguments
@@ -61,6 +64,9 @@ while test $# -gt 0; do
     ;;
   --check)
     CHECK_ONLY=1
+    ;;
+  -t | --tests)
+    TESTS=ON
     ;;
   -h | --help)
     usage
@@ -100,7 +106,7 @@ fi
 cd $CONFIGURATION || exit 1
 
 # Run CMake
-cmake ../.. $BUILD_SYSTEM -DCMAKE_BUILD_TYPE=$CONFIGURATION -DCMAKE_INSTALL_PREFIX=./bin -DCMAKE_EXPORT_COMPILE_COMMANDS=ON || exit 1
+cmake -DBUILD_TESTS=$TESTS ../.. $BUILD_SYSTEM -DCMAKE_BUILD_TYPE=$CONFIGURATION -DCMAKE_INSTALL_PREFIX=./bin -DCMAKE_EXPORT_COMPILE_COMMANDS=ON || exit 1
 
 if [ $CHECK_ONLY = 1 ]; then
   exit 0
