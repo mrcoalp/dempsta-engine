@@ -11,9 +11,10 @@ usage() {
     Checks source code with clang-tidy.
 
 Options
-    -h | --help     - Show help
-    -f | --fix      - Tries to fix warnings or errors found
-    --format        - Use clang-format"
+    -h | --help           - Show help
+    -f | --fix            - Tries to fix warnings or errors found
+    --format              - Use clang-format
+    --format-only | -fo   - Use clang-format and exit without checks"
 }
 
 # Check for arguments
@@ -24,6 +25,9 @@ while test $# -gt 0; do
     ;;
   --format)
     FORMAT=1
+    ;;
+  --format-only | -fo)
+    FORMAT=2
     ;;
   -h | --help)
     usage
@@ -52,17 +56,19 @@ if [ -s format_coverage.txt ]; then
   echo -e '\033[1;33mStyle corrections must be made. Please use clang-format and commit again!\033[0m'
 fi
 
-mv build/Debug/compile_commands.json . || exit 1
-find engine/src -regex '.*\.\(cpp\)' | xargs clang-tidy $FIX >'tidy_coverage.txt' || exit 1
-find editor -regex '.*\.\(cpp\|h\)' | xargs clang-tidy $FIX >>'tidy_coverage.txt' || exit 1
-mv compile_commands.json build/Debug/
+if [ $FORMAT -lt 2 ]; then
+  mv build/Debug/compile_commands.json . || exit 1
+  find engine/src -regex '.*\.\(cpp\)' | xargs clang-tidy $FIX >'tidy_coverage.txt' || exit 1
+  find editor -regex '.*\.\(cpp\|h\)' | xargs clang-tidy $FIX >>'tidy_coverage.txt' || exit 1
+  mv compile_commands.json build/Debug/
 
-# Check if tidy_coverage.txt exists and is not empty
-if [ -s tidy_coverage.txt ]; then
-  echo -e '\033[1;33mErrors and/or warnings were found. Please check "tidy_coverage.txt"!\033[0m'
+  # Check if tidy_coverage.txt exists and is not empty
+  if [ -s tidy_coverage.txt ]; then
+    echo -e '\033[1;33mErrors and/or warnings were found. Please check "tidy_coverage.txt"!\033[0m'
+  fi
 fi
 
-if [ $FORMAT = 1 ]; then
+if [ $FORMAT -ge 1 ]; then
   find engine/src -regex '.*\.\(cpp\)' | xargs clang-format -i
   find engine/include -regex '.*\.\(h\)' | xargs clang-format -i
   find editor -regex '.*\.\(cpp\|h\)' | xargs clang-format -i
