@@ -2,7 +2,8 @@
 
 <center><img src="media/dempsta_icon.png" height="300"></center>
 
-[![pipeline status](https://gitlab.com/mrcoalp/dempsta-engine/badges/master/pipeline.svg)](https://gitlab.com/mrcoalp/dempsta-engine/commits/master)
+[![pipeline status](https://gitlab.com/mrcoalp/dempsta-engine/badges/master/pipeline.svg)](https://gitlab.com/mrcoalp/dempsta-engine/-/commits/master)
+[![contributions](https://img.shields.io/badge/contributions-welcome-informational)](https://gitlab.com/mrcoalp/dempsta-engine/-/blob/master/CONTRIBUTING.md)
 
 ## README
 
