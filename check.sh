@@ -65,6 +65,7 @@ if [ $FORMAT -lt 2 ]; then
   # Check if tidy_coverage.txt exists and is not empty
   if [ -s tidy_coverage.txt ]; then
     echo -e '\033[1;33mErrors and/or warnings were found. Please check "tidy_coverage.txt"!\033[0m'
+    exit 1
   fi
 fi
 

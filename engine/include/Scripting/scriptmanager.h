@@ -36,10 +36,11 @@ public:
         }
         PushValues(std::forward<Args>(args)...);
         lua_call(state, sizeof...(Args), 0);
+        lua_pop(state, 1);
     }
 
     template <typename T, typename... Args>
-    static void CallFunction(T& rValue, const char* name, Args... args) {
+    static void CallFunction(T& lValue, const char* name, Args... args) {
         lua_getglobal(state, name);
         if (!lua_isfunction(state, -1)) {
             LOG_ENGINE_WARN("Tried to call an invalid Lua function: {}", name);
@@ -48,10 +49,19 @@ public:
         }
         PushValues(std::forward<Args>(args)...);
         lua_call(state, sizeof...(Args), 1);
-        rValue = GetValue<T>(-1);
+        lValue = GetValue<T>(-1);
+        lua_pop(state, 1);
     }
 
     static void CallFunction(const char* name);
+
+    template <typename R>
+    [[nodiscard]] static inline R GetGlobalVariable(const char* name) {
+        lua_getglobal(state, name);
+        const R r = GetValue<R>(-1);
+        lua_pop(state, 1);
+        return r;
+    }
 
     template <typename R>
     [[nodiscard]] static inline R GetValue(const int index = 1) {

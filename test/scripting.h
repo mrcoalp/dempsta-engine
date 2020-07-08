@@ -48,10 +48,12 @@ bool test_call_cpp_function_from_lua() {
 bool test_call_lua_function_from_cpp() {
     SM::Init();
     SM::LoadFile("scripts/luafunctions.lua");
-    std::string rValue;
-    SM::CallFunction(rValue, "OnUpdate", 0.016);
+    std::string s;
+    SM::CallFunction(s, "OnUpdate", "delta");
+    int i;
+    SM::CallFunction(i, "Maths", 2, 3, 4);
     SM::CloseState();
-    return rValue == "FPS in Lua:62.5";
+    return s == "FPS in Lua:delta" && i == 10;
 }
 
 bool test_cpp_class_bind_lua() {
@@ -60,4 +62,16 @@ bool test_cpp_class_bind_lua() {
     SM::LoadFile("scripts/cppclass.lua");
     SM::CloseState();
     return testClass == 40;
+}
+
+bool test_get_global_lua_var_from_cpp() {
+    SM::Init();
+    SM::LoadFile("scripts/luavariables.lua");
+    const std::string s = SM::GetGlobalVariable<std::string>("string");
+    const bool b = SM::GetGlobalVariable<bool>("bool");
+    const int i = SM::GetGlobalVariable<int>("int");
+    const float f = SM::GetGlobalVariable<float>("float");
+    const double d = SM::GetGlobalVariable<double>("double");
+    SM::CloseState();
+    return s == "passed" && b && i == -1 && f == 12.6f && d == 3.14;
 }

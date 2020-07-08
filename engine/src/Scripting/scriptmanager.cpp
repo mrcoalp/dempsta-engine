@@ -47,5 +47,6 @@ void ScriptManager::CallFunction(const char* name) {
     } else {
         LOG_ENGINE_WARN("Tried to call an invalid Lua function: {}", name);
     }
+    lua_pop(state, 1);
 }
 }  // namespace lua

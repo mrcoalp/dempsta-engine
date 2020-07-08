@@ -5,7 +5,8 @@
 using Test = std::function<bool()>;
 static std::map<const char*, Test> tests = {{"test_call_cpp_function_from_lua", test_call_cpp_function_from_lua},
                                             {"test_call_lua_function_from_cpp", test_call_lua_function_from_cpp},
-                                            {"test_cpp_class_bind_lua", test_cpp_class_bind_lua}};
+                                            {"test_cpp_class_bind_lua", test_cpp_class_bind_lua},
+                                            {"test_get_global_lua_var_from_cpp", test_get_global_lua_var_from_cpp}};
 
 int RunTests() {
     const int nrOfTests = tests.size();
@@ -17,7 +18,7 @@ int RunTests() {
                 ++passed;
                 LOG_TRACE("'{}' passed", test.first);
             } else {
-                LOG_WARN("'{}' failed", test.first);
+                LOG_ERROR("'{}' failed", test.first);
             }
         } catch (std::exception& e) {
             LOG_ERROR("'{}' raised an exception: {}", test.first, e.what());
