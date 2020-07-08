@@ -16,11 +16,22 @@ Using Lua as scripting language.
 
 #### Linux
 
-Simply run `./build.sh` (using by default Ninja as the build system, can be changed to Make with `--make` option). Run `./build.sh -h` to see all the available options. You can run the proto editor with `./run.sh` .
+Simply run:
+
+* `$ ./build.sh` <br>
+
+**Note** : Using by default Ninja as the build system, can be changed to Make with `--make` option. Run `$ ./build.sh -h` to see all the available options.
 
 #### Windows
 
 Open the project in Visual Studio, build and run dempsta_editor exe.
+
+### Tests
+
+To compile and run the tests:
+
+* `$ ./build.sh -i -t`
+* `$ ./test.sh`
 
 ### Features
 

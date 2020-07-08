@@ -7,6 +7,6 @@ How to do it mostly depends on the type of contribution:
 
 * If you found a bug, **please** ensure there isn't already an answer for you by searching on Gitlab under [issues](https://gitlab.com/mrcoalp/dempsta-engine/-/issues). If you are unable to find an open issue addressing the problem, feel free to [open a new one](https://gitlab.com/mrcoalp/dempsta-engine/-/issues/new). **Please**, do not forget to carefully describe how to reproduce the problem, then add all the information about the system on which you are experiencing it.
 
-* If you found a bug and you wrote a patch to fix it, open a new [merge request](https://gitlab.com/mrcoalp/dempsta-engine/-/merge_requests) with your code. Please run the check script before submitting it.
+* If you found a bug and you wrote a patch to fix it, open a new [merge request](https://gitlab.com/mrcoalp/dempsta-engine/-/merge_requests) with your code. Add some tests to avoid regressions in future if possible, it would be really appreciated. Please run the check script before submitting it.
 
 * If you want to propose a new feature and you know how to code it, **please** do not issue directly a merge request. Before to do it, [create a new issue](https://gitlab.com/mrcoalp/dempsta-engine/-/issues/new) to discuss your proposal. Other users could be interested in your idea and the discussion that will follow can refine it and therefore give us a better solution.
