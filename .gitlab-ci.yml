@@ -13,7 +13,6 @@ run-checks:
   stage: check
   only:
     - merge_requests
-    - master
   script:
     - bash build.sh --make --check
     - bash check.sh
