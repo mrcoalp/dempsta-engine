@@ -2,6 +2,8 @@
 
 <center><img src="media/dempsta_icon.png" height="300"></center>
 
+[![pipeline status](https://gitlab.com/mrcoalp/dempsta-engine/badges/master/pipeline.svg)](https://gitlab.com/mrcoalp/dempsta-engine/commits/master)
+
 ## README
 
 Dempsta is a personal project meant to learn step-by-step what it takes to build a game engine.
