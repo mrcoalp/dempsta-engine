@@ -70,7 +70,9 @@ void Renderer2D::Init() {
     for (uint32_t i = 0; i < Renderer2DData::maxIndices; ++i) {
         const uint8_t indicesIndex = i % 6;
         quadIndices[i] = indices[indicesIndex] + offset;
-        if (indicesIndex == 5) offset += 4;  // Next quad
+        if (indicesIndex == 5) {
+            offset += 4;  // Next quad
+        }
     }
 
     auto _indexBuffer = IndexBuffer::Create(quadIndices, Renderer2DData::maxIndices);

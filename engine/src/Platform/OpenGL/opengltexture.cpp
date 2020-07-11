@@ -17,9 +17,12 @@ OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height) : m_width(widt
 }
 
 OpenGLTexture2D::OpenGLTexture2D(const std::string& filePath) : m_filePath(filePath), m_dataFormat(0) {
-    int width, height, channels;
+    int width;
+    int height;
+    int channels;
+
     stbi_set_flip_vertically_on_load(1);
-    auto data = stbi_load(filePath.c_str(), &width, &height, &channels, 0);
+    auto* data = stbi_load(filePath.c_str(), &width, &height, &channels, 0);
     DE_ASSERT(data != nullptr, "Couldn't load texture: {0}! Reason: {1}", filePath, stbi_failure_reason())
     m_width = width;
     m_height = height;

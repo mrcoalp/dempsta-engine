@@ -87,7 +87,7 @@ private:
      * @param event
      * @return
      */
-    bool onWindowResize(WindowResizeEvent& event);
+    static bool onWindowResize(WindowResizeEvent& event);
 
     /**
      * On window iconify/minimized event callback.

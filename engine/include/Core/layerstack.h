@@ -35,26 +35,17 @@ public:
      */
     void PopLayer(Layer* layer);
 
-#define STACK_IT [[nodiscard]] std::vector<Layer*>::iterator
-#define STACK_IT_CONST [[nodiscard]] std::vector<Layer*>::const_iterator
-#define STACK_IT_REV [[nodiscard]] std::vector<Layer*>::reverse_iterator
-#define STACK_IT_CONST_REV [[nodiscard]] std::vector<Layer*>::const_reverse_iterator
+    [[nodiscard]] std::vector<Layer*>::iterator begin() { return layers.begin(); }
+    [[nodiscard]] std::vector<Layer*>::iterator end() { return layers.end(); }
 
-    STACK_IT begin() { return layers.begin(); }
+    [[nodiscard]] std::vector<Layer*>::reverse_iterator rbegin() { return layers.rbegin(); }
+    [[nodiscard]] std::vector<Layer*>::reverse_iterator rend() { return layers.rend(); }
 
-    STACK_IT end() { return layers.end(); }
+    [[nodiscard]] std::vector<Layer*>::const_iterator begin() const { return layers.begin(); }
+    [[nodiscard]] std::vector<Layer*>::const_iterator end() const { return layers.end(); }
 
-    STACK_IT_REV rbegin() { return layers.rbegin(); }
-
-    STACK_IT_REV rend() { return layers.rend(); }
-
-    STACK_IT_CONST begin() const { return layers.begin(); }
-
-    STACK_IT_CONST end() const { return layers.end(); }
-
-    STACK_IT_CONST_REV rbegin() const { return layers.rbegin(); }
-
-    STACK_IT_CONST_REV rend() const { return layers.rend(); }
+    [[nodiscard]] std::vector<Layer*>::const_reverse_iterator rbegin() const { return layers.rbegin(); }
+    [[nodiscard]] std::vector<Layer*>::const_reverse_iterator rend() const { return layers.rend(); }
 
 private:
     /**

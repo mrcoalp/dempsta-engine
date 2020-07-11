@@ -32,7 +32,7 @@ public:
      * Getter for the coordinates to draw subTexture of atlas
      * @return Vec2 containing the coordinates of the subTexture in the atlas
      */
-    [[nodiscard]] inline constexpr const glm::vec2* GetCoordinates() const { return m_textureCoords; }
+    [[nodiscard]] inline constexpr const std::array<glm::vec2, 4>& GetCoordinates() const { return m_textureCoords; }
 
     /**
      * Getter for the Atlas2D of SubTexture2D
@@ -65,7 +65,7 @@ public:
                                           const glm::vec2& spriteSize);
 
 private:
-    glm::vec2 m_textureCoords[4];
+    std::array<glm::vec2, 4> m_textureCoords;
     Ref<Atlas2D> m_atlas;
 };
 }  // namespace de

@@ -10,15 +10,20 @@ namespace de {
 static GLenum ShaderTypeFromString(const std::string& type) {
     if (type == VERTEX_SHADER) {
         return GL_VERTEX_SHADER;
-    } else if (type == TESS_CONTROL_SHADER) {
+    }
+    if (type == TESS_CONTROL_SHADER) {
         return GL_TESS_CONTROL_SHADER;
-    } else if (type == TESS_EVALUATION_SHADER) {
+    }
+    if (type == TESS_EVALUATION_SHADER) {
         return GL_TESS_EVALUATION_SHADER;
-    } else if (type == GEOMETRY_SHADER) {
+    }
+    if (type == GEOMETRY_SHADER) {
         return GL_GEOMETRY_SHADER;
-    } else if (type == FRAGMENT_SHADER) {
+    }
+    if (type == FRAGMENT_SHADER) {
         return GL_FRAGMENT_SHADER;
-    } else if (type == COMPUTE_SHADER) {
+    }
+    if (type == COMPUTE_SHADER) {
         return GL_COMPUTE_SHADER;
     }
     LOG_ENGINE_ERROR("Invalid shader type: {0}!", type);

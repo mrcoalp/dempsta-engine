@@ -8,7 +8,7 @@ OpenGLFrameBuffer::OpenGLFrameBuffer(const FrameBufferConfig& config) : m_config
 OpenGLFrameBuffer::~OpenGLFrameBuffer() { Destroy(); }
 
 void OpenGLFrameBuffer::Create() {
-    if (m_rendererID) {
+    if (m_rendererID != 0u) {
         Destroy();
     }
 

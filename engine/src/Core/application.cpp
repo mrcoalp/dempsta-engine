@@ -30,7 +30,7 @@ Application::~Application() { SM::CloseState(); }
 void Application::OnEvent(Event& e) {
     EventDispatcher eventDispatcher(e);
     eventDispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent& event) { return onWindowClose(event); });
-    eventDispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent& event) { return onWindowResize(event); });
+    eventDispatcher.Dispatch<WindowResizeEvent>([](WindowResizeEvent& event) { return onWindowResize(event); });
     eventDispatcher.Dispatch<WindowIconifyEvent>([this](WindowIconifyEvent& event) { return onWindowIconify(event); });
 
     // Handle layer events

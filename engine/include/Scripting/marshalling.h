@@ -20,6 +20,8 @@ template <>
 struct Type<unsigned int> : std::true_type {};
 template <>
 struct Type<std::string> : std::true_type {};
+template <>
+struct Type<const char*> : std::true_type {};
 
 class Marshalling {
 public:
@@ -41,6 +43,9 @@ public:
         const char* buffer = lua_tolstring(l, index, &size);
         return std::string{buffer, size};
     }
+    static inline const char* GetValue(Type<const char*>, lua_State* l, const int index) {
+        return lua_tostring(l, index);
+    }
     template <typename R>
     static inline typename std::enable_if<!Type<R>::value, R>::type GetValue(Type<R>, lua_State* l, const int index) {
         // TODO(mpinto): Implement this
@@ -51,7 +56,7 @@ public:
     static void PushValue(lua_State* L, int value) { lua_pushinteger(L, value); }
     static void PushValue(lua_State* L, float value) { lua_pushnumber(L, value); }
     static void PushValue(lua_State* L, double value) { lua_pushnumber(L, value); }
-    static void PushValue(lua_State* L, bool value) { lua_pushboolean(L, value); }
+    static void PushValue(lua_State* L, bool value) { lua_pushboolean(L, (int)value); }
     static void PushValue(lua_State* L, const std::string& value) { lua_pushstring(L, value.c_str()); }
     static void PushValue(lua_State* L, const char* value) { lua_pushstring(L, value); }
 };

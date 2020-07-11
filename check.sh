@@ -57,7 +57,7 @@ if [ -s format_coverage.txt ]; then
 fi
 
 if [ $FORMAT -lt 2 ]; then
-  run-clang-tidy -p='build/Debug/' -header-filter='engine/include|editor/' $FIX >'tidy_coverage.txt' || exit 1
+  run-clang-tidy -p='build/Debug/' -header-filter='engine/include|editor/' $FIX engine/src/ editor/ >'tidy_coverage.txt' || exit 1
   sed -i '/Enabled checks:/,/^$/d' tidy_coverage.txt # Remove enabled checks from file and keep only results
 
   # Check if tidy_coverage.txt exists and is not empty

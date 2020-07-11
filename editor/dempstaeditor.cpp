@@ -20,9 +20,13 @@ void DempstaEditor::OnUpdate(const de::TimeStep& ts) {
         m_timeAccumulator = 0.0f;
         m_fps = 1.0f / (float)ts;
     }
-    if (m_editingMode) m_cameraController.OnUpdate(ts);
+    if (m_editingMode) {
+        m_cameraController.OnUpdate(ts);
+    }
 
-    if (m_editingMode) m_frameBuffer->Bind();
+    if (m_editingMode) {
+        m_frameBuffer->Bind();
+    }
 
     de::RenderCommand::Clear({0.4f, 0.4f, 0.2f, 1});
     de::Renderer2D::ResetStatistics();
@@ -44,7 +48,9 @@ void DempstaEditor::OnUpdate(const de::TimeStep& ts) {
 
     de::Renderer2D::EndScene();
 
-    if (m_editingMode) m_frameBuffer->Unbind();
+    if (m_editingMode) {
+        m_frameBuffer->Unbind();
+    }
 }
 
 void DempstaEditor::OnEvent(de::Event& e) {
@@ -68,7 +74,9 @@ void DempstaEditor::OnEvent(de::Event& e) {
 
 void DempstaEditor::OnImGuiRender() {
     // Render only in editing mode
-    if (!m_editingMode) return;
+    if (!m_editingMode) {
+        return;
+    }
 
     static bool opt_fullscreen_persistant = true;
     bool opt_fullscreen = opt_fullscreen_persistant;
@@ -87,18 +95,22 @@ void DempstaEditor::OnImGuiRender() {
         window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
     }
 
-    if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) window_flags |= ImGuiWindowFlags_NoBackground;
+    if ((dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) != 0) {
+        window_flags |= ImGuiWindowFlags_NoBackground;
+    }
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
     static bool p_open = true;
     ImGui::Begin("Dempsta Editor", &p_open, window_flags);
     ImGui::PopStyleVar();
 
-    if (opt_fullscreen) ImGui::PopStyleVar(2);
+    if (opt_fullscreen) {
+        ImGui::PopStyleVar(2);
+    }
 
     // DockSpace
     ImGuiIO& io = ImGui::GetIO();
-    if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
+    if ((io.ConfigFlags & ImGuiConfigFlags_DockingEnable) != 0) {
         ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
     }

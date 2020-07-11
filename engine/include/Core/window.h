@@ -83,7 +83,6 @@ private:
      */
     void setGLFWCallbacks();
 
-private:
     GLFWwindow* window;
 
     struct WindowData {

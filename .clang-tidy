@@ -1,6 +1,7 @@
 ---
 Checks:          '-*,clang-analyzer-*,clang-diagnostic-*,bugprone-*,google-*,-google-readability-casting,-google-runtime-references,
-modernize-*,-modernize-use-trailing-return-type,performance-*,portability-*,readability-*,-readability-uppercase-literal-suffix'
+modernize-*,-modernize-use-trailing-return-type,performance-*,portability-*,readability-*,-readability-uppercase-literal-suffix,
+-readability-named-parameter,-readability-magic-numbers'
 WarningsAsErrors: ''
 HeaderFilterRegex: ''
 AnalyzeTemporaryDtors: false

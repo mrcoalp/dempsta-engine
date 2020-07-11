@@ -33,12 +33,12 @@ void ImGuiLayer::OnAttach() {
     // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular
     // ones.
     ImGuiStyle& style = ImGui::GetStyle();
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+    if ((io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) != 0) {
         style.WindowRounding = 0.0f;
         style.Colors[ImGuiCol_WindowBg].w = 1.0f;
     }
 
-    auto glfwWindow = Application::GetInstance().GetWindow().GetNativeWindow();
+    auto* glfwWindow = Application::GetInstance().GetWindow().GetNativeWindow();
 
     // Setup Platform/Renderer bindings
     ImGui_ImplGlfw_InitForOpenGL(glfwWindow, true);
@@ -66,7 +66,7 @@ void ImGuiLayer::End() {
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+    if ((io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) != 0) {
         GLFWwindow* backup_current_context = glfwGetCurrentContext();
         ImGui::UpdatePlatformWindows();
         ImGui::RenderPlatformWindowsDefault();

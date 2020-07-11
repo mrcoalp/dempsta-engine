@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
         "************************************************************");
     LOG_ENGINE_TRACE("Running initialization...");
 
-    auto app = de::CreateApplication();
+    auto* app = de::CreateApplication();
     app->Run();
     delete app;
 }
