@@ -21,7 +21,7 @@ Options
 while test $# -gt 0; do
   case "$1" in
   -f | --fix)
-    FIX=--fix
+    FIX=-fix
     ;;
   --format)
     FORMAT=1
