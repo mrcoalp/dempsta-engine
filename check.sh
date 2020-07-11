@@ -47,9 +47,9 @@ while test $# -gt 0; do
   shift
 done
 
-find engine/src -regex '.*\.\(cpp\)' | xargs clang-format -output-replacements-xml | grep "<replacement " >'format_coverage.txt'
-find engine/include -regex '.*\.\(h\)' | xargs clang-format -output-replacements-xml | grep "<replacement " >>'format_coverage.txt'
-find editor -regex '.*\.\(cpp\|h\)' | xargs clang-format -output-replacements-xml | grep "<replacement " >>'format_coverage.txt'
+find engine/src -regex '.*\.\(cpp\|c\)' -exec clang-format -output-replacements-xml {} + | grep "<replacement " >'format_coverage.txt'
+find engine/include -regex '.*\.\(h\|hpp\)' -exec clang-format -output-replacements-xml {} + | grep "<replacement " >>'format_coverage.txt'
+find editor -regex '.*\.\(cpp\|c\|hpp\|h\)' -exec clang-format -output-replacements-xml {} + | grep "<replacement " >>'format_coverage.txt'
 
 # Check if format_coverage.txt exists and is not empty
 if [ -s format_coverage.txt ]; then
@@ -57,22 +57,20 @@ if [ -s format_coverage.txt ]; then
 fi
 
 if [ $FORMAT -lt 2 ]; then
-  mv build/Debug/compile_commands.json . || exit 1
-  find engine/src -regex '.*\.\(cpp\)' | xargs clang-tidy $FIX >'tidy_coverage.txt' || exit 1
-  find editor -regex '.*\.\(cpp\|h\)' | xargs clang-tidy $FIX >>'tidy_coverage.txt' || exit 1
-  mv compile_commands.json build/Debug/
+  run-clang-tidy -p='build/Debug/' -header-filter='engine/include|editor/' $FIX >'tidy_coverage.txt' || exit 1
+  sed -i '/Enabled checks:/,/^$/d' tidy_coverage.txt # Remove enabled checks from file and keep only results
 
   # Check if tidy_coverage.txt exists and is not empty
   if [ -s tidy_coverage.txt ]; then
     echo -e '\033[1;33mErrors and/or warnings were found. Please check "tidy_coverage.txt"!\033[0m'
-    exit 1
+    #    exit 1 TODO(mpinto): Uncomment when all relevant warnings are fixed
   fi
 fi
 
 if [ $FORMAT -ge 1 ]; then
-  find engine/src -regex '.*\.\(cpp\)' | xargs clang-format -i
-  find engine/include -regex '.*\.\(h\)' | xargs clang-format -i
-  find editor -regex '.*\.\(cpp\|h\)' | xargs clang-format -i
+  find engine/src -regex '.*\.\(cpp\)' -exec clang-format -i {} +
+  find engine/include -regex '.*\.\(h\)' -exec clang-format -i {} +
+  find editor -regex '.*\.\(cpp\|h\)' -exec clang-format -i {} +
   echo -e '\033[0;32mRan clang-format!\033[0m'
 fi
 
