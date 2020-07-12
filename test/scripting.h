@@ -6,19 +6,19 @@ int testClass = -1;
 
 class Script {
 public:
-    explicit Script(lua_State*) : m_prop(SM::GetValue<int>()) {}
+    explicit Script(lua_State*) : m_prop(SE::GetValue<int>()) {}
 
     LUA_DECLARE_CLASS(Script)
 
     LUA_PROPERTY(m_prop, int)
 
     LUA_PROXY_METHOD(Getter) {
-        SM::PushValue(m_prop + SM::GetValue<int>());
+        SE::PushValue(m_prop + SE::GetValue<int>());
         return 1;
     }
 
     LUA_PROXY_METHOD(Setter) {
-        testClass = SM::GetValue<int>();
+        testClass = SE::GetValue<int>();
         return 0;
     }
 
@@ -33,45 +33,45 @@ LUA_ADD_METHOD(Setter);
 
 std::string testCPPFunction = "";
 int cppFunction(lua_State* L) {
-    testCPPFunction = SM::GetValue<std::string>();
+    testCPPFunction = SE::GetValue<std::string>();
     return 0;
 }
 
 bool test_call_cpp_function_from_lua() {
-    SM::Init();
-    SM::RegisterFunction("cppFunction", cppFunction);
-    SM::LoadFile("scripts/cppfunctions.lua");
-    SM::CloseState();
+    SE::Init();
+    SE::RegisterFunction("cppFunction", cppFunction);
+    SE::LoadFile("scripts/cppfunctions.lua");
+    SE::CloseState();
     return testCPPFunction == "passed";
 }
 
 bool test_call_lua_function_from_cpp() {
-    SM::Init();
-    SM::LoadFile("scripts/luafunctions.lua");
+    SE::Init();
+    SE::LoadFile("scripts/luafunctions.lua");
     std::string s;
-    SM::CallFunction(s, "OnUpdate", "delta");
+    SE::CallFunction(s, "OnUpdate", "delta");
     int i;
-    SM::CallFunction(i, "Maths", 2, 3, 4);
-    SM::CloseState();
+    SE::CallFunction(i, "Maths", 2, 3, 4);
+    SE::CloseState();
     return s == "FPS in Lua:delta" && i == 10;
 }
 
 bool test_cpp_class_bind_lua() {
-    SM::Init();
-    SM::RegisterClass<Script>();
-    SM::LoadFile("scripts/cppclass.lua");
-    SM::CloseState();
+    SE::Init();
+    SE::RegisterClass<Script>();
+    SE::LoadFile("scripts/cppclass.lua");
+    SE::CloseState();
     return testClass == 40;
 }
 
 bool test_get_global_lua_var_from_cpp() {
-    SM::Init();
-    SM::LoadFile("scripts/luavariables.lua");
-    const std::string s = SM::GetGlobalVariable<std::string>("string");
-    const bool b = SM::GetGlobalVariable<bool>("bool");
-    const int i = SM::GetGlobalVariable<int>("int");
-    const float f = SM::GetGlobalVariable<float>("float");
-    const double d = SM::GetGlobalVariable<double>("double");
-    SM::CloseState();
+    SE::Init();
+    SE::LoadFile("scripts/luavariables.lua");
+    const std::string s = SE::GetGlobalVariable<std::string>("string");
+    const bool b = SE::GetGlobalVariable<bool>("bool");
+    const int i = SE::GetGlobalVariable<int>("int");
+    const float f = SE::GetGlobalVariable<float>("float");
+    const double d = SE::GetGlobalVariable<double>("double");
+    SE::CloseState();
     return s == "passed" && b && i == -1 && f == 12.6f && d == 3.14;
 }

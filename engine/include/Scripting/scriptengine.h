@@ -7,9 +7,9 @@
 #include "Scripting/marshalling.h"
 
 namespace lua {
-typedef int (*lua_CFunction)(lua_State* L);
+using lua_CFunction = int (*)(lua_State*);
 
-class ScriptManager {
+class ScriptEngine {
 public:
     static void Init();
 
@@ -89,4 +89,4 @@ private:
 };
 }  // namespace lua
 
-using SM = lua::ScriptManager;
+using SE = lua::ScriptEngine;

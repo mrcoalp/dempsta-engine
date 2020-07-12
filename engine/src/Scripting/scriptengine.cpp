@@ -1,21 +1,21 @@
-#include "Scripting/scriptmanager.h"
+#include "Scripting/scriptengine.h"
 
 #include "Core/log.h"
 
 namespace lua {
-lua_State* ScriptManager::state = nullptr;
+lua_State* ScriptEngine::state = nullptr;
 
-void ScriptManager::Init() {
+void ScriptEngine::Init() {
     state = luaL_newstate();
     luaL_openlibs(state);
 }
 
-void ScriptManager::CloseState() {
+void ScriptEngine::CloseState() {
     lua_close(state);
     state = nullptr;
 }
 
-bool ScriptManager::LoadFile(const std::string& filePath) {
+bool ScriptEngine::LoadFile(const std::string& filePath) {
     int status = luaL_loadfile(state, filePath.c_str());
     if (status != LUA_OK) {
         if (status == LUA_ERRSYNTAX) {
@@ -38,9 +38,9 @@ bool ScriptManager::LoadFile(const std::string& filePath) {
     return false;
 }
 
-void ScriptManager::RegisterFunction(const char* name, lua_CFunction fn) { lua_register(state, name, fn); }
+void ScriptEngine::RegisterFunction(const char* name, lua_CFunction fn) { lua_register(state, name, fn); }
 
-void ScriptManager::CallFunction(const char* name) {
+void ScriptEngine::CallFunction(const char* name) {
     lua_getglobal(state, name);
     if (lua_isfunction(state, -1)) {
         lua_call(state, 0, 0);

@@ -59,11 +59,12 @@ fi
 if [ $FORMAT -lt 2 ]; then
   run-clang-tidy -p='build/Debug/' -header-filter='engine/include|editor/' $FIX engine/src/ editor/ >'tidy_coverage.txt' || exit 1
   sed -i '/Enabled checks:/,/^$/d' tidy_coverage.txt # Remove enabled checks from file and keep only results
+  sed -i '/-header-filter=/d' tidy_coverage.txt # Remove clang-tidy specific text
 
   # Check if tidy_coverage.txt exists and is not empty
   if [ -s tidy_coverage.txt ]; then
     echo -e '\033[1;33mErrors and/or warnings were found. Please check "tidy_coverage.txt"!\033[0m'
-    #    exit 1 TODO(mpinto): Uncomment when all relevant warnings are fixed
+    exit 1
   fi
 fi
 

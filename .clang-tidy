@@ -1,7 +1,7 @@
 ---
-Checks:          '-*,clang-analyzer-*,clang-diagnostic-*,bugprone-*,google-*,-google-readability-casting,-google-runtime-references,
-modernize-*,-modernize-use-trailing-return-type,performance-*,portability-*,readability-*,-readability-uppercase-literal-suffix,
--readability-named-parameter,-readability-magic-numbers'
+Checks:          '-*,clang-analyzer-*,clang-diagnostic-*,bugprone-*,-bugprone-macro-parentheses,google-*,-google-readability-casting,
+-google-runtime-references,modernize-*,-modernize-use-trailing-return-type,performance-*,-modernize-avoid-c-arrays,portability-*,readability-*,
+-readability-uppercase-literal-suffix,-readability-named-parameter,-readability-magic-numbers,-google-default-arguments'
 WarningsAsErrors: ''
 HeaderFilterRegex: ''
 AnalyzeTemporaryDtors: false

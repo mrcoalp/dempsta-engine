@@ -34,8 +34,10 @@ public:
     */
     static T* Check(lua_State* L, int narg) {
         T** obj = static_cast<T**>(luaL_checkudata(L, narg, T::Binding.GetName()));
-        if (!obj) return nullptr;  // LightCheck returns nullptr if not found.
-        return *obj;               // pointer to T object
+        if (!obj) {
+            return nullptr;
+        }             // LightCheck returns nullptr if not found.
+        return *obj;  // pointer to T object
     }
 
     /*
@@ -51,8 +53,10 @@ public:
     */
     static T* LightCheck(lua_State* L, int narg) {
         T** obj = static_cast<T**>(luaL_testudata(L, narg, T::Binding.GetName()));
-        if (!obj) return nullptr;  // LightCheck returns nullptr if not found.
-        return *obj;               // pointer to T object
+        if (!obj) {
+            return nullptr;
+        }             // LightCheck returns nullptr if not found.
+        return *obj;  // pointer to T object
     }
 
     /*
@@ -65,7 +69,7 @@ public:
         Registers your class with Lua.  Leave nameSpace "" if you want to load it into the global space.
     */
     static void Register(lua_State* L, const char* nameSpace = nullptr) {
-        if (nameSpace && strlen(nameSpace)) {
+        if (nameSpace != nullptr && strlen(nameSpace) != 0u) {
             lua_getglobal(L, nameSpace);
             if (lua_isnil(L, -1))  // Create namespace if not present
             {
@@ -165,15 +169,15 @@ private:
         lua_pushvalue(L, 2);     // Push the name
         lua_rawget(L, -2);       // Get the index
 
-        if (lua_isnumber(L, -1)) {  // Check if we got a valid index
-            unsigned _index = static_cast<unsigned>(lua_tonumber(L, -1));
+        if (lua_isnumber(L, -1) != 0) {  // Check if we got a valid index
+            auto _index = static_cast<unsigned>(lua_tonumber(L, -1));
 
             T** obj = static_cast<T**>(lua_touserdata(L, 1));
 
             lua_pushvalue(L, 3);
 
-            if (_index & (1u << 8u))  // A func
-            {
+            // A func
+            if ((_index & (1u << 8u)) != 0u) {
                 lua_pushnumber(L, _index ^ (1u << 8u));  // Push the right func index
                 lua_pushlightuserdata(L, obj);
                 lua_pushcclosure(L, &LuaClass<T>::function_dispatch, 2);
@@ -200,8 +204,8 @@ private:
         lua_pushvalue(L, 2);     //
         lua_rawget(L, -2);       //
 
-        if (lua_isnumber(L, -1)) {  // Check if we got a valid index
-            unsigned _index = static_cast<unsigned>(lua_tonumber(L, -1));
+        if (lua_isnumber(L, -1) != 0) {  // Check if we got a valid index
+            auto _index = static_cast<unsigned>(lua_tonumber(L, -1));
 
             T** obj = static_cast<T**>(lua_touserdata(L, 1));
 
@@ -210,7 +214,7 @@ private:
                 return 0;
             }
 
-            if (_index >> 8u) {  // Try to set a func
+            if ((_index >> 8u) != 0u) {  // Try to set a func
                 char c[128];
                 sprintf(c, "Trying to set the method [%s] of class [%s]",
                         (*obj)->T::Binding.GetMethods()[_index ^ (1u << 8u)].name, T::Binding.GetName());
@@ -248,7 +252,9 @@ private:
     static int gc_obj(lua_State* L) {
         T** obj = static_cast<T**>(lua_touserdata(L, -1));
 
-        if (obj && *obj) delete (*obj);
+        if (obj && *obj) {
+            delete (*obj);
+        }
 
         return 0;
     }
@@ -256,10 +262,11 @@ private:
     static int to_string(lua_State* L) {
         T** obj = static_cast<T**>(lua_touserdata(L, -1));
 
-        if (obj)
+        if (obj) {
             lua_pushfstring(L, "%s (%p)", T::Binding.GetName(), (void*)*obj);
-        else
+        } else {
             lua_pushstring(L, "Empty object");
+        }
 
         return 1;
     }

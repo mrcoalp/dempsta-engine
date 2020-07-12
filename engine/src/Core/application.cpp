@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Renderer/renderer.h"
-#include "Scripting/scriptmanager.h"
+#include "Scripting/scriptengine.h"
 
 namespace de {
 Application* Application::m_instance = nullptr;
@@ -17,15 +17,13 @@ Application::Application() {
     m_window->SetEventCallback([this](Event& e) { OnEvent(e); });
 
     Renderer::Init();
-    SM::Init();
+    SE::Init();
 
-#ifdef NDEBUG
     m_imguiLayer = new ImGuiLayer();
     PushOverlay(m_imguiLayer);
-#endif
 }
 
-Application::~Application() { SM::CloseState(); }
+Application::~Application() { SE::CloseState(); }
 
 void Application::OnEvent(Event& e) {
     EventDispatcher eventDispatcher(e);
@@ -55,14 +53,13 @@ void Application::Run() {
                 _layer->OnUpdate(_ts);
             }
         }
-#ifdef NDEBUG
+
         // Render ImGui layer
-        m_imguiLayer->Begin();
+        ImGuiLayer::Begin();
         for (const auto& _layer : m_layerStack) {
             _layer->OnImGuiRender();
         }
-        m_imguiLayer->End();
-#endif
+        ImGuiLayer::End();
 
         m_window->OnUpdate();
     }

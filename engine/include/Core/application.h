@@ -71,9 +71,7 @@ private:
     float m_lastFrameTime = 0.0f;
     bool m_minimized = false;
 
-#ifdef NDEBUG
     ImGuiLayer* m_imguiLayer;
-#endif
 
     /**
      * @brief On window close event callback.

@@ -16,12 +16,9 @@ public:
     void OnDetach() override;
 
     /** Initializes a new ImGui frame. */
-    void Begin();
+    static void Begin();
 
     /** Handles rendering of ImGui. Call this after defining what to render in OnImGuiUpdate. */
-    void End();
-
-private:
-    float time = 0.0f;
+    static void End();
 };
 }  // namespace de

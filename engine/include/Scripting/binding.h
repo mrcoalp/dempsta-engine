@@ -42,11 +42,11 @@ private:
 // NOTE(MPINTO): Marshalling is needed when using this macro
 #define LUA_PROPERTY(_property, _type)     \
     int Get_##_property(lua_State* L) {    \
-        SM::PushValue(_property);          \
+        SE::PushValue(_property);          \
         return 1;                          \
     }                                      \
     int Set_##_property(lua_State* L) {    \
-        _property = SM::GetValue<_type>(); \
+        _property = SE::GetValue<_type>(); \
         return 0;                          \
     }
 #define LUA_PROXY_METHOD(_name) int _name(lua_State* L)
