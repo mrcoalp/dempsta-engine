@@ -9,7 +9,7 @@ static std::map<const char*, Test> tests = {{"test_call_cpp_function_from_lua", 
                                             {"test_get_global_lua_var_from_cpp", test_get_global_lua_var_from_cpp}};
 
 int RunTests() {
-    const int nrOfTests = tests.size();
+    const int nrOfTests = (int)tests.size();
     int passed = 0;
     LOG_DEBUG("Executing {} tests...", nrOfTests);
     for (const auto& test : tests) {
