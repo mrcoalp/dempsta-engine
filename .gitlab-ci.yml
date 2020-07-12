@@ -14,8 +14,8 @@ run-checks:
   only:
     - merge_requests
   script:
-    - bash build.sh --make --check
-    - bash check.sh
+    - bash utils/linux/build.sh --make --check
+    - bash utils/linux/check.sh
   artifacts:
     paths:
       - tidy_coverage.txt
@@ -30,9 +30,9 @@ build-project:
     - master
   script:
     # Debug build with tests
-    - bash build.sh --make -i -t
+    - bash utils/linux/build.sh --make -i -t
     # Release build
-    - bash build.sh --make -i -r
+    - bash utils/linux/build.sh --make -i -r
   artifacts:
     paths:
       - build/Debug/bin/
@@ -46,7 +46,7 @@ run-tests:
     - merge_requests
     - master
   script:
-    - bash test.sh -c
+    - bash utils/linux/test.sh -c
   artifacts:
     paths:
       - test_coverage.txt
