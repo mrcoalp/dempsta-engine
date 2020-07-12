@@ -6,7 +6,8 @@ using Test = std::function<bool()>;
 static std::map<const char*, Test> tests = {{"test_call_cpp_function_from_lua", test_call_cpp_function_from_lua},
                                             {"test_call_lua_function_from_cpp", test_call_lua_function_from_cpp},
                                             {"test_cpp_class_bind_lua", test_cpp_class_bind_lua},
-                                            {"test_get_global_lua_var_from_cpp", test_get_global_lua_var_from_cpp}};
+                                            {"test_get_global_lua_var_from_cpp", test_get_global_lua_var_from_cpp},
+                                            {"test_lua_run_code", test_lua_run_code}};
 
 int RunTests() {
     const int nrOfTests = (int)tests.size();

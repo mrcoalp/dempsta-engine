@@ -15,7 +15,9 @@ public:
 
     static void CloseState();
 
-    static bool LoadFile(const std::string& filePath);
+    static bool LoadFile(const char* filePath);
+
+    static bool RunCode(const char* code);
 
     [[nodiscard]] static inline const lua_State* GetState() { return state; }
 
@@ -86,6 +88,16 @@ public:
 
 private:
     static lua_State* state;
+
+    /**
+     * @brief Checks for lua status and returns if ok or not.
+     *
+     * @param status Status code obtained from lua function
+     * @param errMessage Default error message to print if none is obtained from lua stack
+     * @return true Lua ok
+     * @return false Something failed
+     */
+    static bool checkStatus(int status, const char* errMessage = "");
 };
 }  // namespace lua
 

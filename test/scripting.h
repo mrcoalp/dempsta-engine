@@ -75,3 +75,10 @@ bool test_get_global_lua_var_from_cpp() {
     SE::CloseState();
     return s == "passed" && b && i == -1 && f == 12.6f && d == 3.14;
 }
+
+bool test_lua_run_code() {
+    SE::Init();
+    const bool status = SE::RunCode("a = 'passed';print('FROM LUA: run code ', a)");
+    SE::CloseState();
+    return status;
+}
