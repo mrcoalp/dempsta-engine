@@ -4,7 +4,13 @@
 #include <lua.hpp>
 
 namespace lua {
-//==== LunaLuaFive modded ====//
+/**
+ * @brief Converts C++ class to Lua metatable.
+ * LunaFive modded - http://lua-users.org/wiki/LunaFive
+ * This modded version uses a different method to bind class methods.
+ *
+ * @tparam T Class to expose to Lua.
+ */
 template <class T>
 class LuaClass {
 public:
@@ -22,16 +28,14 @@ public:
         int (T::*func)(lua_State*);
     };
 
-    /*
-      @ Check
-      Arguments:
-        * L - Lua State
-        * narg - Position to check
-
-      Description:
-        Retrieves a wrapped class from the arguments passed to the func, specified by narg (position).
-        This func will raise an exception if the argument is not of the correct type.
-    */
+    /**
+     * @brief Retrieves a wrapped class from the arguments passed to the func, specified by narg (position).
+     * This func will raise an exception if the argument is not of the correct type.
+     *
+     * @param L Lua State
+     * @param narg Position to check
+     * @return T*
+     */
     static T* Check(lua_State* L, int narg) {
         T** obj = static_cast<T**>(luaL_checkudata(L, narg, T::Binding.GetName()));
         if (!obj) {
@@ -40,17 +44,15 @@ public:
         return *obj;  // pointer to T object
     }
 
-    /*
-      @ LightCheck
-      Arguments:
-        * L - Lua State
-        * narg - Position to check
-
-      Description:
-        Retrieves a wrapped class from the arguments passed to the func, specified by narg (position).
-        This func will return nullptr if the argument is not of the correct type.  Useful for supporting
-        multiple types of arguments passed to the func
-    */
+    /**
+     * @brief Retrieves a wrapped class from the arguments passed to the func, specified by narg (position).
+     * This func will return nullptr if the argument is not of the correct type.  Useful for supporting
+     * multiple types of arguments passed to the func
+     *
+     * @param L Lua State
+     * @param narg Position to check
+     * @return T*
+     */
     static T* LightCheck(lua_State* L, int narg) {
         T** obj = static_cast<T**>(luaL_testudata(L, narg, T::Binding.GetName()));
         if (!obj) {
@@ -59,15 +61,12 @@ public:
         return *obj;  // pointer to T object
     }
 
-    /*
-      @ Register
-      Arguments:
-        * L - Lua State
-        * nameSpace - Namespace to load into
-
-      Description:
-        Registers your class with Lua.  Leave nameSpace "" if you want to load it into the global space.
-    */
+    /**
+     * @brief Registers your class with Lua.  Leave nameSpace "" if you want to load it into the global space.
+     *
+     * @param L Lua State
+     * @param nameSpace Namespace to load into
+     */
     static void Register(lua_State* L, const char* nameSpace = nullptr) {
         if (nameSpace != nullptr && strlen(nameSpace) != 0u) {
             lua_getglobal(L, nameSpace);
@@ -126,11 +125,12 @@ public:
     }
 
 private:
-    /*
-      @ constructor (internal)
-      Arguments:
-        * L - Lua State
-    */
+    /**
+     * @brief constructor (internal)
+     *
+     * @param L Lua State
+     * @return int
+     */
     static int constructor(lua_State* L) {
         T* ap = new T(L);
         T** a = static_cast<T**>(lua_newuserdata(L, sizeof(T*)));  // Push value = userdata
@@ -141,15 +141,12 @@ private:
         return 1;
     }
 
-    /*
-      @ createNew
-      Arguments:
-        * L - Lua State
-        T*	- Instance to push
-
-      Description:
-        Loads an instance of the class into the Lua stack, and provides you a pointer so you can modify it.
-    */
+    /**
+     * @brief Loads an instance of the class into the Lua stack, and provides you a pointer so you can modify it.
+     *
+     * @param L Lua State
+     * @param instance Instance to push
+     */
     static void push(lua_State* L, T* instance) {
         T** a = (T**)lua_newuserdata(L, sizeof(T*));  // Create userdata
         *a = instance;
@@ -159,11 +156,12 @@ private:
         lua_setmetatable(L, -2);
     }
 
-    /*
-      @ property_getter (internal)
-      Arguments:
-        * L - Lua State
-    */
+    /**
+     * @brief property_getter (internal)
+     *
+     * @param L Lua State
+     * @return int
+     */
     static int property_getter(lua_State* L) {
         lua_getmetatable(L, 1);  // Look up the index of a name
         lua_pushvalue(L, 2);     // Push the name
@@ -194,11 +192,12 @@ private:
         return 1;
     }
 
-    /*
-      @ property_setter (internal)
-      Arguments:
-        * L - Lua State
-    */
+    /**
+     * @brief property_setter (internal)
+     *
+     * @param L Lua State
+     * @return int
+     */
     static int property_setter(lua_State* L) {
         lua_getmetatable(L, 1);  // Look up the index from name
         lua_pushvalue(L, 2);     //
@@ -232,11 +231,12 @@ private:
         return 0;
     }
 
-    /*
-      @ function_dispatch (internal)
-      Arguments:
-        * L - Lua State
-    */
+    /**
+     * @brief function_dispatch (internal)
+     *
+     * @param L Lua State
+     * @return int
+     */
     static int function_dispatch(lua_State* L) {
         int i = (int)lua_tonumber(L, lua_upvalueindex(1));
         T** obj = static_cast<T**>(lua_touserdata(L, lua_upvalueindex(2)));
@@ -244,11 +244,12 @@ private:
         return ((*obj)->*(T::Binding.GetMethods()[i].func))(L);
     }
 
-    /*
-      @ gc_obj (internal)
-      Arguments:
-        * L - Lua State
-    */
+    /**
+     * @brief gc_obj (internal)
+     *
+     * @param L Lua State
+     * @return int
+     */
     static int gc_obj(lua_State* L) {
         T** obj = static_cast<T**>(lua_touserdata(L, -1));
 
@@ -271,10 +272,13 @@ private:
         return 1;
     }
 
-    /*
-     * Method which compares two Luna objects.
+    /**
+     * @brief Method which compares two Luna objects.
      * The full userdatas (as opposed to light userdata) can't be natively compared one to other, we have to had this to
      * do it.
+     *
+     * @param L Lua State
+     * @return int
      */
     static int equals(lua_State* L) {
         T** obj1 = static_cast<T**>(lua_touserdata(L, -1));
