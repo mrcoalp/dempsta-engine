@@ -3,9 +3,6 @@ project(dempsta)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# Include cmake util functions
-include(${CMAKE_CURRENT_SOURCE_DIR}/utils/cmake/utils.cmake)
-
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(BUILD_DOC "Build documentation" OFF)
 
@@ -30,29 +27,17 @@ if (${CMAKE_BUILD_TYPE} MATCHES Debug)
 else ()
     message("-- Build type: Release")
     add_definitions(-UNDEBUG)
-
-    if (BUILD_DOC)
-        find_package(Doxygen)
-        if (DOXYGEN_FOUND)
-            # set input and output files
-            set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
-            set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
-
-            # request to configure the file
-            configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
-            message("Doxygen build started for Dempsta Engine")
-
-            # note the option ALL which allows to build the docs together with the application
-            add_custom_target(doc_dempsta ALL
-                COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
-                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-                COMMENT "Generating API documentation with Doxygen"
-                VERBATIM )
-        else (DOXYGEN_FOUND)
-            message("Doxygen need to be installed to generate the doxygen documentation")
-        endif (DOXYGEN_FOUND)
-    endif(BUILD_DOC)
 endif ()
+
+if (BUILD_DOC)
+    find_package(Doxygen)
+
+    if (DOXYGEN_FOUND)
+        add_subdirectory(docs)
+    else (DOXYGEN_FOUND)
+        message("Doxygen need to be installed to generate the doxygen documentation")
+    endif (DOXYGEN_FOUND)
+endif(BUILD_DOC)
 
 file(GLOB_RECURSE SOURCES src/*.cpp)
 add_library(dempsta ${LIB_TYPE} ${SOURCES})
