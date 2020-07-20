@@ -8,12 +8,14 @@
 namespace de {
 Application* Application::m_instance = nullptr;
 
-Application::Application() {
+Application::Application() : Application(WindowProps()) {}
+
+Application::Application(const WindowProps& windowProps) {
     DE_ASSERT(m_instance == nullptr, "Application already exists! Aborting...")
 
     m_instance = this;
 
-    m_window = CreateScope<Window>(WindowProps());
+    m_window = CreateScope<Window>(windowProps);
     m_window->SetEventCallback([this](Event& e) { OnEvent(e); });
 
     Renderer::Init();

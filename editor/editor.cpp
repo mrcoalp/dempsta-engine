@@ -4,7 +4,7 @@
 
 class Editor : public de::Application {
 public:
-    Editor() { PushLayer(new DempstaEditor()); };
+    Editor() : de::Application({"Dempsta Editor", 1366, 768}) { PushLayer(new DempstaEditor()); };
 
     ~Editor() override = default;
 };

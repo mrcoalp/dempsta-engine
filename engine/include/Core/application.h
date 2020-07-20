@@ -14,6 +14,8 @@ class Application {
 public:
     Application();
 
+    explicit Application(const WindowProps& windowProps);
+
     virtual ~Application();
 
     /**

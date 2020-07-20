@@ -11,13 +11,9 @@ namespace de {
  * @brief Contains relevant window properties.
  */
 struct WindowProps {
-    std::string title;
-    unsigned int width;
-    unsigned int height;
-
-    explicit WindowProps(std::string title = "Default Dempsta Title", unsigned int width = 1280,
-                         unsigned int height = 720)
-        : title(std::move(title)), width(width), height(height) {}
+    std::string title = "Default Dempsta Title";
+    unsigned int width = 1280u;
+    unsigned int height = 720u;
 };
 
 class Window {

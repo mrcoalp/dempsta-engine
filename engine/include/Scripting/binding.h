@@ -5,9 +5,12 @@
 #include "Scripting/luaclass.h"
 
 namespace lua {
-template <typename T>
+template <class BindableClass>
 class Binding {
 public:
+    using LuaFunction = typename LuaClass<BindableClass>::FunctionType;
+    using LuaProperty = typename LuaClass<BindableClass>::PropertyType;
+
     explicit Binding(const char* name) : m_name(name) {}
 
     ~Binding() = default;
@@ -18,20 +21,20 @@ public:
 
     [[nodiscard]] inline const auto& GetProperties() const { return m_properties; }
 
-    Binding& AddMethod(typename LuaClass<T>::FunctionType func) {
+    Binding& AddMethod(LuaFunction func) {
         m_methods.push_back(func);
         return *this;
     }
 
-    Binding& AddProperty(typename LuaClass<T>::PropertyType prop) {
+    Binding& AddProperty(LuaProperty prop) {
         m_properties.push_back(prop);
         return *this;
     }
 
 private:
     const char* m_name;
-    std::vector<typename LuaClass<T>::FunctionType> m_methods;
-    std::vector<typename LuaClass<T>::PropertyType> m_properties;
+    std::vector<LuaFunction> m_methods;
+    std::vector<LuaProperty> m_properties;
 };
 }  // namespace lua
 
