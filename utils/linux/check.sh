@@ -1,6 +1,10 @@
 #!/bin/bash
 
+# Run clang-tidy with fix or not
 FIX=
+# 0 - disable
+# 1 - format and check
+# 2 - format without check
 FORMAT=0
 
 usage() {
@@ -35,12 +39,12 @@ while test $# -gt 0; do
     ;;
   -*)
     echo -e "\033[0;31mBad argument: $1\033[0m"
-    ./check.sh -h
+    usage
     exit 1
     ;;
   *)
     echo -e "\033[0;31mUnknown argument: $1\033[0m"
-    ./check.sh -h
+    usage
     exit 1
     ;;
   esac
@@ -59,7 +63,7 @@ fi
 if [ $FORMAT -lt 2 ]; then
   run-clang-tidy -p='build/Debug/' -header-filter='engine/include|editor/' $FIX engine/src/ editor/ >'tidy_coverage.txt' || exit 1
   sed -i '/Enabled checks:/,/^$/d' tidy_coverage.txt # Remove enabled checks from file and keep only results
-  sed -i '/-header-filter=/d' tidy_coverage.txt # Remove clang-tidy specific text
+  sed -i '/-header-filter=/d' tidy_coverage.txt      # Remove clang-tidy specific text
 
   # Check if tidy_coverage.txt exists and is not empty
   if [ -s tidy_coverage.txt ]; then

@@ -7,6 +7,22 @@ APPNAME=dempsta_editor
 # Build before running?
 BUILD=0
 
+usage() {
+  echo "Usage
+
+    run.sh [options]
+
+    Runs the game, by default, with debug configuration.
+    If build folder doesn't exist, builds game before running.
+
+Options
+    -d | --debug        - Run game with debug configuration
+    -r | --release      - Run game with release configuration
+    -b | --build        - Build configuration before running
+    -n | --name <name>  - Specify executable name to run
+    -h | --help         - Show help"
+}
+
 # Check for arguments
 while test $# -gt 0; do
   case "$1" in
@@ -24,29 +40,17 @@ while test $# -gt 0; do
     APPNAME=$1
     ;;
   -h | --help)
-    echo "Usage
-
-    run.sh [options]
-
-    Runs the game, by default, with debug configuration.
-    If build folder doesn't exist, builds game before running.
-
-Options
-    -d | --debug        - Run game with debug configuration
-    -r | --release      - Run game with release configuration
-    -b | --build        - Build configuration before running
-    -n | --name <name>  - Specify executable name to run
-    -h | --help         - Show help"
+    usage
     exit 0
     ;;
   -*)
     echo -e "\033[0;31mBad argument: $1!\033[0m"
-    ./run.sh -h
+    usage
     exit 1
     ;;
   *)
     echo -e "\033[0;31mUnknown argument: $1!\033[0m"
-    ./run.sh -h
+    usage
     exit 1
     ;;
   esac
@@ -55,7 +59,7 @@ done
 
 # Build project if build folder is not present
 if [ ! -d "build/$CONFIGURATION" ] || [ $BUILD = 1 ]; then
-  ./build.sh "--$CONFIGURATION"
+  ./$(dirname "$0")/build.sh "--$CONFIGURATION"
 fi
 
 if [ -f "build/$CONFIGURATION/$APPNAME" ]; then

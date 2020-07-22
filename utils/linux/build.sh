@@ -80,12 +80,12 @@ while test $# -gt 0; do
     ;;
   -*)
     echo -e "\033[0;31mBad argument: $1\033[0m"
-    ./build.sh -h
+    usage
     exit 1
     ;;
   *)
     echo -e "\033[0;31mUnknown argument: $1\033[0m"
-    ./build.sh -h
+    usage
     exit 1
     ;;
   esac
