@@ -1,13 +1,19 @@
 #include "dempstaeditor.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
 DempstaEditor::DempstaEditor() : de::Layer("DempstaEditor"), m_cameraController(16.0f / 9.0f, true) {}
 
 void DempstaEditor::OnAttach() {
     m_spriteSheet = de::CreateRef<de::Atlas2D>("assets/textures/RPGpack_sheet_2X.png", glm::vec2(128.0f));
-    m_spriteTree = de::SubTexture2D::CreateSprite(m_spriteSheet, glm::vec2({0.0f, 1.0f}), glm::vec2({1.0f, 2.0f}));
     m_spriteBarrel = de::SubTexture2D::CreateSprite(m_spriteSheet, glm::vec2({8.0f, 0.0f}));
     de::FrameBufferConfig fConfig = {1280, 720};
     m_frameBuffer = de::FrameBuffer::Create(fConfig);
+    m_activeScene = de::CreateRef<de::Scene>();
+
+    m_square = m_activeScene->CreateEntity();
+    m_activeScene->GetReg().emplace<de::TransformComponent>(m_square);
+    m_activeScene->GetReg().emplace<de::SpriteComponent>(m_square);
 }
 
 void DempstaEditor::OnDetach() {}
@@ -35,15 +41,9 @@ void DempstaEditor::OnUpdate(const de::TimeStep& ts) {
     rotation += 50.0f * (float)ts;
 
     de::Renderer2D::BeginScene(m_cameraController.GetCamera());
-    de::Renderer2D::DrawQuad({0.0f, 0.0f}, {0.5f, 1.0f}, m_spriteTree);
 
-    m_quad.subTexture = m_spriteBarrel;
-    m_quad.position = glm::vec3({0.5f, 0.0f, 0.0f});
-    m_quad.size = glm::vec3({0.5f, 0.5f, 0.0f});
-    m_quad.rotation = 45.0f;
-    m_quad.tint = glm::vec4(1.0f, 0.1f, 0.2f, 0.7f);
+    m_activeScene->OnUpdate(ts);
 
-    de::Renderer2D::DrawQuad(m_quad);
     de::Renderer2D::DrawRotatedQuad(rotation, {-1.0f, 0.f}, {1.0f, 1.0f}, m_spriteBarrel);
 
     de::Renderer2D::EndScene();
@@ -152,6 +152,11 @@ void DempstaEditor::OnImGuiRender() {
     }
 
     ImGui::Image((void*)(uintptr_t)m_frameBuffer->GetColorAttachment(), {contentWidth, contentHeight}, {0, 1}, {1, 0});
+    ImGui::End();
+
+    ImGui::Begin("Square Color");
+    auto& color = m_activeScene->GetReg().get<de::SpriteComponent>(m_square).Color;
+    ImGui::ColorPicker4("Select color", glm::value_ptr(color));
     ImGui::End();
 
     ImGui::End();
