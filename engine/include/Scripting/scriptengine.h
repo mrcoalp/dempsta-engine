@@ -101,7 +101,7 @@ public:
      * @param args Lua function arguments.
      */
     template <typename T, typename... Args>
-    static void CallFunction(T& lValue, const char* name, Args... args) {
+    static void CallFunction(T& lValue, const char* name, Args&&... args) {
         lua_getglobal(state, name);
         if (!lua_isfunction(state, -1)) {
             LOG_ENGINE_WARN("Tried to call an invalid Lua function: {}", name);
@@ -168,7 +168,7 @@ public:
      * @param args Rest of the value to push to Lua stack.
      */
     template <typename T, typename... Args>
-    static void PushValues(T first, Args... args) {
+    static void PushValues(T first, Args&&... args) {
         PushValue(first);
         PushValues(std::forward<Args>(args)...);
     }
