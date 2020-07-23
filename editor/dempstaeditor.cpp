@@ -2,22 +2,23 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-DempstaEditor::DempstaEditor() : de::Layer("DempstaEditor"), m_cameraController(16.0f / 9.0f, true) {}
+namespace de {
+DempstaEditor::DempstaEditor() : Layer("DempstaEditor"), m_cameraController(16.0f / 9.0f, true) {}
 
 void DempstaEditor::OnAttach() {
-    m_spriteSheet = de::CreateRef<de::Atlas2D>("assets/textures/RPGpack_sheet_2X.png", glm::vec2(128.0f));
-    m_spriteBarrel = de::SubTexture2D::CreateSprite(m_spriteSheet, glm::vec2({8.0f, 0.0f}));
-    de::FrameBufferConfig fConfig = {1280, 720};
-    m_frameBuffer = de::FrameBuffer::Create(fConfig);
-    m_activeScene = de::CreateRef<de::Scene>();
+    m_spriteSheet = CreateRef<Atlas2D>("assets/textures/RPGpack_sheet_2X.png", glm::vec2(128.0f));
+    m_spriteBarrel = SubTexture2D::CreateSprite(m_spriteSheet, glm::vec2({8.0f, 0.0f}));
+    FrameBufferConfig fConfig = {1280, 720};
+    m_frameBuffer = FrameBuffer::Create(fConfig);
+    m_activeScene = CreateRef<Scene>();
 
     m_square = m_activeScene->CreateEntity("Square");
-    m_square.AddComponent<de::SpriteComponent>();
+    m_square.AddComponent<SpriteComponent>();
 }
 
 void DempstaEditor::OnDetach() {}
 
-void DempstaEditor::OnUpdate(const de::TimeStep& ts) {
+void DempstaEditor::OnUpdate(const TimeStep& ts) {
     m_ts = ts;
     m_timeAccumulator += (float)ts;
     // Update fps every half second
@@ -33,35 +34,35 @@ void DempstaEditor::OnUpdate(const de::TimeStep& ts) {
         m_frameBuffer->Bind();
     }
 
-    de::RenderCommand::Clear({0.4f, 0.4f, 0.2f, 1});
-    de::Renderer2D::ResetStatistics();
+    RenderCommand::Clear({0.4f, 0.4f, 0.2f, 1});
+    Renderer2D::ResetStatistics();
 
     static float rotation = 0.0f;
     rotation += 50.0f * (float)ts;
 
-    de::Renderer2D::BeginScene(m_cameraController.GetCamera());
+    Renderer2D::BeginScene(m_cameraController.GetCamera());
 
     m_activeScene->OnUpdate(ts);
 
-    de::Renderer2D::DrawRotatedQuad(rotation, {-1.0f, 0.f}, {1.0f, 1.0f}, m_spriteBarrel);
+    Renderer2D::DrawRotatedQuad(rotation, {-1.0f, 0.f}, {1.0f, 1.0f}, m_spriteBarrel);
 
-    de::Renderer2D::EndScene();
+    Renderer2D::EndScene();
 
     if (m_editingMode) {
         m_frameBuffer->Unbind();
     }
 }
 
-void DempstaEditor::OnEvent(de::Event& e) {
-    de::EventDispatcher eventDispatcher(e);
+void DempstaEditor::OnEvent(Event& e) {
+    EventDispatcher eventDispatcher(e);
 
-    eventDispatcher.Dispatch<de::KeyPressedEvent>([this](de::KeyPressedEvent& event) {
+    eventDispatcher.Dispatch<KeyPressedEvent>([this](KeyPressedEvent& event) {
         if (event.GetKeyCode() == DE_KEY_TAB) {
             m_editingMode = !m_editingMode;
             LOG_TRACE("Editing Mode: {}", m_editingMode);
             if (!m_editingMode) {
-                const auto& window = de::Application::GetInstance().GetWindow();
-                de::Renderer::OnWindowResize(window.GetWidth(), window.GetHeight());
+                const auto& window = Application::GetInstance().GetWindow();
+                Renderer::OnWindowResize(window.GetWidth(), window.GetHeight());
                 m_cameraController.OnResize(window.GetWidth(), window.GetHeight());
             }
         }
@@ -118,14 +119,14 @@ void DempstaEditor::OnImGuiRender() {
         if (ImGui::BeginMenu("File")) {
             // ImGui::Separator();
             if (ImGui::MenuItem("Quit", nullptr, false, true)) {
-                de::Application::GetInstance().Close();
+                Application::GetInstance().Close();
             }
             ImGui::EndMenu();
         }
         ImGui::EndMenuBar();
     }
 
-    auto stats = de::Renderer2D::GetStatistics();
+    auto stats = Renderer2D::GetStatistics();
     ImGui::Begin("Renderer2D Statistics");
     ImGui::Text("Max Quads Per Draw: %d", stats.maxQuadsPerDraw);
     ImGui::Text("Draw Calls: %d", stats.drawCalls);
@@ -146,7 +147,7 @@ void DempstaEditor::OnImGuiRender() {
         (uint32_t)contentWidth != m_frameBuffer->GetConfig().width) {
         // Handle ImGui ViewPort resize
         m_frameBuffer->Resize((uint32_t)contentWidth, (uint32_t)contentHeight);
-        de::Renderer::OnWindowResize((uint32_t)contentWidth, (uint32_t)contentHeight);
+        Renderer::OnWindowResize((uint32_t)contentWidth, (uint32_t)contentHeight);
         m_cameraController.OnResize((uint32_t)contentWidth, (uint32_t)contentHeight);
     }
 
@@ -154,11 +155,12 @@ void DempstaEditor::OnImGuiRender() {
     ImGui::End();
 
     if ((bool)m_square) {
-        ImGui::Begin((const char*)m_square.GetComponent<de::NameComponent>());
-        auto& color = m_square.GetComponent<de::SpriteComponent>().Color;
+        ImGui::Begin((const char*)m_square.GetComponent<NameComponent>());
+        auto& color = m_square.GetComponent<SpriteComponent>().Color;
         ImGui::ColorEdit4("Select color", glm::value_ptr(color));
         ImGui::End();
     }
 
     ImGui::End();
 }
+}  // namespace de
