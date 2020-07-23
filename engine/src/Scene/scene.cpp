@@ -4,8 +4,6 @@
 #include "Scene/entity.h"
 
 namespace de {
-Scene::Scene() = default;
-
 void Scene::OnUpdate(const TimeStep& ts) {
     auto group = m_registry.group<TransformComponent>(entt::get<SpriteComponent>);
     for (const auto& entity : group) {
