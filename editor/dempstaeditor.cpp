@@ -11,9 +11,8 @@ void DempstaEditor::OnAttach() {
     m_frameBuffer = de::FrameBuffer::Create(fConfig);
     m_activeScene = de::CreateRef<de::Scene>();
 
-    m_square = m_activeScene->CreateEntity();
-    m_activeScene->GetReg().emplace<de::TransformComponent>(m_square);
-    m_activeScene->GetReg().emplace<de::SpriteComponent>(m_square);
+    m_square = m_activeScene->CreateEntity("Square");
+    m_square.AddComponent<de::SpriteComponent>();
 }
 
 void DempstaEditor::OnDetach() {}
@@ -154,10 +153,12 @@ void DempstaEditor::OnImGuiRender() {
     ImGui::Image((void*)(uintptr_t)m_frameBuffer->GetColorAttachment(), {contentWidth, contentHeight}, {0, 1}, {1, 0});
     ImGui::End();
 
-    ImGui::Begin("Square Color");
-    auto& color = m_activeScene->GetReg().get<de::SpriteComponent>(m_square).Color;
-    ImGui::ColorPicker4("Select color", glm::value_ptr(color));
-    ImGui::End();
+    if ((bool)m_square) {
+        ImGui::Begin((const char*)m_square.GetComponent<de::NameComponent>());
+        auto& color = m_square.GetComponent<de::SpriteComponent>().Color;
+        ImGui::ColorEdit4("Select color", glm::value_ptr(color));
+        ImGui::End();
+    }
 
     ImGui::End();
 }

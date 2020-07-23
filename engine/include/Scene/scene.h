@@ -6,7 +6,7 @@
 #include "Scene/components.h"
 
 namespace de {
-using Entity = entt::entity;
+class Entity;
 
 class Scene {
 public:
@@ -16,12 +16,11 @@ public:
 
     void OnUpdate(const TimeStep& ts);
 
-    [[nodiscard]] inline Entity CreateEntity() noexcept { return m_registry.create(); }
-
-    // NOTE(mpinto): Temp method for testing first implementation
-    [[nodiscard]] inline entt::registry& GetReg() noexcept { return m_registry; }
+    Entity CreateEntity(const std::string& name = "New Entity");
 
 private:
     entt::registry m_registry;
+
+    friend class Entity;
 };
 }  // namespace de
