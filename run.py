@@ -6,7 +6,8 @@ import subprocess
 args = sys.argv
 
 if sys.platform == "win32":
-    print("Windows run not yet supported")
+    args[0] = "utils\\windows\\run.bat"
 elif sys.platform == "linux" or sys.platform == "linux2":
     args[0] = "utils/linux/run.sh"
-    subprocess.call(args, cwd=".")
+
+subprocess.call(args, cwd=".")
