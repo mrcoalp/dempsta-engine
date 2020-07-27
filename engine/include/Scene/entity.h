@@ -24,7 +24,7 @@ public:
      * @tparam Component Component to be added.
      * @tparam Args Type of arguments of component.
      * @param args Arguments to construct the component.
-     * @return Component& Returns a reference to the component.
+     * @return Returns a reference to the component.
      */
     template <typename Component, typename... Args>
     Component& AddComponent(Args&&... args) {
@@ -33,42 +33,42 @@ public:
     }
 
     /**
-     * @brief Removes a list of components from the entity.
-     *
-     * @warning If entity does not have any of the components, an exception is thrown.
-     *
-     * @tparam Component Component list to remove.
-     */
-    template <typename... Component>
-    void RemoveComponent() {
-        DE_ASSERT(HasComponent<Component...>(), "Tried to remove an inexistent component from entity!");
-        m_scene->m_registry.remove<Component...>(m_handle);
-    }
-
-    /**
-     * @brief Checks if entity has a specific list of components.
-     *
-     * @tparam Component Components to check for.
-     * @return true Entity has all the specified components.
-     * @return false Entity doesn't have all the specified components.
-     */
-    template <typename... Component>
-    bool HasComponent() {
-        return m_scene->m_registry.has<Component...>(m_handle);
-    }
-
-    /**
-     * @brief Gets components from entity. One or multiple as tuple.
+     * @brief Remove component from the entity.
      *
      * @warning If entity does not have component, an exception is thrown.
      *
-     * @tparam Component Components to get.
-     * @return Returns references to the components.
+     * @tparam Component Component to remove.
      */
-    template <typename... Component>
-    decltype(auto) GetComponent() {
-        DE_ASSERT(HasComponent<Component...>(), "Tried to get an inexistent component from entity!");
-        return m_scene->m_registry.get<Component...>(m_handle);
+    template <typename Component>
+    void RemoveComponent() {
+        DE_ASSERT(HasComponent<Component>(), "Tried to remove an inexistent component from entity!");
+        m_scene->m_registry.remove<Component>(m_handle);
+    }
+
+    /**
+     * @brief Checks if entity has a specific component.
+     *
+     * @tparam Component Component to check for.
+     * @return true Entity has the specified component.
+     * @return false Entity doesn't have the specified component.
+     */
+    template <typename Component>
+    bool HasComponent() {
+        return m_scene->m_registry.has<Component>(m_handle);
+    }
+
+    /**
+     * @brief Gets component from entity.
+     *
+     * @warning If entity doesn't have the component, an exception is thrown.
+     *
+     * @tparam Component Component to get.
+     * @return Returns reference to the component.
+     */
+    template <typename Component>
+    Component& GetComponent() {
+        DE_ASSERT(HasComponent<Component>(), "Tried to get an inexistent component from entity!");
+        return m_scene->m_registry.get<Component>(m_handle);
     }
 
     /**
@@ -77,10 +77,10 @@ public:
      * @return true Valid entity.
      * @return false Invalid entity.
      */
-    explicit operator bool() const noexcept { return (int)m_handle >= 0; }
+    explicit operator bool() const noexcept { return m_handle != entt::null; }
 
 private:
-    entt::entity m_handle;
+    entt::entity m_handle{entt::null};
     Scene* m_scene;
 };
 }  // namespace de
