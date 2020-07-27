@@ -77,18 +77,19 @@ public:
      * @tparam Args Lua function argument types.
      * @param name Name of the Lua function.
      * @param args Lua function arguments.
+     * @return true Function successfully called.
+     * @return false Unable to call function.
      */
     template <typename... Args>
-    static void CallFunction(const char* name, Args... args) {
+    static bool CallFunction(const char* name, Args&&... args) {
         lua_getglobal(state, name);
         if (!lua_isfunction(state, -1)) {
-            LOG_ENGINE_WARN("Tried to call an invalid Lua function: {}", name);
             lua_pop(state, 1);
-            return;
+            return false;
         }
         PushValues(std::forward<Args>(args)...);
         lua_call(state, sizeof...(Args), 0);
-        lua_pop(state, 1);
+        return true;
     }
 
     /**
@@ -99,27 +100,31 @@ public:
      * @param lValue Return from Lua function.
      * @param name Name of the Lua function.
      * @param args Lua function arguments.
+     * @return true Function successfully called.
+     * @return false Unable to call function.
      */
     template <typename T, typename... Args>
-    static void CallFunction(T& lValue, const char* name, Args&&... args) {
+    static bool CallFunction(T& lValue, const char* name, Args&&... args) {
         lua_getglobal(state, name);
         if (!lua_isfunction(state, -1)) {
-            LOG_ENGINE_WARN("Tried to call an invalid Lua function: {}", name);
             lua_pop(state, 1);
-            return;
+            return false;
         }
         PushValues(std::forward<Args>(args)...);
         lua_call(state, sizeof...(Args), 1);
         lValue = GetValue<T>(-1);
         lua_pop(state, 1);
+        return true;
     }
 
     /**
      * @brief Calls Lua function without arguments.
      *
      * @param name Name of the Lua function.
+     * @return true Function successfully called.
+     * @return false Unable to call function.
      */
-    static void CallFunction(const char* name);
+    static bool CallFunction(const char* name);
 
     /**
      * @brief Get the global variable from Lua.

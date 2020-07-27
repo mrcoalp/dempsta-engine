@@ -10,6 +10,14 @@ void Scene::OnUpdate(const TimeStep& ts) {
         const auto& [transform, sprite] = group.get<TransformComponent, SpriteComponent>(entity);
         Renderer2D::DrawQuad((glm::mat4)transform, sprite.Color);
     }
+    auto g = m_registry.view<ScriptComponent>();
+    for (const auto& e : g) {
+        auto& s = g.get<ScriptComponent>(e);
+        SE::LoadFile(s.Path.c_str());
+        if (!SE::CallFunction("OnUpdate", (float)ts)) {
+            LOG_ENGINE_DEBUG("{} doesn't contain 'OnUpdate function", s.Path);
+        }
+    }
 }
 
 Entity Scene::CreateEntity(const std::string& name) {

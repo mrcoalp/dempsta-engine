@@ -14,6 +14,7 @@ void DempstaEditor::OnAttach() {
 
     m_square = m_activeScene->CreateEntity("Square");
     m_square.AddComponent<SpriteComponent>();
+    m_square.AddComponent<ScriptComponent>("assets/scripts/component_test.lua");
 }
 
 void DempstaEditor::OnDetach() {}

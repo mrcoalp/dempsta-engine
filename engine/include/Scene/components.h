@@ -32,4 +32,12 @@ struct SpriteComponent {
     SpriteComponent(const SpriteComponent&) = default;
     explicit SpriteComponent(const glm::vec4& color) : Color(color) {}
 };
+
+struct ScriptComponent {
+    std::string Path;
+
+    ScriptComponent() = default;
+    ScriptComponent(const ScriptComponent&) = default;
+    explicit ScriptComponent(std::string path) : Path(std::move(path)) {}
+};
 }  // namespace de

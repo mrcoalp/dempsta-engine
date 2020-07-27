@@ -37,14 +37,15 @@ bool ScriptEngine::RunCode(const char* code) {
 
 void ScriptEngine::RegisterFunction(const char* name, lua_CFunction fn) { lua_register(state, name, fn); }
 
-void ScriptEngine::CallFunction(const char* name) {
+bool ScriptEngine::CallFunction(const char* name) {
     lua_getglobal(state, name);
     if (lua_isfunction(state, -1)) {
         lua_call(state, 0, 0);
+        return true;
     } else {
-        LOG_ENGINE_WARN("Tried to call an invalid Lua function: {}", name);
+        lua_pop(state, 1);
     }
-    lua_pop(state, 1);
+    return false;
 }
 
 bool ScriptEngine::checkStatus(int status, const char* errMessage) {

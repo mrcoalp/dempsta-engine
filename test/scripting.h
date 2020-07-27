@@ -49,9 +49,13 @@ bool test_call_lua_function_from_cpp() {
     SE::Init();
     SE::LoadFile("scripts/luafunctions.lua");
     std::string s;
-    SE::CallFunction(s, "OnUpdate", "delta");
+    if (!SE::CallFunction(s, "OnUpdate", "delta")) {
+        return false;
+    }
     int i;
-    SE::CallFunction(i, "Maths", 2, 3, 4);
+    if (!SE::CallFunction(i, "Maths", 2, 3, 4)) {
+        return false;
+    }
     SE::CloseState();
     return s == "FPS in Lua:delta" && i == 10;
 }
