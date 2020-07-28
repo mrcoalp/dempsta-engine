@@ -2,6 +2,7 @@
 
 #include "Renderer/renderer2d.h"
 #include "Scene/entity.h"
+#include "Scripting/scriptengine.h"
 
 namespace de {
 void Scene::OnUpdate(const TimeStep& ts) {
@@ -26,5 +27,4 @@ Entity Scene::CreateEntity(const std::string& name) {
     entity.AddComponent<NameComponent>(name);
     return entity;
 }
-
 }  // namespace de
