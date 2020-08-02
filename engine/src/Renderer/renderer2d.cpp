@@ -127,6 +127,13 @@ void Renderer2D::flush() {
     ++data.statistics.drawCalls;
 }
 
+void Renderer2D::BeginScene(const glm::mat4& projection, const glm::mat4& transform) {
+    glm::mat4 viewProj = projection * glm::inverse(transform);
+    data.shader->Bind();
+    data.shader->SetMat4("u_viewProjection", viewProj);
+    resetBuffer();
+}
+
 void Renderer2D::BeginScene(const OrthographicCamera& camera) {
     data.shader->Bind();
     data.shader->SetMat4("u_viewProjection", camera.GetProjectionViewMatrix());

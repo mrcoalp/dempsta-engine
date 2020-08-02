@@ -77,7 +77,27 @@ public:
      * @return true Valid entity.
      * @return false Invalid entity.
      */
-    explicit operator bool() const noexcept { return m_handle != entt::null; }
+    explicit operator bool() const noexcept { return m_handle != entt::null && m_scene != nullptr; }
+
+    /**
+     * @brief Compares if two entities are equal.
+     *
+     * @param other Entity to compare to.
+     * @return true Entities are equal.
+     * @return false Entities are not equal.
+     */
+    bool operator==(const Entity& other) const noexcept {
+        return m_handle == other.m_handle && m_scene == other.m_scene;
+    }
+
+    /**
+     * @brief Compares if two entities are different.
+     *
+     * @param other Entity to compare to.
+     * @return true Entities are different.
+     * @return false Entities are not different.
+     */
+    bool operator!=(const Entity& other) const noexcept { return !(*(this) == other); }
 
 private:
     entt::entity m_handle{entt::null};

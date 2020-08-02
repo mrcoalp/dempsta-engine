@@ -7,6 +7,18 @@
 #include "Events/mouseevent.h"
 
 namespace de {
+class Camera {
+public:
+    explicit Camera(const glm::mat4& projection) : m_projection(projection) {}
+
+    ~Camera() = default;
+
+    [[nodiscard]] const glm::mat4& GetProjection() const { return m_projection; }
+
+private:
+    glm::mat4 m_projection;
+};
+
 struct OrthographicCameraBounds {
     float left, right, bottom, top;
     [[nodiscard]] inline float GetWidth() const { return right - left; }

@@ -6,19 +6,26 @@
 
 namespace de {
 void Scene::OnUpdate(const TimeStep& ts) {
-    auto group = m_registry.group<TransformComponent>(entt::get<SpriteComponent>);
-    for (const auto& entity : group) {
-        const auto& [transform, sprite] = group.get<TransformComponent, SpriteComponent>(entity);
-        Renderer2D::DrawQuad((glm::mat4)transform, sprite.Color);
-    }
-    auto g = m_registry.view<ScriptComponent>();
-    for (const auto& e : g) {
-        auto& s = g.get<ScriptComponent>(e);
-        SE::LoadFile(s.Path.c_str());
-        if (!SE::CallFunction("OnUpdate", (float)ts)) {
-            LOG_ENGINE_DEBUG("{} doesn't contain 'OnUpdate function", s.Path);
-        }
-    }
+    m_registry.view<TransformComponent, CameraComponent>().each(
+        // cameraEntity can be avoided to be captured
+        [&]([[maybe_unused]] const auto cameraEntity, const auto& transformComp, const auto& cameraComp) {
+            const auto& camera = cameraComp.Cam;
+            const auto& transform = transformComp.Transform;
+            if (cameraComp.Primary) {
+                Renderer2D::BeginScene(camera.GetProjection(), transform);
+
+                m_registry.group<TransformComponent>(entt::get<SpriteComponent, ScriptComponent>)
+                    .each([ts](const auto& transformComp, const auto& spriteComp, const auto& scriptComp) {
+                        Renderer2D::DrawQuad(transformComp.Transform, spriteComp.Color);
+                        SE::LoadFile(scriptComp.Path.c_str());
+                        if (!SE::CallFunction("OnUpdate", (float)ts)) {
+                            LOG_ENGINE_DEBUG("{} doesn't contain 'OnUpdate function", scriptComp.Path);
+                        }
+                    });
+                Renderer2D::EndScene();
+                return;
+            }
+        });
 }
 
 Entity Scene::CreateEntity(const std::string& name) {

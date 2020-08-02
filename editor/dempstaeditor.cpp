@@ -15,6 +15,9 @@ void DempstaEditor::OnAttach() {
     m_square = m_activeScene->CreateEntity("Square");
     m_square.AddComponent<SpriteComponent>();
     m_square.AddComponent<ScriptComponent>("assets/scripts/component_test.lua");
+
+    auto camEntity = m_activeScene->CreateEntity("Primary Camera");
+    camEntity.AddComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f), true);
 }
 
 void DempstaEditor::OnDetach() {}
@@ -38,16 +41,7 @@ void DempstaEditor::OnUpdate(const TimeStep& ts) {
     RenderCommand::Clear({0.4f, 0.4f, 0.2f, 1});
     Renderer2D::ResetStatistics();
 
-    static float rotation = 0.0f;
-    rotation += 50.0f * (float)ts;
-
-    Renderer2D::BeginScene(m_cameraController.GetCamera());
-
     m_activeScene->OnUpdate(ts);
-
-    Renderer2D::DrawRotatedQuad(rotation, {-1.0f, 0.f}, {1.0f, 1.0f}, m_spriteBarrel);
-
-    Renderer2D::EndScene();
 
     if (m_editingMode) {
         m_frameBuffer->Unbind();

@@ -20,6 +20,8 @@ public:
 
     static void Shutdown();
 
+    static void BeginScene(const glm::mat4& projection, const glm::mat4& transform);
+
     static void BeginScene(const OrthographicCamera& camera);
 
     static void EndScene();
