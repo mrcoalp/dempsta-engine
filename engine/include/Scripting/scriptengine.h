@@ -50,7 +50,7 @@ public:
      *
      * @return const lua_State*
      */
-    [[nodiscard]] static inline const lua_State* GetState() { return state; }
+    [[nodiscard]] static inline lua_State* GetState() { return state; }
 
     /**
      * @brief Registers and exposes C++ class to Lua.
@@ -163,6 +163,11 @@ public:
     static void PushValue(T value) {
         MS::PushValue(state, value);
     }
+
+    /**
+     * @brief Push a nil (null) value to Lua stack.
+     */
+    static void PushNull() { MS::PushNull(state); }
 
     /**
      * @brief Recursive helper method to push multiple values to Lua stack.

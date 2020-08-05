@@ -42,9 +42,8 @@ bool ScriptEngine::CallFunction(const char* name) {
     if (lua_isfunction(state, -1)) {
         lua_call(state, 0, 0);
         return true;
-    } else {
-        lua_pop(state, 1);
     }
+    lua_pop(state, 1);
     return false;
 }
 

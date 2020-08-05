@@ -3,9 +3,12 @@
 #include <GLFW/glfw3.h>
 
 #include "Renderer/renderer.h"
+#include "Scripting/API/databuffer.h"
 #include "Scripting/scriptengine.h"
 
 namespace de {
+static void RegisterScriptingAPI() { SE::RegisterClass<lua::DataBuffer>(); }
+
 Application* Application::m_instance = nullptr;
 
 Application::Application() : Application(WindowProps()) {}
@@ -20,6 +23,7 @@ Application::Application(const WindowProps& windowProps) {
 
     Renderer::Init();
     SE::Init();
+    RegisterScriptingAPI();
 
     m_imguiLayer = new ImGuiLayer();
     PushOverlay(m_imguiLayer);

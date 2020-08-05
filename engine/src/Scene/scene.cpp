@@ -18,9 +18,7 @@ void Scene::OnUpdate(const TimeStep& ts) {
                     .each([ts](const auto& transformComp, const auto& spriteComp, const auto& scriptComp) {
                         Renderer2D::DrawQuad(transformComp.Transform, spriteComp.Color);
                         SE::LoadFile(scriptComp.Path.c_str());
-                        if (!SE::CallFunction("OnUpdate", (float)ts)) {
-                            LOG_ENGINE_DEBUG("{} doesn't contain 'OnUpdate function", scriptComp.Path);
-                        }
+                        SE::CallFunction("OnUpdate", scriptComp.Data.get(), (float)ts);
                     });
                 Renderer2D::EndScene();
                 return;

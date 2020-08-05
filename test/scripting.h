@@ -6,6 +6,8 @@ int testClass = -1;
 
 class Script {
 public:
+    explicit Script(int prop) : m_prop(prop) {}
+
     explicit Script(lua_State*) : m_prop(SE::GetValue<int>()) {}
 
     LUA_DECLARE_CLASS(Script)
@@ -18,15 +20,17 @@ public:
     }
 
     LUA_PROXY_METHOD(Setter) {
-        testClass = SE::GetValue<int>();
+        testClass = m_prop = SE::GetValue<int>();
         return 0;
     }
+
+    [[nodiscard]] inline int GetProp() const { return m_prop; }
 
 private:
     int m_prop;
 };
 
-LUA_DEFINE_BINDING(Script)
+LUA_DEFINE_BINDING(Script, false)
 LUA_ADD_PROPERTY(m_prop)
 LUA_ADD_METHOD(Getter)
 LUA_ADD_METHOD(Setter);
@@ -47,7 +51,12 @@ bool test_call_cpp_function_from_lua() {
 
 bool test_call_lua_function_from_cpp() {
     SE::Init();
+    SE::RegisterClass<Script>();
     SE::LoadFile("scripts/luafunctions.lua");
+    Script o(20);
+    if (!SE::CallFunction("Object", &o)) {
+        return false;
+    }
     std::string s;
     if (!SE::CallFunction(s, "OnUpdate", "delta")) {
         return false;
@@ -57,7 +66,7 @@ bool test_call_lua_function_from_cpp() {
         return false;
     }
     SE::CloseState();
-    return s == "FPS in Lua:delta" && i == 10;
+    return s == "FPS in Lua:delta" && i == 10 && o.GetProp() == 1;
 }
 
 bool test_cpp_class_bind_lua() {
