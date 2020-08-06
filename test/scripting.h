@@ -50,23 +50,31 @@ bool test_call_cpp_function_from_lua() {
 }
 
 bool test_call_lua_function_from_cpp() {
+    Script o(20);
+    std::vector<std::string> vec;
+    std::string s;
+    int i;
+    std::vector<double> vecRet;
     SE::Init();
     SE::RegisterClass<Script>();
     SE::LoadFile("scripts/luafunctions.lua");
-    Script o(20);
     if (!SE::CallFunction("Object", &o)) {
         return false;
     }
-    std::string s;
-    if (!SE::CallFunction(s, "OnUpdate", "delta")) {
+    for (size_t i = 0; i < 100; ++i) {
+        vec.push_back(std::to_string(i));
+    }
+    if (!SE::CallFunction(s, "OnUpdate", vec, 100)) {
         return false;
     }
-    int i;
     if (!SE::CallFunction(i, "Maths", 2, 3, 4)) {
         return false;
     }
+    if (!SE::CallFunction(vecRet, 3, "VecTest", 2.2, 3.14, 4.0)) {
+        return false;
+    }
     SE::CloseState();
-    return s == "FPS in Lua:delta" && i == 10 && o.GetProp() == 1;
+    return s == "99" && i == 10 && o.GetProp() == 1 && vecRet.size() == 3 && vecRet[1] == 3.14;
 }
 
 bool test_cpp_class_bind_lua() {
@@ -91,7 +99,8 @@ bool test_get_global_lua_var_from_cpp() {
 
 bool test_lua_run_code() {
     SE::Init();
-    const bool status = SE::RunCode("a = 'passed';print('FROM LUA: run code ', a)");
+    const bool status = SE::RunCode("a = 'passed'");
+    const std::string s = SE::GetGlobalVariable<std::string>("a");
     SE::CloseState();
-    return status;
+    return status && s == "passed";
 }

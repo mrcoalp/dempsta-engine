@@ -28,6 +28,13 @@ public:
     static void CloseState();
 
     /**
+     * @brief Get the Lua state object.
+     *
+     * @return const lua_State*
+     */
+    [[nodiscard]] static inline lua_State* GetState() { return state; }
+
+    /**
      * @brief Loads Lua file script.
      *
      * @param filePath Path to file to be loaded.
@@ -46,11 +53,98 @@ public:
     static bool RunCode(const char* code);
 
     /**
-     * @brief Get the Lua state object.
+     * @brief Get value from Lua stack.
      *
-     * @return const lua_State*
+     * @tparam R Value type.
+     * @param index Stack index.
+     * @return R
      */
-    [[nodiscard]] static inline lua_State* GetState() { return state; }
+    template <typename R>
+    [[nodiscard]] static inline R GetValue(const int index = 1) {
+        return MS::GetValue(lua::Type<R>{}, state, index);
+    }
+
+    /**
+     * @brief Get the global variable from Lua.
+     *
+     * @tparam R Type of returned variable.
+     * @param name Name of the variable.
+     * @return R Lua global variable.
+     */
+    template <typename R>
+    [[nodiscard]] static inline R GetGlobalVariable(const char* name) {
+        lua_getglobal(state, name);
+        const R r = GetValue<R>(-1);
+        lua_pop(state, 1);
+        return r;
+    }
+
+    /**
+     * @brief Get vector from Lua stack.
+     *
+     * @tparam T Vector type.
+     * @param size Vector size.
+     * @param index Stack index.
+     * @return std::vector<T>
+     */
+    template <typename T>
+    [[nodiscard]] static inline std::vector<T> GetVector(size_t size, const int index = 1) {
+        return MS::GetVector<T>(state, size, index);
+    }
+
+    /**
+     * @brief Push value to Lua stack.
+     *
+     * @tparam T Value type.
+     * @param value Value pushed to Lua stack.
+     */
+    template <typename T>
+    static void PushValue(T value) {
+        MS::PushValue(state, value);
+    }
+
+    /**
+     * @brief Push global variable to Lua stack.
+     *
+     * @tparam T Value type.
+     * @param name Variable name.
+     * @param value Value pushed to Lua stack.
+     */
+    template <typename T>
+    static void PushGlobalVariable(const char* name, T value) {
+        PushValue(value);
+        lua_setglobal(state, name);
+    }
+
+    /**
+     * @brief Recursive helper method to push multiple values to Lua stack.
+     *
+     * @tparam T Value type.
+     * @tparam Args Rest of the values types.
+     * @param first Value pushed to Lua stack.
+     * @param args Rest of the value to push to Lua stack.
+     */
+    template <typename T, typename... Args>
+    static void PushValues(T first, Args&&... args) {
+        PushValue(first);
+        PushValues(std::forward<Args>(args)...);
+    }
+
+    /**
+     * @brief Stop method to recursive PushValues overload.
+     *
+     * @tparam T Value type.
+     * @param first Value pushed to Lua stack.
+     */
+    template <typename T>
+    static void PushValues(T first) {
+        PushValue(first);
+    }
+
+    /**
+     * @brief Push a nil (null) value to Lua stack.
+     */
+    static void PushNull();
 
     /**
      * @brief Registers and exposes C++ class to Lua.
@@ -70,6 +164,15 @@ public:
      * @param fn Function pointer.
      */
     static void RegisterFunction(const char* name, lua_CFunction fn);
+
+    /**
+     * @brief Calls Lua function without arguments.
+     *
+     * @param name Name of the Lua function.
+     * @return true Function successfully called.
+     * @return false Unable to call function.
+     */
+    static bool CallFunction(const char* name);
 
     /**
      * @brief Calls Lua funtion.
@@ -118,80 +221,29 @@ public:
     }
 
     /**
-     * @brief Calls Lua function without arguments.
+     * @brief Calls Lua funtion and saves return in lValue.
      *
+     * @tparam T Return type for lValue.
+     * @tparam Args Args Lua function argument types.
+     * @param lValue Return from Lua function.
+     * @param size Number of elements to push to vector.
      * @param name Name of the Lua function.
+     * @param args Lua function arguments.
      * @return true Function successfully called.
      * @return false Unable to call function.
      */
-    static bool CallFunction(const char* name);
-
-    /**
-     * @brief Get the global variable from Lua.
-     *
-     * @tparam R Type of returned variable.
-     * @param name Name of the variable.
-     * @return R Lua global variable.
-     */
-    template <typename R>
-    [[nodiscard]] static inline R GetGlobalVariable(const char* name) {
-        lua_getglobal(state, name);
-        const R r = GetValue<R>(-1);
-        lua_pop(state, 1);
-        return r;
-    }
-
-    /**
-     * @brief Get value from Lua stack.
-     *
-     * @tparam R Value type.
-     * @param index Stack index.
-     * @return R
-     */
-    template <typename R>
-    [[nodiscard]] static inline R GetValue(const int index = 1) {
-        return MS::GetValue(lua::Type<R>{}, state, index);
-    }
-
-    /**
-     * @brief Push value to Lua stack.
-     *
-     * @tparam T Value type.
-     * @param value Value pushed to Lua stack.
-     */
-    template <typename T>
-    static void PushValue(T value) {
-        MS::PushValue(state, value);
-    }
-
-    /**
-     * @brief Push a nil (null) value to Lua stack.
-     */
-    static void PushNull() { MS::PushNull(state); }
-
-    /**
-     * @brief Recursive helper method to push multiple values to Lua stack.
-     *
-     * @tparam T Value type.
-     * @tparam Args Rest of the values types.
-     * @param first Value pushed to Lua stack.
-     * @param args Rest of the value to push to Lua stack.
-     */
     template <typename T, typename... Args>
-    static void PushValues(T first, Args&&... args) {
-        PushValue(first);
+    static bool CallFunction(std::vector<T>& lValue, size_t size, const char* name, Args&&... args) {
+        lua_getglobal(state, name);
+        if (!lua_isfunction(state, -1)) {
+            lua_pop(state, 1);
+            return false;
+        }
         PushValues(std::forward<Args>(args)...);
-    }
-
-    /**
-     * @brief Stop method to recursive PushValues overload.
-     *
-     * @tparam T Value type.
-     * @param first Value pushed to Lua stack.
-     */
-    template <typename T>
-    static void PushValues(T first) {
-        PushValue(first);
+        lua_call(state, sizeof...(Args), 1);
+        lValue = GetVector<T>(size, -1);
+        lua_pop(state, 1);
+        return true;
     }
 
 private:

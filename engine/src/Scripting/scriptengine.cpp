@@ -20,7 +20,6 @@ bool ScriptEngine::LoadFile(const char* filePath) {
     if (!checkStatus(status, "Error loading file")) {
         return false;
     }
-
     status = lua_pcall(state, 0, LUA_MULTRET, 0);
     return checkStatus(status, "Loading file failed");
 }
@@ -30,10 +29,11 @@ bool ScriptEngine::RunCode(const char* code) {
     if (!checkStatus(status, "Error running code")) {
         return false;
     }
-
     status = lua_pcall(state, 0, LUA_MULTRET, 0);
     return checkStatus(status, "Running code failed");
 }
+
+void ScriptEngine::PushNull() { MS::PushNull(state); }
 
 void ScriptEngine::RegisterFunction(const char* name, lua_CFunction fn) { lua_register(state, name, fn); }
 
