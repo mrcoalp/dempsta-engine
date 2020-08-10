@@ -1,19 +1,19 @@
 function OnInit(data)
-    data.SetInt("seconds", 1)
-    data.SetFloat("delta", 0)
-    data.SetDouble("double", 3.14)
-    data.SetBool("bool", true)
-    data.SetString("string", "Seconds elapsed: ")
+    data.Set("seconds", 1)
+    data.Set("delta", 0)
+    data.Set("double", 3.14)
+    data.Set("bool", true)
+    data.Set("string", "Seconds elapsed: ")
 end
 
 function OnUpdate(data, delta)
-    local seconds = data.GetInt("seconds");
-    if (data.GetFloat("delta") >= 1) then
-        print(data.GetString("string") .. seconds .. "s")
-        data.SetInt("seconds", seconds + 1)
-        print("Saved data -> ", data.GetDouble("double"), data.GetBool("bool"), data.GetBool("inexistent_key"))
-        data.SetFloat("delta", 0)
+    local seconds = data.Get("seconds");
+    if (data.Get("delta") >= 1) then
+        print(data.Get("string") .. seconds .. "s")
+        data.Set("seconds", seconds + 1)
+        print("Saved data -> ", data.Get("double"), data.Get("bool"), data.Get("inexistent_key"))
+        data.Set("delta", 0)
     else
-        data.SetFloat("delta", data.GetFloat("delta") + delta)
+        data.Set("delta", data.Get("delta") + delta)
     end
 end

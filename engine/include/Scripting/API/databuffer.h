@@ -14,86 +14,54 @@ public:
 
     LUA_DECLARE_CLASS(DataBuffer)
 
-    LUA_PROXY_METHOD(SetInt) {
-        m_ints[SE::GetValue<std::string>()] = SE::GetValue<int>(2);
-        return 0;
-    }
-
-    LUA_PROXY_METHOD(GetInt) {
+    LUA_PROXY_METHOD(Set) {
         auto key = SE::GetValue<std::string>();
-        if (m_ints.find(key) == m_ints.end()) {
-            SE::PushNull();
-        } else {
-            SE::PushValue(m_ints.at(key));
+        erase(key);
+        switch (SE::GetValueType(2)) {
+            case LuaType::Number:
+                m_doubles[key] = SE::GetValue<double>(2);
+                break;
+            case LuaType::Boolean:
+                m_bools[key] = SE::GetValue<bool>(2);
+                break;
+            case LuaType::String:
+                m_strings[key] = SE::GetValue<std::string>(2);
+                break;
+            case LuaType::Null:
+            case LuaType::LightUserData:
+            case LuaType::Table:
+            case LuaType::Function:
+            case LuaType::UserData:
+            case LuaType::Thread:
+            default:
+                break;
         }
-        return 1;
-    }
-
-    LUA_PROXY_METHOD(SetFloat) {
-        m_floats[SE::GetValue<std::string>()] = SE::GetValue<float>(2);
         return 0;
     }
 
-    LUA_PROXY_METHOD(GetFloat) {
+    LUA_PROXY_METHOD(Get) {
         auto key = SE::GetValue<std::string>();
-        if (m_floats.find(key) == m_floats.end()) {
-            SE::PushNull();
-        } else {
-            SE::PushValue(m_floats.at(key));
-        }
-        return 1;
-    }
-
-    LUA_PROXY_METHOD(SetDouble) {
-        m_doubles[SE::GetValue<std::string>()] = SE::GetValue<double>(2);
-        return 0;
-    }
-
-    LUA_PROXY_METHOD(GetDouble) {
-        auto key = SE::GetValue<std::string>();
-        if (m_doubles.find(key) == m_doubles.end()) {
-            SE::PushNull();
-        } else {
+        if (m_doubles.find(key) != m_doubles.end()) {
             SE::PushValue(m_doubles.at(key));
-        }
-        return 1;
-    }
-
-    LUA_PROXY_METHOD(SetBool) {
-        m_bools[SE::GetValue<std::string>()] = SE::GetValue<bool>(2);
-        return 0;
-    }
-
-    LUA_PROXY_METHOD(GetBool) {
-        auto key = SE::GetValue<std::string>();
-        if (m_bools.find(key) == m_bools.end()) {
-            SE::PushNull();
-        } else {
+        } else if (m_bools.find(key) != m_bools.end()) {
             SE::PushValue(m_bools.at(key));
-        }
-        return 1;
-    }
-
-    LUA_PROXY_METHOD(SetString) {
-        m_strings[SE::GetValue<std::string>()] = SE::GetValue<std::string>(2);
-        return 0;
-    }
-
-    LUA_PROXY_METHOD(GetString) {
-        auto key = SE::GetValue<std::string>();
-        if (m_strings.find(key) == m_strings.end()) {
-            SE::PushNull();
-        } else {
+        } else if (m_strings.find(key) != m_strings.end()) {
             SE::PushValue(m_strings.at(key));
+        } else {
+            SE::PushNull();
         }
         return 1;
     }
 
 private:
-    std::unordered_map<std::string, int> m_ints;
-    std::unordered_map<std::string, float> m_floats;
     std::unordered_map<std::string, double> m_doubles;
     std::unordered_map<std::string, bool> m_bools;
     std::unordered_map<std::string, std::string> m_strings;
+
+    void erase(const std::string& key) {
+        m_doubles.erase(key);
+        m_bools.erase(key);
+        m_strings.erase(key);
+    }
 };
 }  // namespace lua

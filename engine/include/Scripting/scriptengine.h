@@ -9,6 +9,18 @@
 namespace lua {
 using lua_CFunction = int (*)(lua_State*);
 
+enum class LuaType {
+    Null = LUA_TNIL,
+    Boolean = LUA_TBOOLEAN,
+    LightUserData = LUA_TLIGHTUSERDATA,
+    Number = LUA_TNUMBER,
+    String = LUA_TSTRING,
+    Table = LUA_TTABLE,
+    Function = LUA_TFUNCTION,
+    UserData = LUA_TUSERDATA,
+    Thread = LUA_TTHREAD
+};
+
 /**
  * @brief Handles all the logic related to "communication" between C++ and Lua, initializing it.
  * Acts as an engine to allow to call C++ functions from Lua and vice-versa, registers
@@ -51,6 +63,14 @@ public:
      * @return false Failed to run script.
      */
     static bool RunCode(const char* code);
+
+    /**
+     * @brief Get the type of value in stack at position index.
+     *
+     * @param index Position of stack to check.
+     * @return LuaType
+     */
+    static LuaType GetValueType(int index = 1) { return static_cast<LuaType>(lua_type(state, index)); }
 
     /**
      * @brief Get value from Lua stack.
