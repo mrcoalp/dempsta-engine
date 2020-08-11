@@ -1,13 +1,13 @@
-local s = Script(20)
-print(s.GetProp())
-print(s.m_bool)
-print(s.m_string)
-
-function OnUpdate(delta)
-    print('FPS in Lua:', 1 / delta);
+function OnInit(data)
+    data.name = "Marco"
+    data.counter = 0
 end
 
-function ReturnAlgo(asd)
-    print(asd);
-    return 24;
+function OnUpdate(data, delta)
+    if (data.counter == 60) then
+        print(data.name)
+        data.counter = 0
+    else
+        data.counter = data.counter + 1
+    end
 end

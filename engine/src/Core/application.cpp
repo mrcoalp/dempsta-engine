@@ -7,7 +7,7 @@
 #include "Scripting/scriptengine.h"
 
 namespace de {
-static void RegisterScriptingAPI() { SE::RegisterClass<lua::DataBuffer>(); }
+static void RegisterScriptingAPI() { lua::DataBuffer::Register(SE::GetState()); }
 
 Application* Application::m_instance = nullptr;
 

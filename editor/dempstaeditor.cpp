@@ -16,6 +16,10 @@ void DempstaEditor::OnAttach() {
     m_square.AddComponent<SpriteComponent>();
     m_square.AddComponent<ScriptComponent>("assets/scripts/component_test.lua");
 
+    auto other = m_activeScene->CreateEntity("Other");
+    other.AddComponent<SpriteComponent>();
+    other.AddComponent<ScriptComponent>("assets/scripts/script.lua");
+
     auto camEntity = m_activeScene->CreateEntity("Primary Camera");
     camEntity.AddComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f), true);
 }
