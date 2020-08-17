@@ -12,6 +12,8 @@ function OnUpdate(data, delta)
         print(data.string .. seconds .. "s")
         data.seconds = seconds + 1
         print("Saved data -> ", data.double, data.bool, data.inexistent_key)
+        data.bool = not data.bool
+        data.double = data.double + (data.seconds / 3)
         data.delta = 0
     else
         data.delta = data.delta + delta

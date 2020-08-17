@@ -25,6 +25,14 @@ public:
     void OnUpdate(const TimeStep& ts);
 
     /**
+     * @brief Handles resize of viewport.
+     *
+     * @param width Viewport width.
+     * @param height Viewport height.
+     */
+    void OnViewportResize(uint32_t width, uint32_t height);
+
+    /**
      * @brief Creates a Entity object
      *
      * @param name Name of the entity. Adds a new NameComponent. Default = "New Entity"
@@ -37,6 +45,9 @@ private:
      * @brief Storage for all the entities. Handled by EnTT.
      */
     entt::registry m_registry;
+
+    uint32_t m_viewportWidth{0};
+    uint32_t m_viewportHeight{0};
 
     friend class Entity;
 };

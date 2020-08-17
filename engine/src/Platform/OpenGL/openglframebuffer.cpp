@@ -40,7 +40,10 @@ void OpenGLFrameBuffer::Destroy() {
     glDeleteTextures(1, &m_depthAttachment);
 }
 
-void OpenGLFrameBuffer::Bind() { glBindFramebuffer(GL_FRAMEBUFFER, m_rendererID); }
+void OpenGLFrameBuffer::Bind() {
+    glBindFramebuffer(GL_FRAMEBUFFER, m_rendererID);
+    glViewport(0, 0, m_config.width, m_config.height);
+}
 
 void OpenGLFrameBuffer::Unbind() { glBindFramebuffer(GL_FRAMEBUFFER, 0); }
 

@@ -9,14 +9,16 @@
 namespace de {
 class Camera {
 public:
+    Camera() = default;
+
     explicit Camera(const glm::mat4& projection) : m_projection(projection) {}
 
-    ~Camera() = default;
+    virtual ~Camera() = default;
 
     [[nodiscard]] const glm::mat4& GetProjection() const { return m_projection; }
 
-private:
-    glm::mat4 m_projection;
+protected:
+    glm::mat4 m_projection{glm::mat4(1.f)};
 };
 
 struct OrthographicCameraBounds {

@@ -9,7 +9,7 @@ void Scene::OnUpdate(const TimeStep& ts) {
     m_registry.view<TransformComponent, CameraComponent>().each(
         // cameraEntity can be avoided to be captured
         [&]([[maybe_unused]] const auto cameraEntity, const auto& transformComp, const auto& cameraComp) {
-            const auto& camera = cameraComp.Cam;
+            const auto& camera = cameraComp.Camera;
             const auto& transform = transformComp.Transform;
             if (cameraComp.Primary) {
                 Renderer2D::BeginScene(camera.GetProjection(), transform);
@@ -24,6 +24,17 @@ void Scene::OnUpdate(const TimeStep& ts) {
                 return;
             }
         });
+}
+
+void Scene::OnViewportResize(uint32_t width, uint32_t height) {
+    m_viewportWidth = width;
+    m_viewportHeight = height;
+
+    m_registry.view<CameraComponent>().each([&]([[maybe_unused]] const auto entity, auto& cameraComp) {
+        if (!cameraComp.FixedAspectRatio) {
+            cameraComp.Camera.SetViewportSize(width, height);
+        }
+    });
 }
 
 Entity Scene::CreateEntity(const std::string& name) {

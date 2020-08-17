@@ -24,9 +24,11 @@ private:
     Ref<SubTexture2D> m_spriteBarrel;
     Ref<FrameBuffer> m_frameBuffer;
     TimeStep m_ts;
-    float m_timeAccumulator = 0.0f;
-    float m_fps = 0.0f;
+    float m_timeAccumulator{0.f};
+    float m_fps{0.f};
     Ref<Scene> m_activeScene;
     Entity m_square;
+
+    glm::vec2 m_viewportSize{glm::vec2(0.f)};
 };
 }  // namespace de

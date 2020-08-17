@@ -16,12 +16,8 @@ void DempstaEditor::OnAttach() {
     m_square.AddComponent<SpriteComponent>();
     m_square.AddComponent<ScriptComponent>("assets/scripts/component_test.lua");
 
-    auto other = m_activeScene->CreateEntity("Other");
-    other.AddComponent<SpriteComponent>();
-    other.AddComponent<ScriptComponent>("assets/scripts/script.lua");
-
     auto camEntity = m_activeScene->CreateEntity("Primary Camera");
-    camEntity.AddComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f), true);
+    camEntity.AddComponent<CameraComponent>().Primary = true;
 }
 
 void DempstaEditor::OnDetach() {}
@@ -34,16 +30,24 @@ void DempstaEditor::OnUpdate(const TimeStep& ts) {
         m_timeAccumulator = 0.0f;
         m_fps = 1.0f / (float)ts;
     }
-    if (m_editingMode) {
-        m_cameraController.OnUpdate(ts);
+
+    auto fConfig = m_frameBuffer->GetConfig();
+
+    if (m_viewportSize.x > 0.0f && m_viewportSize.y > 0.0f &&
+        (fConfig.width != m_viewportSize.x || fConfig.height != m_viewportSize.y)) {
+        const uint32_t width = (uint32_t)m_viewportSize.x;
+        const uint32_t height = (uint32_t)m_viewportSize.y;
+        m_frameBuffer->Resize(width, height);
+        m_activeScene->OnViewportResize(width, height);
     }
+
+    Renderer2D::ResetStatistics();
 
     if (m_editingMode) {
         m_frameBuffer->Bind();
     }
 
     RenderCommand::Clear({0.4f, 0.4f, 0.2f, 1});
-    Renderer2D::ResetStatistics();
 
     m_activeScene->OnUpdate(ts);
 
@@ -59,16 +63,9 @@ void DempstaEditor::OnEvent(Event& e) {
         if (event.GetKeyCode() == DE_KEY_TAB) {
             m_editingMode = !m_editingMode;
             LOG_TRACE("Editing Mode: {}", m_editingMode);
-            if (!m_editingMode) {
-                const auto& window = Application::GetInstance().GetWindow();
-                Renderer::OnWindowResize(window.GetWidth(), window.GetHeight());
-                m_cameraController.OnResize(window.GetWidth(), window.GetHeight());
-            }
         }
         return false;
     });
-
-    m_cameraController.OnEvent(e);
 }
 
 void DempstaEditor::OnImGuiRender() {
@@ -140,17 +137,9 @@ void DempstaEditor::OnImGuiRender() {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
     ImGui::Begin("ViewPort", &p_open, ImGuiWindowFlags_NoCollapse);
     ImGui::PopStyleVar(2);
-    float contentWidth = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
-    float contentHeight = ImGui::GetWindowContentRegionMax().y - ImGui::GetWindowContentRegionMin().y;
-    if ((uint32_t)contentHeight != m_frameBuffer->GetConfig().height ||
-        (uint32_t)contentWidth != m_frameBuffer->GetConfig().width) {
-        // Handle ImGui ViewPort resize
-        m_frameBuffer->Resize((uint32_t)contentWidth, (uint32_t)contentHeight);
-        Renderer::OnWindowResize((uint32_t)contentWidth, (uint32_t)contentHeight);
-        m_cameraController.OnResize((uint32_t)contentWidth, (uint32_t)contentHeight);
-    }
-
-    ImGui::Image((void*)(uintptr_t)m_frameBuffer->GetColorAttachment(), {contentWidth, contentHeight}, {0, 1}, {1, 0});
+    ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+    ImGui::Image((void*)(uintptr_t)m_frameBuffer->GetColorAttachment(), viewportPanelSize, {0, 1}, {1, 0});
+    m_viewportSize = {viewportPanelSize.x, viewportPanelSize.y};
     ImGui::End();
 
     if ((bool)m_square) {

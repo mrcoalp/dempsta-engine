@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 
 #include "Core/core.h"
-#include "Renderer/camera.h"
+#include "Scene/scenecamera.h"
 #include "Scripting/API/databuffer.h"
 
 namespace de {
@@ -46,11 +46,10 @@ struct ScriptComponent {
 };
 
 struct CameraComponent {
-    Camera Cam = Camera(glm::mat4(1.0));
+    SceneCamera Camera;
     bool Primary = false;
+    bool FixedAspectRatio = false;
 
     CameraComponent() = default;
-    explicit CameraComponent(const glm::mat4& projection, bool primary = false)
-        : Cam(Camera(projection)), Primary(primary) {}
 };
 }  // namespace de
