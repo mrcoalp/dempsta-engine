@@ -63,8 +63,8 @@ public:
         lua_getmetatable(L, 1);
         lua_pushvalue(L, 2);
         lua_rawget(L, -2);
-        auto** obj = static_cast<DataBuffer**>(lua_touserdata(L, 1));
-        (*obj)->Get(SE::GetValue<std::string>(2));
+        auto* self = *SE::GetValue<DataBuffer**>();
+        self->Get(SE::GetValue<std::string>(2));
 
         return 1;
     }
@@ -79,17 +79,17 @@ public:
         lua_getmetatable(L, 1);
         lua_pushvalue(L, 2);
         lua_rawget(L, -2);
-        auto** obj = static_cast<DataBuffer**>(lua_touserdata(L, 1));
+        auto* self = *SE::GetValue<DataBuffer**>();
 
         switch (SE::GetValueType(3)) {  // Handle Lua type
             case LuaType::Number:
-                (*obj)->Set(SE::GetValue<std::string>(2), SE::GetValue<double>(3));
+                self->Set(SE::GetValue<std::string>(2), SE::GetValue<double>(3));
                 break;
             case LuaType::Boolean:
-                (*obj)->Set(SE::GetValue<std::string>(2), SE::GetValue<bool>(3));
+                self->Set(SE::GetValue<std::string>(2), SE::GetValue<bool>(3));
                 break;
             case LuaType::String:
-                (*obj)->Set(SE::GetValue<std::string>(2), SE::GetValue<std::string>(3));
+                self->Set(SE::GetValue<std::string>(2), SE::GetValue<std::string>(3));
                 break;
             case LuaType::Null:
             case LuaType::LightUserData:

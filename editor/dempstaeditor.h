@@ -18,7 +18,6 @@ public:
     void OnImGuiRender() final;
 
 private:
-    bool m_editingMode = true;
     OrthographicCameraController m_cameraController;
     Ref<Atlas2D> m_spriteSheet;
     Ref<SubTexture2D> m_spriteBarrel;

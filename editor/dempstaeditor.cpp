@@ -35,45 +35,26 @@ void DempstaEditor::OnUpdate(const TimeStep& ts) {
 
     if (m_viewportSize.x > 0.0f && m_viewportSize.y > 0.0f &&
         (fConfig.width != m_viewportSize.x || fConfig.height != m_viewportSize.y)) {
-        const uint32_t width = (uint32_t)m_viewportSize.x;
-        const uint32_t height = (uint32_t)m_viewportSize.y;
+        const auto width = (uint32_t)m_viewportSize.x;
+        const auto height = (uint32_t)m_viewportSize.y;
         m_frameBuffer->Resize(width, height);
         m_activeScene->OnViewportResize(width, height);
     }
 
     Renderer2D::ResetStatistics();
 
-    if (m_editingMode) {
-        m_frameBuffer->Bind();
-    }
+    m_frameBuffer->Bind();
 
     RenderCommand::Clear({0.4f, 0.4f, 0.2f, 1});
 
     m_activeScene->OnUpdate(ts);
 
-    if (m_editingMode) {
-        m_frameBuffer->Unbind();
-    }
+    m_frameBuffer->Unbind();
 }
 
-void DempstaEditor::OnEvent(Event& e) {
-    EventDispatcher eventDispatcher(e);
-
-    eventDispatcher.Dispatch<KeyPressedEvent>([this](KeyPressedEvent& event) {
-        if (event.GetKeyCode() == DE_KEY_TAB) {
-            m_editingMode = !m_editingMode;
-            LOG_TRACE("Editing Mode: {}", m_editingMode);
-        }
-        return false;
-    });
-}
+void DempstaEditor::OnEvent(Event& e) {}
 
 void DempstaEditor::OnImGuiRender() {
-    // Render only in editing mode
-    if (!m_editingMode) {
-        return;
-    }
-
     static bool opt_fullscreen_persistant = true;
     bool opt_fullscreen = opt_fullscreen_persistant;
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;

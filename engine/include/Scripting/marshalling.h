@@ -7,21 +7,7 @@
 namespace lua {
 // NOTE(MPINTO): Extend _type to check for primitive
 template <typename T>
-struct Type : std::false_type {};
-template <>
-struct Type<int> : std::true_type {};
-template <>
-struct Type<float> : std::true_type {};
-template <>
-struct Type<double> : std::true_type {};
-template <>
-struct Type<bool> : std::true_type {};
-template <>
-struct Type<unsigned> : std::true_type {};
-template <>
-struct Type<std::string> : std::true_type {};
-template <>
-struct Type<const char*> : std::true_type {};
+struct Type {};
 
 class Marshalling {
 public:
@@ -60,6 +46,11 @@ public:
     static inline const char* GetValue(Type<const char*>, lua_State* L, int index) {
         ensure_type(lua_isstring(L, index));
         return lua_tostring(L, index);
+    }
+
+    static inline void* GetValue(Type<void*>, lua_State* L, int index) {
+        ensure_type(lua_isuserdata(L, index));
+        return lua_touserdata(L, index);
     }
 
     template <typename R>

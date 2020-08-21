@@ -10,8 +10,6 @@ class SceneCamera : public Camera {
 public:
     SceneCamera();
 
-    ~SceneCamera() = default;
-
     /**
      * @brief Set the Orthographic properties.
      *
@@ -35,7 +33,6 @@ private:
      */
     void recalculateProjection();
 
-private:
     float m_aspectRatio{0.f};
     float m_orthoSize{10.f};
     float m_orthoNear{-1.f};
