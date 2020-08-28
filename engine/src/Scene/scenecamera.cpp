@@ -5,10 +5,10 @@
 namespace de {
 SceneCamera::SceneCamera() { recalculateProjection(); }
 
-void SceneCamera::SetOrthographic(float size, float near, float far) {
+void SceneCamera::SetOrthographic(float size, float orthoNear, float orthoFar) {
     m_orthoSize = size;
-    m_orthoNear = near;
-    m_orthoFar = far;
+    m_orthoNear = orthoNear;
+    m_orthoFar = orthoFar;
     recalculateProjection();
 }
 

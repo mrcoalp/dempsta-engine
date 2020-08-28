@@ -17,7 +17,7 @@ public:
      * @param near Orthographic near.
      * @param far Orthographic far.
      */
-    void SetOrthographic(float size, float near, float far);
+    void SetOrthographic(float size, float orthoNear, float orthoFar);
 
     /**
      * @brief Set the viewport size.
