@@ -15,9 +15,14 @@ void Scene::OnUpdate(const TimeStep& ts) {
         nsc.Instance->OnUpdate(ts);
     });
     // scripting update
-    m_registry.view<ScriptComponent>().each([&ts](const auto entity, const auto& sc) {
-        SE::LoadFile(sc.Path.c_str());
-        SE::CallFunction("OnUpdate", sc.Data.get(), (float)ts);
+    m_registry.view<ScriptComponent>().each([&](const auto entity, auto& sc) {
+        if (sc.EntityRef == nullptr) {
+            sc.Data.reset(new lua::DataBuffer());
+            sc.EntityRef.reset(new lua::LuaEntity());
+            sc.EntityRef->m_entity = Entity(entity, this);
+            sc.OnInit();
+        }
+        sc.OnUpdate(ts);
     });
     // render
     m_registry.view<TransformComponent, CameraComponent>().each(

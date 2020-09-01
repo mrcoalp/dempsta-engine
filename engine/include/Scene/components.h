@@ -5,6 +5,7 @@
 #include "Core/core.h"
 #include "Scene/scenecamera.h"
 #include "Scripting/API/databuffer.h"
+#include "Scripting/API/luaentity.h"
 #include "Scripting/scriptentity.h"
 
 namespace de {
@@ -37,13 +38,28 @@ struct SpriteComponent {
 
 struct ScriptComponent {
     std::string Path;
-    Ref<lua::DataBuffer> Data = CreateRef<lua::DataBuffer>();
+    Scope<lua::DataBuffer> Data;
+    Scope<lua::LuaEntity> EntityRef;
 
-    ScriptComponent() = default;
-    explicit ScriptComponent(std::string path) : Path(std::move(path)) {
+    void LoadScript() const {
         SE::LoadFile(Path.c_str());
+        SE::PushGlobalVariable("this", EntityRef.get());
+    }
+
+    void OnInit() {
+        LoadScript();
         SE::CallFunction("OnInit", Data.get());
     }
+
+    void OnUpdate(const TimeStep& ts) {
+        LoadScript();
+        SE::CallFunction("OnUpdate", Data.get(), (float)ts);
+    }
+
+    void OnDestroy() { EntityRef.reset(nullptr); }
+
+    ScriptComponent() = default;
+    explicit ScriptComponent(std::string path) : Path(std::move(path)) {}
 };
 
 struct NativeScriptComponent {
