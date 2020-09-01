@@ -7,6 +7,8 @@
 #include "Scripting/API/databuffer.h"
 
 namespace de {
+class ScriptEntity;
+
 struct NameComponent {
     std::string Name;
 
@@ -43,6 +45,24 @@ struct ScriptComponent {
         SE::LoadFile(Path.c_str());
         SE::CallFunction("OnInit", Data.get());
     }
+};
+
+struct NativeScriptComponent {
+    ScriptEntity* Instance = nullptr;
+
+    ScriptEntity* (*Create)();
+    void (*Destroy)(NativeScriptComponent*);
+
+    template <typename Script>
+    void Bind() {
+        Create = []() { return dynamic_cast<ScriptEntity*>(new Script()); };
+        Destroy = [](NativeScriptComponent* nsc) {
+            delete nsc->Instance;
+            nsc->Instance = nullptr;
+        };
+    }
+
+    NativeScriptComponent() = default;
 };
 
 struct CameraComponent {

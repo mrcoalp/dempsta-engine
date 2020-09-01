@@ -24,6 +24,7 @@
 #include "Scene/scene.h"
 #include "Scripting/binding.h"
 #include "Scripting/scriptengine.h"
+#include "Scripting/scriptentity.h"
 #include "Utils/fileutils.h"
 
 #endif  // DEMPSTA_H

@@ -16,8 +16,29 @@ void DempstaEditor::OnAttach() {
     m_square.AddComponent<SpriteComponent>();
     m_square.AddComponent<ScriptComponent>("assets/scripts/component_test.lua");
 
+    class CameraController : public ScriptEntity {
+    public:
+        void OnUpdate(const TimeStep& ts) override {
+            auto& transform = GetComponent<TransformComponent>().Transform;
+
+            if (Input::IsKeyPressed(DE_KEY_A)) {
+                transform[3][0] -= 5.f * (float)ts;
+            }
+            if (Input::IsKeyPressed(DE_KEY_D)) {
+                transform[3][0] += 5.f * (float)ts;
+            }
+            if (Input::IsKeyPressed(DE_KEY_S)) {
+                transform[3][1] -= 5.f * (float)ts;
+            }
+            if (Input::IsKeyPressed(DE_KEY_W)) {
+                transform[3][1] += 5.f * (float)ts;
+            }
+        }
+    };
+
     auto camEntity = m_activeScene->CreateEntity("Primary Camera");
     camEntity.AddComponent<CameraComponent>().Primary = true;
+    camEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 }
 
 void DempstaEditor::OnDetach() {}

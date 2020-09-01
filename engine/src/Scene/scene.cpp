@@ -3,9 +3,25 @@
 #include "Renderer/renderer2d.h"
 #include "Scene/entity.h"
 #include "Scripting/scriptengine.h"
+#include "Scripting/scriptentity.h"
 
 namespace de {
 void Scene::OnUpdate(const TimeStep& ts) {
+    // native scripting update
+    m_registry.view<NativeScriptComponent>().each([&](const auto entity, auto& nsc) {
+        if (nsc.Instance == nullptr) {
+            nsc.Instance = nsc.Create();
+            nsc.Instance->m_entity = Entity(entity, this);
+            nsc.Instance->OnInit();
+        }
+        nsc.Instance->OnUpdate(ts);
+    });
+    // scripting update
+    m_registry.view<ScriptComponent>().each([&ts](const auto entity, const auto& sc) {
+        SE::LoadFile(sc.Path.c_str());
+        SE::CallFunction("OnUpdate", sc.Data.get(), (float)ts);
+    });
+    // render
     m_registry.view<TransformComponent, CameraComponent>().each(
         // cameraEntity can be avoided to be captured
         [&]([[maybe_unused]] const auto cameraEntity, const auto& transformComp, const auto& cameraComp) {
@@ -14,11 +30,9 @@ void Scene::OnUpdate(const TimeStep& ts) {
             if (cameraComp.Primary) {
                 Renderer2D::BeginScene(camera.GetProjection(), transform);
 
-                m_registry.group<TransformComponent>(entt::get<SpriteComponent, ScriptComponent>)
-                    .each([ts](const auto& transformComp, const auto& spriteComp, const auto& scriptComp) {
+                m_registry.group<TransformComponent>(entt::get<SpriteComponent>)
+                    .each([](const auto& transformComp, const auto& spriteComp) {
                         Renderer2D::DrawQuad(transformComp.Transform, spriteComp.Color);
-                        SE::LoadFile(scriptComp.Path.c_str());
-                        SE::CallFunction("OnUpdate", scriptComp.Data.get(), (float)ts);
                     });
                 Renderer2D::EndScene();
                 return;
