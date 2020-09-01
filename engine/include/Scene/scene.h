@@ -3,7 +3,6 @@
 #include <entity/registry.hpp>
 
 #include "Core/timestep.h"
-#include "Scene/components.h"
 
 namespace de {
 class Entity;

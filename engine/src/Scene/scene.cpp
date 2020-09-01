@@ -1,9 +1,7 @@
 #include "Scene/scene.h"
 
 #include "Renderer/renderer2d.h"
-#include "Scene/entity.h"
-#include "Scripting/scriptengine.h"
-#include "Scripting/scriptentity.h"
+#include "Scene/components.h"
 
 namespace de {
 void Scene::OnUpdate(const TimeStep& ts) {

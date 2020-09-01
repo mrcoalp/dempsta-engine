@@ -5,10 +5,9 @@
 #include "Core/core.h"
 #include "Scene/scenecamera.h"
 #include "Scripting/API/databuffer.h"
+#include "Scripting/scriptentity.h"
 
 namespace de {
-class ScriptEntity;
-
 struct NameComponent {
     std::string Name;
 
