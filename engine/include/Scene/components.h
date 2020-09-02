@@ -68,7 +68,7 @@ struct NativeScriptComponent {
     ScriptEntity* (*Create)();
     void (*Destroy)(NativeScriptComponent*);
 
-    template <typename Script>
+    template <class Script>
     void Bind() {
         Create = []() { return dynamic_cast<ScriptEntity*>(new Script()); };
         Destroy = [](NativeScriptComponent* nsc) {
