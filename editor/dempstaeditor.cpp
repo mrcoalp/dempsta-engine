@@ -66,7 +66,7 @@ void DempstaEditor::OnUpdate(const TimeStep& ts) {
 
     m_frameBuffer->Bind();
 
-    RenderCommand::Clear({0.4f, 0.4f, 0.2f, 1});
+    RenderCommand::Clear({0.2f, 0.2f, 0.2f, 1});
 
     m_activeScene->OnUpdate(ts);
 

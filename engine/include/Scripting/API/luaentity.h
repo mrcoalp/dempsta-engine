@@ -15,13 +15,18 @@ public:
 
     LUA_DECLARE_CLASS(LuaEntity)
 
-    LUA_PROXY_METHOD(GetX);
-
-    LUA_PROXY_METHOD(SetX);
-
-    LUA_PROXY_METHOD(GetY);
-
-    LUA_PROXY_METHOD(SetY);
+    LUA_METHOD(GetName);
+    LUA_METHOD(SetName);
+    LUA_METHOD(GetX);
+    LUA_METHOD(SetX);
+    LUA_METHOD(GetY);
+    LUA_METHOD(SetY);
+    LUA_METHOD(GetZ);
+    LUA_METHOD(SetZ);
+    LUA_METHOD(GetColor);
+    LUA_METHOD(SetColor);
+    LUA_METHOD(GetAlpha);
+    LUA_METHOD(SetAlpha);
 
 private:
     de::Entity m_entity;

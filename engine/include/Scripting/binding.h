@@ -52,7 +52,7 @@ private:
         _property = SE::GetValue<_type>(); \
         return 0;                          \
     }
-#define LUA_PROXY_METHOD(_name) int _name(lua_State* L)
+#define LUA_METHOD(_name) int _name(lua_State* L)
 #define LUA_DEFINE_BINDING(_class, _gc) \
     using BindingType = _class;         \
     bool BindingType::GC = _gc;         \

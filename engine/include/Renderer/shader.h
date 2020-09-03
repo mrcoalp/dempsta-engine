@@ -3,7 +3,6 @@
 #include <glm/glm.hpp>
 
 #include "Core/core.h"
-#include "Core/pch.h"
 
 namespace de {
 class Shader {

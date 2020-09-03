@@ -2,7 +2,6 @@
 
 #include <queue>
 
-#include "Core/pch.h"
 #include "Events/event.h"
 #include "Platform/OpenGL/openglcontext.h"
 

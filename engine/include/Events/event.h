@@ -1,7 +1,8 @@
 #pragma once
 
+#include <sstream>
+
 #include "Core/log.h"
-#include "Core/pch.h"
 
 namespace de {
 /**

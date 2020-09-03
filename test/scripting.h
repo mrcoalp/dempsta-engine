@@ -14,12 +14,12 @@ public:
 
     LUA_PROPERTY(m_prop, int)
 
-    LUA_PROXY_METHOD(Getter) {
+    LUA_METHOD(Getter) {
         SE::PushValue(m_prop + SE::GetValue<int>());
         return 1;
     }
 
-    LUA_PROXY_METHOD(Setter) {
+    LUA_METHOD(Setter) {
         testClass = m_prop = SE::GetValue<int>();
         return 0;
     }

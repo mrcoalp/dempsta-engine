@@ -46,12 +46,12 @@ struct ScriptComponent {
         SE::PushGlobalVariable("this", EntityRef.get());
     }
 
-    void OnInit() {
+    void OnInit() const {
         LoadScript();
         SE::CallFunction("OnInit", Data.get());
     }
 
-    void OnUpdate(const TimeStep& ts) {
+    void OnUpdate(const TimeStep& ts) const {
         LoadScript();
         SE::CallFunction("OnUpdate", Data.get(), (float)ts);
     }

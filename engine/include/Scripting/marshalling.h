@@ -1,8 +1,8 @@
 #pragma once
 
 #include <lua.hpp>
-
-#include "Core/log.h"
+#include <stdexcept>
+#include <vector>
 
 namespace lua {
 // NOTE(MPINTO): Extend _type to check for primitive

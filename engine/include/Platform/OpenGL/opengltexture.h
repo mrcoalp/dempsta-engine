@@ -2,7 +2,6 @@
 
 #include <glad/glad.h>
 
-#include "Core/pch.h"
 #include "Renderer/texture.h"
 
 namespace de {
