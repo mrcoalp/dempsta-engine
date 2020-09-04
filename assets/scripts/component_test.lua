@@ -1,7 +1,8 @@
 function OnInit(data)
     data.delta = 0
-    data.speedX = 5
-    data.speedY = 2
+    data.dirX = 0
+    data.dirY = 0
+    data.speed = 5
     data.currentColor = -1
     data.playing = true
 end
@@ -13,17 +14,23 @@ function OnUpdate(data, delta)
 
     local x = this.GetX()
     local y = this.y
+    data.dirX = 0
+    data.dirY = 0
 
-    if x > 7 or x < -7 then
-        data.speedX = data.speedX * -1
+    if IsKeyPressed(DE_KEY_UP) then
+        data.dirX = -1
+    elseif IsKeyPressed(DE_KEY_DOWN) then
+        data.dirX = 1
     end
 
-    if y > 4 or y < -4 then
-        data.speedY = data.speedY * -1
+    if IsKeyPressed(DE_KEY_LEFT) then
+        data.dirY = -1
+    elseif IsKeyPressed(DE_KEY_RIGHT) then
+        data.dirY = 1
     end
 
-    x = x + data.speedX * delta
-    y = y + data.speedY * delta
+    x = x + data.dirX * data.speed * delta
+    y = y + data.dirY * data.speed * delta
 
     this.x = x
     this.SetY(y)
