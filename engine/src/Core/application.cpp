@@ -4,12 +4,14 @@
 
 #include "Renderer/renderer.h"
 #include "Scripting/API/databuffer.h"
+#include "Scripting/API/helpers.h"
 #include "Scripting/API/luaentity.h"
 #include "Scripting/scriptengine.h"
 
 namespace de {
 static void RegisterScriptingAPI() {
-    lua::DataBuffer::Register(SE::GetState());
+    lua::Helpers::Register();
+    lua::DataBuffer::Register();
     SE::RegisterClass<lua::LuaEntity>();
 }
 

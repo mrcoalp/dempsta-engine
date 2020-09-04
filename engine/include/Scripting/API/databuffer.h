@@ -37,10 +37,9 @@ public:
 
     /**
      * @brief Registers class as metatable in Lua.
-     *
-     * @param L Lua state
      */
-    static void Register(lua_State* L) {
+    static void Register() {
+        auto* L = SE::GetState();
         luaL_newmetatable(L, "DataBuffer");
         int metatable = lua_gettop(L);
 

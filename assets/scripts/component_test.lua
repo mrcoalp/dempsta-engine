@@ -1,10 +1,7 @@
 function OnInit(data)
-    data.seconds = 1
     data.delta = 0
-    data.double = 3.14
-    data.bool = true
-    data.string = "Seconds elapsed: "
-    data.direction = 1
+    data.speedX = 5
+    data.speedY = 2
     data.currentColor = -1
     data.playing = true
 end
@@ -17,20 +14,23 @@ function OnUpdate(data, delta)
     local x = this.GetX()
     local y = this.y
 
-    if x > 7 then
-        data.direction = -1
-    elseif x < -7 then
-        data.direction = 1
+    if x > 7 or x < -7 then
+        data.speedX = data.speedX * -1
     end
 
-    x = x + 5 * data.direction * delta
-    y = y + 2 * data.direction * delta
+    if y > 4 or y < -4 then
+        data.speedY = data.speedY * -1
+    end
 
-    this.SetX(x)
-    this.y = y
+    x = x + data.speedX * delta
+    y = y + data.speedY * delta
+
+    this.x = x
+    this.SetY(y)
 
     if (data.delta >= 1) then
         handleSecondElapsed(data)
+        data.delta = 0
     else
         data.delta = data.delta + delta
     end
@@ -39,19 +39,8 @@ end
 function handleSecondElapsed(data)
     data.currentColor = (data.currentColor + 1) % 4
     changeColor(data.currentColor)
-
-    local seconds = data.seconds
     print("Entity '" .. this.name .. "': pos: x: " .. this.x .. ", y: " .. this.y .. ", z: " .. this.z)
     print("Color: " .. this.color .. ", alpha: " .. this.alpha)
-    print(data.string .. seconds .. "s")
-
-    data.seconds = seconds + 1
-
-    print("Saved data -> ", data.double, data.bool, data.inexistent_key, "\n")
-
-    data.bool = not data.bool
-    data.double = data.double + (data.seconds / 3)
-    data.delta = 0
 end
 
 function changeColor(colorID)
