@@ -5,12 +5,9 @@
 namespace de {
 class StringUtils {
 public:
-    template <typename T>
-    static T ToHex(const std::string& string, bool head = false) {
-        std::stringstream ss(head ? string.substr(2) : string);
-        T hex;
-        ss >> std::hex >> hex;
-        return hex;
+    static std::string SubString(const std::string& string, size_t begin = 0, long end = -1) {
+        end = end < 0 ? string.size() : end;
+        return string.substr(begin, end);
     }
 };
 }  // namespace de

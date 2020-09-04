@@ -50,24 +50,7 @@ int LuaEntity::GetColor(lua_State* L) {
 }
 
 int LuaEntity::SetColor(lua_State* L) {
-    auto stringColor = SE::GetValue<std::string>();
-    if (stringColor.substr(0, 1) == "#") {
-        stringColor.erase(0, 1);
-    } else if (stringColor.substr(0, 2) == "0x") {
-        stringColor.erase(0, 2);
-    }
-    if (stringColor.size() > 8 || stringColor.size() < 6) {
-        return 0;
-    }
-    glm::vec4 newColor;
-    if (stringColor.size() == 8) {
-        newColor = de::Color::HexStringToVec4(stringColor);
-    } else if (stringColor.size() == 6) {
-        newColor = {de::Color::HexStringToVec3(stringColor), 1.f};
-    } else {
-        return 0;
-    }
-    m_entity.GetComponent<de::SpriteComponent>().Color = newColor;
+    m_entity.GetComponent<de::SpriteComponent>().Color = de::Color::HexStringToVec4(SE::GetValue<std::string>());
     return 0;
 }
 
