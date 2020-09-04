@@ -18,15 +18,15 @@ function OnUpdate(data, delta)
     data.dirY = 0
 
     if IsKeyPressed(DE_KEY_UP) then
-        data.dirX = -1
+        data.dirY = 1
     elseif IsKeyPressed(DE_KEY_DOWN) then
-        data.dirX = 1
+        data.dirY = -1
     end
 
     if IsKeyPressed(DE_KEY_LEFT) then
-        data.dirY = -1
+        data.dirX = -1
     elseif IsKeyPressed(DE_KEY_RIGHT) then
-        data.dirY = 1
+        data.dirX = 1
     end
 
     x = x + data.dirX * data.speed * delta
