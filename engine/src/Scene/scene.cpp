@@ -1,5 +1,6 @@
 #include "Scene/scene.h"
 
+#include "Events/keyevent.h"
 #include "Renderer/renderer2d.h"
 #include "Scene/components.h"
 
@@ -41,6 +42,16 @@ void Scene::OnUpdate(const TimeStep& ts) {
                 return;
             }
         });
+}
+
+void Scene::OnEvent(Event& event) {
+    // native scripting update
+    m_registry.view<NativeScriptComponent>().each([&](const auto entity, auto& nsc) { nsc.Instance->OnEvent(event); });
+    // scripting update
+    m_registry.view<ScriptComponent>().each([&](const auto entity, auto& sc) {
+        if (event.GetEventType() == EventType::KeyPressed)
+            sc.OnEvent(event, dynamic_cast<KeyPressedEvent&>(event).GetKeyCode());
+    });
 }
 
 void Scene::OnViewportResize(uint32_t width, uint32_t height) {

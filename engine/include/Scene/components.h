@@ -56,6 +56,12 @@ struct ScriptComponent {
         SE::CallFunction("OnUpdate", Data.get(), (float)ts);
     }
 
+    template <typename T>
+    void OnEvent(Event& event, T&& action) const {
+        LoadScript();
+        SE::CallFunction("OnEvent", Data.get(), static_cast<int>(event.GetEventType()), action);
+    }
+
     void OnDestroy() { EntityRef.reset(nullptr); }
 
     ScriptComponent() = default;

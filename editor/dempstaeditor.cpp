@@ -73,7 +73,7 @@ void DempstaEditor::OnUpdate(const TimeStep& ts) {
     m_frameBuffer->Unbind();
 }
 
-void DempstaEditor::OnEvent(Event& e) {}
+void DempstaEditor::OnEvent(Event& e) { m_activeScene->OnEvent(e); }
 
 void DempstaEditor::OnImGuiRender() {
     static bool opt_fullscreen_persistant = true;

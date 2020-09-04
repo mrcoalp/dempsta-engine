@@ -2,9 +2,9 @@ function OnInit(data)
     data.delta = 0
     data.dirX = 0
     data.dirY = 0
-    data.speed = 5
+    data.speed = 10
     data.currentColor = -1
-    data.playing = true
+    data.playing = false
 end
 
 function OnUpdate(data, delta)
@@ -17,15 +17,15 @@ function OnUpdate(data, delta)
     data.dirX = 0
     data.dirY = 0
 
-    if IsKeyPressed(DE_KEY_UP) then
+    if IsKeyPressed(KEY_UP) then
         data.dirY = 1
-    elseif IsKeyPressed(DE_KEY_DOWN) then
+    elseif IsKeyPressed(KEY_DOWN) then
         data.dirY = -1
     end
 
-    if IsKeyPressed(DE_KEY_LEFT) then
+    if IsKeyPressed(KEY_LEFT) then
         data.dirX = -1
-    elseif IsKeyPressed(DE_KEY_RIGHT) then
+    elseif IsKeyPressed(KEY_RIGHT) then
         data.dirX = 1
     end
 
@@ -40,6 +40,13 @@ function OnUpdate(data, delta)
         data.delta = 0
     else
         data.delta = data.delta + delta
+    end
+end
+
+function OnEvent(data, event, action)
+    if event == EVT_KEY_PRESSED and action == KEY_SPACE then
+        data.playing = not data.playing
+        print("Playing:", data.playing)
     end
 end
 

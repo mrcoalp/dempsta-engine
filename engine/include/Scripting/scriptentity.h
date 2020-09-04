@@ -17,6 +17,8 @@ protected:
 
     virtual void OnUpdate(const TimeStep& ts) {}
 
+    virtual void OnEvent(Event& event) {}
+
     virtual void OnDestroy() {}
 
 private:

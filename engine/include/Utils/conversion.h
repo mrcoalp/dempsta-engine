@@ -20,4 +20,4 @@ public:
         return ss.str();
     }
 };
-}
+}  // namespace de

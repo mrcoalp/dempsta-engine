@@ -3,6 +3,7 @@
 #include <entity/registry.hpp>
 
 #include "Core/timestep.h"
+#include "Events/event.h"
 
 namespace de {
 class Entity;
@@ -22,6 +23,8 @@ public:
      * @param ts Delta time.
      */
     void OnUpdate(const TimeStep& ts);
+
+    void OnEvent(Event& event);
 
     /**
      * @brief Handles resize of viewport.
