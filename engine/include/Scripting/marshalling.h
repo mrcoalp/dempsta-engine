@@ -1,7 +1,9 @@
 #pragma once
 
 #include <lua.hpp>
+#include <map>
 #include <stdexcept>
+#include <unordered_map>
 #include <vector>
 
 namespace lua {
@@ -98,6 +100,26 @@ public:
             PushValue(L, element);
             lua_settable(L, -3);
             ++index;
+        }
+    }
+
+    template <typename T>
+    static void PushValue(lua_State* L, const std::unordered_map<std::string, T>& value) {
+        lua_newtable(L);
+        for (const auto& element : value) {
+            PushValue(L, element.first);
+            PushValue(L, element.second);
+            lua_settable(L, -3);
+        }
+    }
+
+    template <typename T>
+    static void PushValue(lua_State* L, const std::map<std::string, T>& value) {
+        lua_newtable(L);
+        for (const auto& element : value) {
+            PushValue(L, element.first);
+            PushValue(L, element.second);
+            lua_settable(L, -3);
         }
     }
 

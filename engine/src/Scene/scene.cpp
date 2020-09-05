@@ -1,5 +1,7 @@
 #include "Scene/scene.h"
 
+#include <unordered_map>
+
 #include "Events/keyevent.h"
 #include "Renderer/renderer2d.h"
 #include "Scene/components.h"
@@ -21,6 +23,7 @@ void Scene::OnUpdate(const TimeStep& ts) {
             sc.Data.reset(new lua::DataBuffer());
             sc.EntityRef.reset(new lua::LuaEntity());
             sc.EntityRef->m_entity = Entity(entity, this);
+            sc.ReloadScript();
             sc.OnInit();
         }
         sc.OnUpdate(ts);
@@ -48,9 +51,22 @@ void Scene::OnEvent(Event& event) {
     // native scripting update
     m_registry.view<NativeScriptComponent>().each([&](const auto entity, auto& nsc) { nsc.Instance->OnEvent(event); });
     // scripting update
+    EventDispatcher dispatcher(event);
+    const int eventType = static_cast<int>(event.GetEventType());
     m_registry.view<ScriptComponent>().each([&](const auto entity, auto& sc) {
-        if (event.GetEventType() == EventType::KeyPressed)
-            sc.OnEvent(event, dynamic_cast<KeyPressedEvent&>(event).GetKeyCode());
+        dispatcher.Dispatch<KeyPressedEvent>([&](KeyPressedEvent& event) {
+            sc.OnEvent(eventType, event.GetKeyCode());
+            return false;
+        });
+        dispatcher.Dispatch<MouseBtnPressedEvent>([&](MouseBtnPressedEvent& event) {
+            sc.OnEvent(eventType, event.GetMouseBtnCode());
+            return false;
+        });
+        dispatcher.Dispatch<MouseMovedEvent>([&](MouseMovedEvent& event) {
+            std::unordered_map<std::string, float> coord = {{"x", event.GetX()}, {"y", event.GetY()}};
+            sc.OnEvent(eventType, coord);
+            return false;
+        });
     });
 }
 

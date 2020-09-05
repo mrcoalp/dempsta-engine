@@ -7,6 +7,7 @@
 #include "Scripting/API/databuffer.h"
 #include "Scripting/API/luaentity.h"
 #include "Scripting/scriptentity.h"
+#include "Utils/fileutils.h"
 
 namespace de {
 struct NameComponent {
@@ -15,7 +16,7 @@ struct NameComponent {
     NameComponent() = default;
     explicit NameComponent(std::string name) : Name(std::move(name)) {}
 
-    explicit operator const std::string &() const noexcept { return Name; }
+    explicit operator const std::string&() const noexcept { return Name; }
     explicit operator const char*() const noexcept { return Name.c_str(); }
 };
 
@@ -25,8 +26,8 @@ struct TransformComponent {
     TransformComponent() = default;
     explicit TransformComponent(const glm::mat4& transform) : Transform(transform) {}
 
-    explicit operator glm::mat4 &() noexcept { return Transform; }
-    explicit operator const glm::mat4 &() const noexcept { return Transform; }
+    explicit operator glm::mat4&() noexcept { return Transform; }
+    explicit operator const glm::mat4&() const noexcept { return Transform; }
 };
 
 struct SpriteComponent {
@@ -36,36 +37,42 @@ struct SpriteComponent {
     explicit SpriteComponent(const glm::vec4& color) : Color(color) {}
 };
 
-struct ScriptComponent {
-    std::string Path;
+class ScriptComponent {
+public:
     Scope<lua::DataBuffer> Data;
     Scope<lua::LuaEntity> EntityRef;
 
-    void LoadScript() const {
-        SE::LoadFile(Path.c_str());
-        SE::PushGlobalVariable("this", EntityRef.get());
-    }
+    void ReloadScript() { m_code = FileUtils::ReadFile(m_path); }
 
     void OnInit() const {
-        LoadScript();
+        loadCode();
         SE::CallFunction("OnInit", Data.get());
     }
 
     void OnUpdate(const TimeStep& ts) const {
-        LoadScript();
+        loadCode();
         SE::CallFunction("OnUpdate", Data.get(), (float)ts);
     }
 
     template <typename T>
-    void OnEvent(Event& event, T&& action) const {
-        LoadScript();
-        SE::CallFunction("OnEvent", Data.get(), static_cast<int>(event.GetEventType()), action);
+    void OnEvent(int eventType, T&& action) const {
+        loadCode();
+        SE::CallFunction("OnEvent", Data.get(), eventType, action);
     }
 
     void OnDestroy() { EntityRef.reset(nullptr); }
 
     ScriptComponent() = default;
-    explicit ScriptComponent(std::string path) : Path(std::move(path)) {}
+    explicit ScriptComponent(std::string path) : m_path(std::move(path)) {}
+
+private:
+    std::string m_path{""};
+    std::string m_code{""};
+
+    void loadCode() const {
+        SE::PushGlobalVariable("this", EntityRef.get());
+        SE::RunCode(m_code.c_str());
+    }
 };
 
 struct NativeScriptComponent {
