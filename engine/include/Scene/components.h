@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 
 #include "Core/core.h"
+#include "Renderer/subtexture.h"
 #include "Scene/scenecamera.h"
 #include "Scripting/API/databuffer.h"
 #include "Scripting/API/luaentity.h"
@@ -32,9 +33,9 @@ struct TransformComponent {
 
 struct SpriteComponent {
     glm::vec4 Color = glm::vec4(1.0f);
+    Ref<SubTexture2D> Texture;
 
     SpriteComponent() = default;
-    explicit SpriteComponent(const glm::vec4& color) : Color(color) {}
 };
 
 class ScriptComponent {
@@ -58,6 +59,11 @@ public:
     void OnEvent(int eventType, T&& action) const {
         loadCode();
         SE::CallFunction("OnEvent", Data.get(), eventType, action);
+    }
+
+    void OnMessage(const std::string& id, lua::DataBuffer* data, const std::string& sender) const {
+        loadCode();
+        SE::CallFunction("OnMessage", Data.get(), id, data, sender);
     }
 
     void OnDestroy() { EntityRef.reset(nullptr); }

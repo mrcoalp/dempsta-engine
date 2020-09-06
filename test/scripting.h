@@ -1,6 +1,7 @@
 #pragma once
 
 #include "dempsta.h"
+#include "Scripting/API/databuffer.h"
 
 int testClass = -1;
 
@@ -36,7 +37,7 @@ LUA_ADD_METHOD(Getter)
 LUA_ADD_METHOD(Setter);
 
 std::string testCPPFunction = "";
-int cppFunction(lua_State* L) {
+LUA_METHOD(cppFunction) {
     testCPPFunction = SE::GetValue<std::string>();
     return 0;
 }
@@ -103,4 +104,25 @@ bool test_lua_run_code() {
     const std::string s = SE::GetGlobalVariable<std::string>("a");
     SE::CloseState();
     return status && s == "passed";
+}
+
+std::string dataStored;
+
+LUA_METHOD(NewMessage) {
+    auto id = SE::GetValue<std::string>();
+    auto* data = *SE::GetValue<lua::DataBuffer**>(2);
+    SE::CallFunction(dataStored, "Listen", id, data);
+    dataStored = id + "_" + dataStored;
+    delete data;
+    return 0;
+}
+
+bool test_lua_data_buffer() {
+    SE::Init();
+    lua::DataBuffer::Register();
+    SE::RegisterFunction("NewMessage", NewMessage);
+    SE::LoadFile("scripts/databuffer.lua");
+    SE::CallFunction("Broadcast");
+    SE::CloseState();
+    return dataStored == "msg_sender";
 }

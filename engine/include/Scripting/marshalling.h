@@ -75,6 +75,18 @@ public:
         return vec;
     }
 
+    template <typename T>
+    [[nodiscard]] static std::unordered_map<std::string, T> GetMap(lua_State* L, const std::vector<const char*>& keys,
+                                                                   int index) {
+        std::unordered_map<std::string, T> map;
+        for (const auto& key : keys) {
+            lua_getfield(L, -1, key);
+            map.emplace(key, GetValue(Type<T>{}, L, -1));
+            lua_pop(L, 1);
+        }
+        return map;
+    }
+
     static void PushValue(lua_State* L, int value) { lua_pushinteger(L, value); }
 
     static void PushValue(lua_State* L, float value) { lua_pushnumber(L, value); }

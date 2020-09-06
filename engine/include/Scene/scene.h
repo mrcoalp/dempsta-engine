@@ -4,6 +4,11 @@
 
 #include "Core/timestep.h"
 #include "Events/event.h"
+#include "Scripting/messaging.h"
+
+namespace lua {
+class LuaEntity;
+}
 
 namespace de {
 class Entity;
@@ -51,6 +56,9 @@ private:
     uint32_t m_viewportWidth{0};
     uint32_t m_viewportHeight{0};
 
+    MessageHandler m_messageHandler;
+
     friend class Entity;
+    friend class lua::LuaEntity;
 };
 }  // namespace de

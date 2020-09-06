@@ -18,9 +18,6 @@ public:
     void OnImGuiRender() final;
 
 private:
-    OrthographicCameraController m_cameraController;
-    Ref<Atlas2D> m_spriteSheet;
-    Ref<SubTexture2D> m_spriteBarrel;
     Ref<FrameBuffer> m_frameBuffer;
     TimeStep m_ts;
     float m_timeAccumulator{0.f};

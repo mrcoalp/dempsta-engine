@@ -31,7 +31,12 @@ namespace lua {
  */
 class DataBuffer {
 public:
+    template <typename T>
+    using Data = std::unordered_map<std::string, T>;
+
     DataBuffer() = default;
+
+    explicit DataBuffer(lua_State*) {}
 
     LUA_DECLARE_CLASS(DataBuffer)
 
@@ -40,6 +45,9 @@ public:
      */
     static void Register() {
         auto* L = SE::GetState();
+        lua_pushcfunction(L, &LuaCtor);
+        lua_setglobal(L, "DataBuffer");
+
         luaL_newmetatable(L, "DataBuffer");
         int metatable = lua_gettop(L);
 
@@ -53,12 +61,27 @@ public:
     }
 
     /**
+     * @brief Construct a new lua data buffer object inside Lua
+     *
+     * @warning Use with carefull since lua does not handle garbage collection for this class.
+     * Ensure a proper object deletion in C++ land when constructing inside lua.
+     *
+     * @param L Lua state.
+     * @return int Number of values returned to Lua.
+     */
+    static LUA_METHOD(LuaCtor) {
+        auto* buffer = new DataBuffer(L);
+        SE::PushValue(buffer);
+        return 1;
+    }
+
+    /**
      * @brief Fetches index as key and calls internal getter.
      *
      * @param L Lua state.
      * @return int Number of values returned to Lua.
      */
-    static int LuaGetter(lua_State* L) {
+    static LUA_METHOD(LuaGetter) {
         lua_getmetatable(L, 1);
         lua_pushvalue(L, 2);
         lua_rawget(L, -2);
@@ -74,7 +97,7 @@ public:
      * @param L Lua state.
      * @return int Number of values returned to Lua.
      */
-    static int LuaSetter(lua_State* L) {
+    static LUA_METHOD(LuaSetter) {
         lua_getmetatable(L, 1);
         lua_pushvalue(L, 2);
         lua_rawget(L, -2);
@@ -158,9 +181,9 @@ public:
     }
 
 private:
-    std::unordered_map<std::string, double> m_doubles;
-    std::unordered_map<std::string, bool> m_bools;
-    std::unordered_map<std::string, std::string> m_strings;
+    Data<double> m_doubles;
+    Data<bool> m_bools;
+    Data<std::string> m_strings;
 
     /**
      * @brief Ensures the key is unique amongst all maps.

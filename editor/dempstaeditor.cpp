@@ -3,42 +3,30 @@
 #include <glm/gtc/type_ptr.hpp>
 
 namespace de {
-DempstaEditor::DempstaEditor() : Layer("DempstaEditor"), m_cameraController(16.0f / 9.0f, true) {}
+DempstaEditor::DempstaEditor() : Layer("DempstaEditor") {}
 
 void DempstaEditor::OnAttach() {
-    m_spriteSheet = CreateRef<Atlas2D>("assets/textures/RPGpack_sheet_2X.png", glm::vec2(128.0f));
-    m_spriteBarrel = SubTexture2D::CreateSprite(m_spriteSheet, glm::vec2({8.0f, 0.0f}));
     FrameBufferConfig fConfig = {1280, 720};
     m_frameBuffer = FrameBuffer::Create(fConfig);
     m_activeScene = CreateRef<Scene>();
 
+    auto spriteSheet = CreateRef<Atlas2D>("assets/textures/RPGpack_sheet_2X.png", glm::vec2(128.0f));
+    auto spriteBarrel = SubTexture2D::CreateSprite(spriteSheet, glm::vec2({8.0f, 0.0f}));
+    auto spriteDog = CreateRef<SubTexture2D>("assets/textures/dog.jpg");
+
     m_square = m_activeScene->CreateEntity("Square");
     m_square.AddComponent<SpriteComponent>();
-    m_square.AddComponent<ScriptComponent>("assets/scripts/component_test.lua");
+    m_square.AddComponent<ScriptComponent>("assets/scripts/square.lua");
 
-    class CameraController : public ScriptEntity {
-    public:
-        void OnUpdate(const TimeStep& ts) override {
-            auto& transform = GetComponent<TransformComponent>().Transform;
+    auto dog = m_activeScene->CreateEntity("Dog");
+    dog.AddComponent<SpriteComponent>().Texture = spriteDog;
 
-            if (Input::IsKeyPressed(DE_KEY_A)) {
-                transform[3][0] -= 5.f * (float)ts;
-            }
-            if (Input::IsKeyPressed(DE_KEY_D)) {
-                transform[3][0] += 5.f * (float)ts;
-            }
-            if (Input::IsKeyPressed(DE_KEY_S)) {
-                transform[3][1] -= 5.f * (float)ts;
-            }
-            if (Input::IsKeyPressed(DE_KEY_W)) {
-                transform[3][1] += 5.f * (float)ts;
-            }
-        }
-    };
+    auto barrel = m_activeScene->CreateEntity("Barrel");
+    barrel.AddComponent<SpriteComponent>().Texture = spriteBarrel;
+    barrel.AddComponent<ScriptComponent>("assets/scripts/barrel.lua");
 
     auto camEntity = m_activeScene->CreateEntity("Primary Camera");
     camEntity.AddComponent<CameraComponent>().Primary = true;
-    camEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 }
 
 void DempstaEditor::OnDetach() {}

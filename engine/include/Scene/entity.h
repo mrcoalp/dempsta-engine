@@ -3,6 +3,10 @@
 #include "Core/core.h"
 #include "Scene/scene.h"
 
+namespace lua {
+class LuaEntity;
+}
+
 namespace de {
 /**
  * @brief Wrapper class to abstract all EnTT related logic.
@@ -102,5 +106,6 @@ public:
 private:
     entt::entity m_handle{entt::null};
     Scene* m_scene;
+    friend class lua::LuaEntity;
 };
 }  // namespace de

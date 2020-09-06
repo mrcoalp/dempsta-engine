@@ -28,6 +28,11 @@ void Scene::OnUpdate(const TimeStep& ts) {
         }
         sc.OnUpdate(ts);
     });
+    // messaging
+    m_messageHandler.HandleMessages([&](const Message& msg) {
+        m_registry.view<ScriptComponent>().each(
+            [msg](const auto entity, auto& sc) { sc.OnMessage(msg.ID, msg.Data, msg.Sender); });
+    });
     // render
     m_registry.view<TransformComponent, CameraComponent>().each(
         // cameraEntity can be avoided to be captured
@@ -39,7 +44,11 @@ void Scene::OnUpdate(const TimeStep& ts) {
 
                 m_registry.group<TransformComponent>(entt::get<SpriteComponent>)
                     .each([](const auto& transformComp, const auto& spriteComp) {
-                        Renderer2D::DrawQuad(transformComp.Transform, spriteComp.Color);
+                        if (spriteComp.Texture != nullptr) {
+                            Renderer2D::DrawQuad(transformComp.Transform, spriteComp.Texture, spriteComp.Color);
+                        } else {
+                            Renderer2D::DrawQuad(transformComp.Transform, spriteComp.Color);
+                        }
                     });
                 Renderer2D::EndScene();
                 return;

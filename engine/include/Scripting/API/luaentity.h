@@ -23,10 +23,14 @@ public:
     LUA_METHOD(SetY);
     LUA_METHOD(GetZ);
     LUA_METHOD(SetZ);
+    LUA_METHOD(GetScale);
+    LUA_METHOD(SetScale);
     LUA_METHOD(GetColor);
     LUA_METHOD(SetColor);
     LUA_METHOD(GetAlpha);
     LUA_METHOD(SetAlpha);
+
+    LUA_METHOD(SendMessage);
 
 private:
     de::Entity m_entity;

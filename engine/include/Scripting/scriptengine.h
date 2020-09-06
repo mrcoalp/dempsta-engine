@@ -2,6 +2,7 @@
 
 #include <lua.hpp>
 #include <string>
+#include <unordered_map>
 
 #include "Scripting/luaclass.h"
 #include "Scripting/marshalling.h"
@@ -110,6 +111,12 @@ public:
     template <typename T>
     [[nodiscard]] static inline std::vector<T> GetVector(size_t size, const int index = 1) {
         return MS::GetVector<T>(state, size, index);
+    }
+
+    template <typename T>
+    [[nodiscard]] static inline std::unordered_map<std::string, T> GetMap(const std::vector<const char*>& keys,
+                                                                          int index = 1) {
+        return MS::GetMap<T>(state, keys, index);
     }
 
     /**

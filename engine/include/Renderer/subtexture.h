@@ -7,7 +7,7 @@
 namespace de {
 class Atlas2D {
 public:
-    Atlas2D(const char* atlasTexturePath, const glm::vec2& cellSize);
+    Atlas2D(const std::string& atlasTexturePath, const glm::vec2& cellSize);
 
     [[nodiscard]] inline constexpr const Ref<Texture2D>& GetTexture() const { return m_texture; }
 
@@ -27,6 +27,8 @@ private:
 class SubTexture2D {
 public:
     SubTexture2D(Ref<Atlas2D> atlas, const glm::vec2& min, const glm::vec2& max);
+
+    explicit SubTexture2D(const std::string& texturePath);
 
     /**
      * Getter for the coordinates to draw subTexture of atlas
