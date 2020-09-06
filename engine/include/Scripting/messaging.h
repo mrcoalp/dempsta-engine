@@ -1,10 +1,11 @@
 #pragma once
 
+#include <functional>
 #include <queue>
 
 #include "Scripting/API/databuffer.h"
 
-namespace de {
+namespace lua {
 struct Message {
     std::string ID;
     lua::DataBuffer* Data;
@@ -16,21 +17,11 @@ struct Message {
 
 class MessageHandler {
 public:
-    MessageHandler() = default;
+    static void AddMessage(const Message& msg);
 
-    void AddMessage(const Message& msg) { m_messageQueue.emplace(msg); }
-
-    void HandleMessages(std::function<void(const Message&)> callback) {
-        while (!m_messageQueue.empty()) {
-            const auto& msg = m_messageQueue.front();
-            callback(msg);
-            // Ensure data buffer deletion
-            delete msg.Data;
-            m_messageQueue.pop();
-        }
-    }
+    static void HandleMessages(const std::function<void(const Message&)>& callback);
 
 private:
-    std::queue<Message> m_messageQueue;
+    static std::queue<Message> s_messageQueue;
 };
-}  // namespace de
+}  // namespace lua

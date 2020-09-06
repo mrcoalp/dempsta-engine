@@ -35,4 +35,8 @@ Ref<SubTexture2D> SubTexture2D::CreateSprite(const Ref<Atlas2D>& spriteSheet, co
 
     return CreateRef<SubTexture2D>(spriteSheet, min, max);
 }
+
+Ref<SubTexture2D> SubTexture2D::CreateSprite(const std::string& texturePath) {
+    return CreateRef<SubTexture2D>(texturePath);
+}
 }  // namespace de

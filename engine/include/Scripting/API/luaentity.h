@@ -4,7 +4,7 @@
 
 #include "Scene/entity.h"
 #include "Scripting/binding.h"
-#include "Scripting/scriptengine.h"
+#include "Scripting/luaengine.h"
 
 namespace lua {
 class LuaEntity {

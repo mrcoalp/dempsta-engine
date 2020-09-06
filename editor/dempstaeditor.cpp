@@ -12,20 +12,19 @@ void DempstaEditor::OnAttach() {
 
     auto spriteSheet = CreateRef<Atlas2D>("assets/textures/RPGpack_sheet_2X.png", glm::vec2(128.0f));
     auto spriteBarrel = SubTexture2D::CreateSprite(spriteSheet, glm::vec2({8.0f, 0.0f}));
-    auto spriteDog = CreateRef<SubTexture2D>("assets/textures/dog.jpg");
+    auto spriteDog = SubTexture2D::CreateSprite("assets/textures/dog.jpg");
+    auto spriteMask = SubTexture2D::CreateSprite("assets/textures/mask.png");
+    auto spriteSphere = SubTexture2D::CreateSprite("assets/textures/sphere.png");
 
-    m_square = m_activeScene->CreateEntity("Square");
-    m_square.AddComponent<SpriteComponent>();
-    m_square.AddComponent<ScriptComponent>("assets/scripts/square.lua");
+    m_sphere = m_activeScene->CreateEntity("Sphere");
+    m_sphere.AddComponent<SpriteComponent>().Texture = spriteSphere;
+    m_sphere.AddComponent<ScriptComponent>("assets/scripts/sphere.lua");
 
-    auto dog = m_activeScene->CreateEntity("Dog");
-    dog.AddComponent<SpriteComponent>().Texture = spriteDog;
-
-    // for (size_t i = 0; i < 1000; ++i) {
-    auto barrel = m_activeScene->CreateEntity("Barrel");
-    barrel.AddComponent<SpriteComponent>().Texture = spriteBarrel;
-    barrel.AddComponent<ScriptComponent>("assets/scripts/barrel.lua");
-    // }
+    for (size_t i = 0; i < 500; ++i) {
+        auto mask = m_activeScene->CreateEntity("Mask_" + std::to_string(i));
+        mask.AddComponent<SpriteComponent>().Texture = spriteMask;
+        mask.AddComponent<ScriptComponent>("assets/scripts/mask.lua");
+    }
 
     auto camEntity = m_activeScene->CreateEntity("Primary Camera");
     camEntity.AddComponent<CameraComponent>().Primary = true;
@@ -134,9 +133,9 @@ void DempstaEditor::OnImGuiRender() {
     m_viewportSize = {viewportPanelSize.x, viewportPanelSize.y};
     ImGui::End();
 
-    if ((bool)m_square) {
-        ImGui::Begin((const char*)m_square.GetComponent<NameComponent>());
-        auto& color = m_square.GetComponent<SpriteComponent>().Color;
+    if ((bool)m_sphere) {
+        ImGui::Begin((const char*)m_sphere.GetComponent<NameComponent>());
+        auto& color = m_sphere.GetComponent<SpriteComponent>().Color;
         ImGui::ColorEdit4("Select color", glm::value_ptr(color));
         ImGui::End();
     }

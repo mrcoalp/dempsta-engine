@@ -23,7 +23,7 @@
 #include "Scene/entity.h"
 #include "Scene/scene.h"
 #include "Scripting/binding.h"
-#include "Scripting/scriptengine.h"
+#include "Scripting/luaengine.h"
 #include "Scripting/scriptentity.h"
 #include "Utils/fileutils.h"
 

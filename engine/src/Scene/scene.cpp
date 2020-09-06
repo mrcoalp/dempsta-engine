@@ -5,6 +5,7 @@
 #include "Events/keyevent.h"
 #include "Renderer/renderer2d.h"
 #include "Scene/components.h"
+#include "Scripting/messaging.h"
 
 namespace de {
 void Scene::OnUpdate(const TimeStep& ts) {
@@ -39,9 +40,9 @@ void Scene::OnUpdate(const TimeStep& ts) {
         sc.OnUpdate(ts);
     });
     // messaging
-    m_messageHandler.HandleMessages([&](const Message& msg) {
-        scriptsView.each([&msg](const auto entity, auto& sc) { sc.OnMessage(msg.ID, msg.Data, msg.Sender); });
-    });
+    // lua::MessageHandler::HandleMessages([&](const lua::Message& msg) {
+    //     scriptsView.each([&msg](const auto entity, auto& sc) { sc.OnMessage(msg.ID, msg.Data, msg.Sender); });
+    // });
     // render
     m_registry.view<TransformComponent, CameraComponent>().each(
         // cameraEntity can be avoided to be captured
@@ -72,7 +73,9 @@ void Scene::OnEvent(Event& event) {
     EventDispatcher dispatcher(event);
     const int eventType = static_cast<int>(event.GetEventType());
     m_registry.view<ScriptComponent>().each([&](const auto entity, auto& sc) {
-        if (!sc.AcquireEvents) return;
+        if (!sc.AcquireEvents) {
+            return;
+        }
         dispatcher.Dispatch<KeyPressedEvent>([&](KeyPressedEvent& event) {
             sc.OnEvent(eventType, event.GetKeyCode());
             return false;

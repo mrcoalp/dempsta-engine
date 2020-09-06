@@ -3,7 +3,7 @@
 #include <unordered_map>
 
 #include "Scripting/binding.h"
-#include "Scripting/scriptengine.h"
+#include "Scripting/luaengine.h"
 
 namespace lua {
 /**
@@ -44,7 +44,7 @@ public:
      * @brief Registers class as metatable in Lua.
      */
     static void Register() {
-        auto* L = SE::GetState();
+        auto* L = LE::GetState();
         lua_pushcfunction(L, &LuaCtor);
         lua_setglobal(L, "DataBuffer");
 
@@ -71,7 +71,7 @@ public:
      */
     static LUA_METHOD(LuaCtor) {
         auto* buffer = new DataBuffer(L);
-        SE::PushValue(buffer);
+        LE::PushValue(buffer);
         return 1;
     }
 
@@ -85,8 +85,8 @@ public:
         lua_getmetatable(L, 1);
         lua_pushvalue(L, 2);
         lua_rawget(L, -2);
-        auto* self = *SE::GetValue<DataBuffer**>();
-        self->Get(SE::GetValue<std::string>(2));
+        auto* self = *LE::GetValue<DataBuffer**>();
+        self->Get(LE::GetValue<std::string>(2));
 
         return 1;
     }
@@ -101,17 +101,17 @@ public:
         lua_getmetatable(L, 1);
         lua_pushvalue(L, 2);
         lua_rawget(L, -2);
-        auto* self = *SE::GetValue<DataBuffer**>();
+        auto* self = *LE::GetValue<DataBuffer**>();
 
-        switch (SE::GetValueType(3)) {  // Handle Lua type
+        switch (LE::GetValueType(3)) {  // Handle Lua type
             case LuaType::Number:
-                self->Set(SE::GetValue<std::string>(2), SE::GetValue<double>(3));
+                self->Set(LE::GetValue<std::string>(2), LE::GetValue<double>(3));
                 break;
             case LuaType::Boolean:
-                self->Set(SE::GetValue<std::string>(2), SE::GetValue<bool>(3));
+                self->Set(LE::GetValue<std::string>(2), LE::GetValue<bool>(3));
                 break;
             case LuaType::String:
-                self->Set(SE::GetValue<std::string>(2), SE::GetValue<std::string>(3));
+                self->Set(LE::GetValue<std::string>(2), LE::GetValue<std::string>(3));
                 break;
             case LuaType::Null:
             case LuaType::LightUserData:
@@ -170,13 +170,13 @@ public:
      */
     void Get(const std::string& key) {
         if (m_doubles.find(key) != m_doubles.end()) {
-            SE::PushValue(m_doubles.at(key));
+            LE::PushValue(m_doubles.at(key));
         } else if (m_bools.find(key) != m_bools.end()) {
-            SE::PushValue(m_bools.at(key));
+            LE::PushValue(m_bools.at(key));
         } else if (m_strings.find(key) != m_strings.end()) {
-            SE::PushValue(m_strings.at(key));
+            LE::PushValue(m_strings.at(key));
         } else {
-            SE::PushNull();
+            LE::PushNull();
         }
     }
 

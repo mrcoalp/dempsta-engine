@@ -28,7 +28,7 @@ enum class LuaType {
  * and exposes C++ classes to Lua, pops and pushes values to Lua stack, runs file scripts and
  * string scripts.
  */
-class ScriptEngine {
+class LuaEngine {
 public:
     /**
      * @brief Intializes Lua state and opens libs.
@@ -294,4 +294,4 @@ private:
 /**
  * @brief Script engine abbreviation.
  */
-using SE = lua::ScriptEngine;
+using LE = lua::LuaEngine;

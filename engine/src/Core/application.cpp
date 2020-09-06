@@ -6,13 +6,13 @@
 #include "Scripting/API/databuffer.h"
 #include "Scripting/API/helpers.h"
 #include "Scripting/API/luaentity.h"
-#include "Scripting/scriptengine.h"
+#include "Scripting/luaengine.h"
 
 namespace de {
 static void RegisterScriptingAPI() {
     lua::Helpers::Register();
     lua::DataBuffer::Register();
-    SE::RegisterClass<lua::LuaEntity>();
+    LE::RegisterClass<lua::LuaEntity>();
 }
 
 Application* Application::m_instance = nullptr;
@@ -28,14 +28,14 @@ Application::Application(const WindowProps& windowProps) {
     m_window->SetEventCallback([this](Event& e) { OnEvent(e); });
 
     Renderer::Init();
-    SE::Init();
+    LE::Init();
     RegisterScriptingAPI();
 
     m_imguiLayer = new ImGuiLayer();
     PushOverlay(m_imguiLayer);
 }
 
-Application::~Application() { SE::CloseState(); }
+Application::~Application() { LE::CloseState(); }
 
 void Application::OnEvent(Event& e) {
     EventDispatcher eventDispatcher(e);

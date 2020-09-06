@@ -32,4 +32,8 @@ in float v_textureIndex;
 
 uniform sampler2D u_textures[32];
 
-void main() { color = texture(u_textures[int(v_textureIndex)], v_texture) * v_color; }
+void main() {
+    vec4 texColor = texture(u_textures[int(v_textureIndex)], v_texture) * v_color;
+    if (texColor.a < 0.1) discard;
+    color = texColor;
+}

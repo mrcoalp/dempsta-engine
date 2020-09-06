@@ -1,21 +1,21 @@
-#include "Scripting/scriptengine.h"
+#include "Scripting/luaengine.h"
 
 #include "Core/log.h"
 
 namespace lua {
-lua_State* ScriptEngine::state = nullptr;
+lua_State* LuaEngine::state = nullptr;
 
-void ScriptEngine::Init() {
+void LuaEngine::Init() {
     state = luaL_newstate();
     luaL_openlibs(state);
 }
 
-void ScriptEngine::CloseState() {
+void LuaEngine::CloseState() {
     lua_close(state);
     state = nullptr;
 }
 
-bool ScriptEngine::LoadFile(const char* filePath) {
+bool LuaEngine::LoadFile(const char* filePath) {
     int status = luaL_loadfile(state, filePath);
     if (!checkStatus(status, "Error loading file")) {
         return false;
@@ -24,7 +24,7 @@ bool ScriptEngine::LoadFile(const char* filePath) {
     return checkStatus(status, "Loading file failed");
 }
 
-bool ScriptEngine::RunCode(const char* code) {
+bool LuaEngine::RunCode(const char* code) {
     int status = luaL_loadstring(state, code);
     if (!checkStatus(status, "Error running code")) {
         return false;
@@ -33,11 +33,11 @@ bool ScriptEngine::RunCode(const char* code) {
     return checkStatus(status, "Running code failed");
 }
 
-void ScriptEngine::PushNull() { MS::PushNull(state); }
+void LuaEngine::PushNull() { MS::PushNull(state); }
 
-void ScriptEngine::RegisterFunction(const char* name, lua_CFunction fn) { lua_register(state, name, fn); }
+void LuaEngine::RegisterFunction(const char* name, lua_CFunction fn) { lua_register(state, name, fn); }
 
-bool ScriptEngine::CallFunction(const char* name) {
+bool LuaEngine::CallFunction(const char* name) {
     lua_getglobal(state, name);
     if (lua_isfunction(state, -1)) {
         lua_call(state, 0, 0);
@@ -47,7 +47,7 @@ bool ScriptEngine::CallFunction(const char* name) {
     return false;
 }
 
-bool ScriptEngine::checkStatus(int status, const char* errMessage) {
+bool LuaEngine::checkStatus(int status, const char* errMessage) {
     if (status != LUA_OK) {
         if (status == LUA_ERRSYNTAX) {
             const char* msg = lua_tostring(state, -1);

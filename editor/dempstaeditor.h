@@ -23,7 +23,7 @@ private:
     float m_timeAccumulator{0.f};
     float m_fps{0.f};
     Ref<Scene> m_activeScene;
-    Entity m_square;
+    Entity m_sphere;
 
     glm::vec2 m_viewportSize{glm::vec2(0.f)};
 };

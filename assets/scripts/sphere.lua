@@ -6,6 +6,7 @@ function OnInit(data)
     data.speed = 10
     data.currentColor = -1
     data.chasing = false
+    data.mult = 1
     this.scale = {x = 1.5, y = 1.5, z = 0}
 end
 
@@ -16,8 +17,8 @@ local function changeColor(colorID)
         this.color = '#00ff00'
         this.alpha = 170
     elseif colorID == 2 then
-        this.color = '0x0000ff'
-        this.alpha = 100
+        this.color = '#008080'
+        this.alpha = 200
     else
         this.color = 'ffffff'
     end
@@ -26,11 +27,6 @@ end
 local function handleSecondElapsed(data)
     data.currentColor = (data.currentColor + 1) % 4
     changeColor(data.currentColor)
-    if this.scale.x == 1.5 then
-        this.scale = {x = 2, y = 2, z = 0}
-    else
-        this.scale = {x = 1.5, y = 1.5, z = 0}
-    end
 end
 
 function OnUpdate(data, delta)
@@ -54,6 +50,19 @@ function OnUpdate(data, delta)
     
         x = x + data.dirX * data.speed * delta
         y = y + data.dirY * data.speed * delta
+
+        if this.scale.x > 4 then
+            data.mult = -1
+        end
+        if this.scale.x < 1.5 then
+            data.mult = 1
+        end
+
+        this.scale = {
+            x = this.scale.x + data.mult * delta, 
+            y = this.scale.y + data.mult * delta, 
+            z = 0
+        }
     
         this.x = x
         this.SetY(y)

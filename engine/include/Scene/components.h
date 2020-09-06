@@ -17,7 +17,7 @@ struct NameComponent {
     NameComponent() = default;
     explicit NameComponent(std::string name) : Name(std::move(name)) {}
 
-    explicit operator const std::string&() const noexcept { return Name; }
+    explicit operator const std::string &() const noexcept { return Name; }
     explicit operator const char*() const noexcept { return Name.c_str(); }
 };
 
@@ -27,8 +27,8 @@ struct TransformComponent {
     TransformComponent() = default;
     explicit TransformComponent(const glm::mat4& transform) : Transform(transform) {}
 
-    explicit operator glm::mat4&() noexcept { return Transform; }
-    explicit operator const glm::mat4&() const noexcept { return Transform; }
+    explicit operator glm::mat4 &() noexcept { return Transform; }
+    explicit operator const glm::mat4 &() const noexcept { return Transform; }
 };
 
 struct SpriteComponent {
@@ -48,21 +48,21 @@ public:
 
     [[nodiscard]] inline const std::string& GetPath() const { return m_path; }
 
-    void SetContext() const { SE::PushGlobalVariable("this", EntityRef.get()); }
+    void SetContext() const { LE::PushGlobalVariable("this", EntityRef.get()); }
 
-    void LoadCode() const { SE::RunCode(m_code.c_str()); }
+    void LoadCode() const { LE::RunCode(m_code.c_str()); }
 
-    void OnInit() const { SE::CallFunction("OnInit", Data.get()); }
+    void OnInit() const { LE::CallFunction("OnInit", Data.get()); }
 
-    void OnUpdate(const TimeStep& ts) const { SE::CallFunction("OnUpdate", Data.get(), (float)ts); }
+    void OnUpdate(const TimeStep& ts) const { LE::CallFunction("OnUpdate", Data.get(), (float)ts); }
 
     template <typename T>
     void OnEvent(int eventType, T&& action) const {
-        SE::CallFunction("OnEvent", Data.get(), eventType, action);
+        LE::CallFunction("OnEvent", Data.get(), eventType, action);
     }
 
     void OnMessage(const std::string& id, lua::DataBuffer* data, const std::string& sender) const {
-        SE::CallFunction("OnMessage", Data.get(), id, data, sender);
+        LE::CallFunction("OnMessage", Data.get(), id, data, sender);
     }
 
     void OnDestroy() {
@@ -79,14 +79,14 @@ private:
 };
 
 struct NativeScriptComponent {
-    ScriptEntity* Instance = nullptr;
+    NativeScriptEntity* Instance = nullptr;
 
-    ScriptEntity* (*Create)();
+    NativeScriptEntity* (*Create)();
     void (*Destroy)(NativeScriptComponent*);
 
     template <class Script>
     void Bind() {
-        Create = []() { return dynamic_cast<ScriptEntity*>(new Script()); };
+        Create = []() { return dynamic_cast<NativeScriptEntity*>(new Script()); };
         Destroy = [](NativeScriptComponent* nsc) {
             delete nsc->Instance;
             nsc->Instance = nullptr;
