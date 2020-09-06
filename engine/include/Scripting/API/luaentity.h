@@ -30,6 +30,8 @@ public:
     LUA_METHOD(GetAlpha);
     LUA_METHOD(SetAlpha);
 
+    LUA_METHOD(GetAcquireEvents);
+    LUA_METHOD(SetAcquireEvents);
     LUA_METHOD(SendMessage);
 
 private:

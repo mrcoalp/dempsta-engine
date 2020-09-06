@@ -12,6 +12,8 @@ public:
         RegisterKeyCodes();
         RegisterEventTypes();
         SE::RegisterFunction("IsKeyPressed", IsKeyPressed);
+        SE::RegisterFunction("RandomNumber", RandomNumber);
+        SE::RegisterFunction("GenerateRandomSeed", GenerateRandomSeed);
     }
 
     static void RegisterKeyCodes() {
@@ -160,6 +162,26 @@ public:
 
     static LUA_METHOD(IsKeyPressed) {
         SE::PushValue(de::Input::IsKeyPressed(SE::GetValue<int>()));
+        return 1;
+    }
+
+    static LUA_METHOD(GenerateRandomSeed) {
+        static bool seed = false;
+        if (!seed) {
+            std::srand(std::time(nullptr));
+            seed = true;
+        }
+        return 0;
+    }
+
+    static LUA_METHOD(RandomNumber) {
+        const auto low = SE::GetValue<int>();
+        const auto high = SE::GetValue<int>(2);
+        if (low > high) {
+            SE::PushValue(high);
+            return 1;
+        }
+        SE::PushValue(low + (std::rand() % (high - low + 1)));
         return 1;
     }
 };

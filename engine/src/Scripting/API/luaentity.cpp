@@ -81,6 +81,16 @@ int LuaEntity::SetAlpha(lua_State* L) {
     return 0;
 }
 
+int LuaEntity::GetAcquireEvents(lua_State* L) {
+    SE::PushValue(m_entity.GetComponent<de::ScriptComponent>().AcquireEvents);
+    return 1;
+}
+
+int LuaEntity::SetAcquireEvents(lua_State* L) {
+    m_entity.GetComponent<de::ScriptComponent>().AcquireEvents = SE::GetValue<bool>();
+    return 0;
+}
+
 int LuaEntity::SendMessage(lua_State* L) {
     auto id = SE::GetValue<std::string>();
     auto* data = *SE::GetValue<DataBuffer**>(2);
@@ -111,5 +121,6 @@ LUA_ADD_PROPERTY_CUSTOM(color, GetColor, SetColor)
 LUA_ADD_METHOD(GetAlpha)
 LUA_ADD_METHOD(SetAlpha)
 LUA_ADD_PROPERTY_CUSTOM(alpha, GetAlpha, SetAlpha)
+LUA_ADD_PROPERTY_CUSTOM(acquire_events, GetAcquireEvents, SetAcquireEvents)
 LUA_ADD_METHOD(SendMessage);
 }  // namespace lua

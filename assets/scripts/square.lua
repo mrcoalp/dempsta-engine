@@ -1,10 +1,12 @@
 function OnInit(data)
+    this.acquire_events = true
     data.delta = 0
     data.dirX = 0
     data.dirY = 0
     data.speed = 10
     data.currentColor = -1
     data.chasing = false
+    this.scale = {x = 1.5, y = 1.5, z = 0}
 end
 
 local function changeColor(colorID)
@@ -24,18 +26,10 @@ end
 local function handleSecondElapsed(data)
     data.currentColor = (data.currentColor + 1) % 4
     changeColor(data.currentColor)
-    if this.scale.x == 1 then
-        this.scale = {
-            x = 2,
-            y = 2,
-            z = 0
-        }
+    if this.scale.x == 1.5 then
+        this.scale = {x = 2, y = 2, z = 0}
     else
-        this.scale = {
-            x = 1.5,
-            y = 1.5,
-            z = 0
-        }
+        this.scale = {x = 1.5, y = 1.5, z = 0}
     end
 end
 

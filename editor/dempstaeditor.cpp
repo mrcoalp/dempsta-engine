@@ -21,9 +21,11 @@ void DempstaEditor::OnAttach() {
     auto dog = m_activeScene->CreateEntity("Dog");
     dog.AddComponent<SpriteComponent>().Texture = spriteDog;
 
+    // for (size_t i = 0; i < 1000; ++i) {
     auto barrel = m_activeScene->CreateEntity("Barrel");
     barrel.AddComponent<SpriteComponent>().Texture = spriteBarrel;
     barrel.AddComponent<ScriptComponent>("assets/scripts/barrel.lua");
+    // }
 
     auto camEntity = m_activeScene->CreateEntity("Primary Camera");
     camEntity.AddComponent<CameraComponent>().Primary = true;

@@ -42,31 +42,33 @@ class ScriptComponent {
 public:
     Scope<lua::DataBuffer> Data;
     Scope<lua::LuaEntity> EntityRef;
+    bool AcquireEvents = false;
 
     void ReloadScript() { m_code = FileUtils::ReadFile(m_path); }
 
-    void OnInit() const {
-        loadCode();
-        SE::CallFunction("OnInit", Data.get());
-    }
+    [[nodiscard]] inline const std::string& GetPath() const { return m_path; }
 
-    void OnUpdate(const TimeStep& ts) const {
-        loadCode();
-        SE::CallFunction("OnUpdate", Data.get(), (float)ts);
-    }
+    void SetContext() const { SE::PushGlobalVariable("this", EntityRef.get()); }
+
+    void LoadCode() const { SE::RunCode(m_code.c_str()); }
+
+    void OnInit() const { SE::CallFunction("OnInit", Data.get()); }
+
+    void OnUpdate(const TimeStep& ts) const { SE::CallFunction("OnUpdate", Data.get(), (float)ts); }
 
     template <typename T>
     void OnEvent(int eventType, T&& action) const {
-        loadCode();
         SE::CallFunction("OnEvent", Data.get(), eventType, action);
     }
 
     void OnMessage(const std::string& id, lua::DataBuffer* data, const std::string& sender) const {
-        loadCode();
         SE::CallFunction("OnMessage", Data.get(), id, data, sender);
     }
 
-    void OnDestroy() { EntityRef.reset(nullptr); }
+    void OnDestroy() {
+        EntityRef = nullptr;
+        Data = nullptr;
+    }
 
     ScriptComponent() = default;
     explicit ScriptComponent(std::string path) : m_path(std::move(path)) {}
@@ -74,11 +76,6 @@ public:
 private:
     std::string m_path{""};
     std::string m_code{""};
-
-    void loadCode() const {
-        SE::PushGlobalVariable("this", EntityRef.get());
-        SE::RunCode(m_code.c_str());
-    }
 };
 
 struct NativeScriptComponent {
