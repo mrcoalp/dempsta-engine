@@ -15,32 +15,21 @@ end
 function OnInit(data)
     GenerateRandomSeed()
     local color = RandomNumber(0, 4)
-    local multiplier = RandomNumber(0, 1)
-    if multiplier == 0 then
-        multiplier = -1
-    else
-        multiplier = 1
-    end
+    local multiplier = (RandomNumber(0, 1) == 0 and -1 or 1)
     data.dirX = (RandomNumber(5, 100) / 100) * multiplier
-    multiplier = RandomNumber(0, 1)
-    if multiplier == 0 then
-        multiplier = -1
-    else
-        multiplier = 1
-    end
+    multiplier = (RandomNumber(0, 1) == 0 and -1 or 1)
     data.dirY = (RandomNumber(5, 100) / 100) * multiplier
     changeColor(color)
-    data.speed = 20
 end
 
 function OnUpdate(data, delta)
     this.x = this.x + data.dirX * delta
     this.y = this.y + data.dirY * delta
 
-    local buffer = DataBuffer()
-    buffer.x = this.x
-    buffer.y = this.y
-    this.SendMessage('barrel_position', buffer)
+    -- local buffer = DataBuffer()
+    -- buffer.x = this.x
+    -- buffer.y = this.y
+    -- this.SendMessage('barrel_position', buffer)
 end
 
 function OnEvent(data, event, action)

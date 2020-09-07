@@ -1,13 +1,15 @@
 function OnInit(data)
     this.acquire_events = true
     data.delta = 0
-    data.dirX = 0
-    data.dirY = 0
     data.speed = 10
     data.currentColor = -1
     data.chasing = false
     data.mult = 1
-    this.scale = {x = 1.5, y = 1.5, z = 0}
+    this.scale = {
+        x = 1.5,
+        y = 1.5,
+        z = 0
+    }
 end
 
 local function changeColor(colorID)
@@ -29,27 +31,31 @@ local function handleSecondElapsed(data)
     changeColor(data.currentColor)
 end
 
+local function handleMovement(data, delta)
+    local dirX = 0
+    local dirY = 0
+
+    if IsKeyPressed(KEY_UP) then
+        dirY = 1
+    elseif IsKeyPressed(KEY_DOWN) then
+        dirY = -1
+    end
+
+    if IsKeyPressed(KEY_LEFT) then
+        dirX = -1
+    elseif IsKeyPressed(KEY_RIGHT) then
+        dirX = 1
+    end
+
+    if dirX ~= 0 or dirY ~= 0 then
+        this.x = this.x + dirX * data.speed * delta
+        this.y = this.y + dirY * data.speed * delta
+    end
+end
+
 function OnUpdate(data, delta)
     if not data.chasing then
-        local x = this.GetX()
-        local y = this.y
-        data.dirX = 0
-        data.dirY = 0
-    
-        if IsKeyPressed(KEY_UP) then
-            data.dirY = 1
-        elseif IsKeyPressed(KEY_DOWN) then
-            data.dirY = -1
-        end
-    
-        if IsKeyPressed(KEY_LEFT) then
-            data.dirX = -1
-        elseif IsKeyPressed(KEY_RIGHT) then
-            data.dirX = 1
-        end
-    
-        x = x + data.dirX * data.speed * delta
-        y = y + data.dirY * data.speed * delta
+        handleMovement(data, delta)
 
         if this.scale.x > 4 then
             data.mult = -1
@@ -59,13 +65,10 @@ function OnUpdate(data, delta)
         end
 
         this.scale = {
-            x = this.scale.x + data.mult * delta, 
-            y = this.scale.y + data.mult * delta, 
+            x = this.scale.x + data.mult * delta,
+            y = this.scale.y + data.mult * delta,
             z = 0
         }
-    
-        this.x = x
-        this.SetY(y)
     end
 
     if (data.delta >= 1) then
@@ -79,10 +82,10 @@ end
 function OnEvent(data, event, action)
     if event == EVT_KEY_PRESSED and action == KEY_SPACE then
         data.chasing = not data.chasing
-        local buffer = DataBuffer()
-        buffer.msg = "Hello"
-        buffer.chasing = data.chasing
-        this.SendMessage("welcome", buffer)
+        -- local buffer = DataBuffer()
+        -- buffer.msg = "Hello"
+        -- buffer.chasing = data.chasing
+        -- this.SendMessage("welcome", buffer)
     end
 end
 
