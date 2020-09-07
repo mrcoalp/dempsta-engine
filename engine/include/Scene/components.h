@@ -5,10 +5,7 @@
 #include "Core/core.h"
 #include "Renderer/subtexture.h"
 #include "Scene/scenecamera.h"
-#include "Scripting/API/databuffer.h"
-#include "Scripting/API/luaentity.h"
 #include "Scripting/scriptentity.h"
-#include "Utils/fileutils.h"
 
 namespace de {
 struct NameComponent {
@@ -38,44 +35,19 @@ struct SpriteComponent {
     SpriteComponent() = default;
 };
 
-class ScriptComponent {
-public:
-    Scope<lua::DataBuffer> Data;
-    Scope<lua::LuaEntity> EntityRef;
-    bool AcquireEvents = false;
+struct ScriptComponent {
+    std::string Path;
+    Scope<lua::ScriptEntity> Instance;
 
-    void ReloadScript() { m_code = FileUtils::ReadFile(m_path); }
+    void Create() { Instance.reset(new lua::ScriptEntity(Path)); }
 
-    [[nodiscard]] inline const std::string& GetPath() const { return m_path; }
-
-    void SetContext() const { LE::PushGlobalVariable("this", EntityRef.get()); }
-
-    void LoadCode() const { LE::RunCode(m_code.c_str()); }
-
-    void OnInit() const { LE::CallFunction("OnInit", Data.get()); }
-
-    void OnUpdate(const TimeStep& ts) const { LE::CallFunction("OnUpdate", Data.get(), (float)ts); }
-
-    template <typename T>
-    void OnEvent(int eventType, T&& action) const {
-        LE::CallFunction("OnEvent", Data.get(), eventType, action);
-    }
-
-    void OnMessage(const std::string& id, lua::DataBuffer* data, const std::string& sender) const {
-        LE::CallFunction("OnMessage", Data.get(), id, data, sender);
-    }
-
-    void OnDestroy() {
-        EntityRef = nullptr;
-        Data = nullptr;
+    void Destroy() {
+        Instance->OnDestroy();
+        Instance.reset(nullptr);
     }
 
     ScriptComponent() = default;
-    explicit ScriptComponent(std::string path) : m_path(std::move(path)) {}
-
-private:
-    std::string m_path{""};
-    std::string m_code{""};
+    explicit ScriptComponent(std::string path) : Path(std::move(path)) {}
 };
 
 struct NativeScriptComponent {

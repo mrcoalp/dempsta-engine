@@ -44,9 +44,7 @@ public:
 
     [[nodiscard]] inline const std::string& GetPath() const { return m_scriptPath; }
 
-    void SetContext() const;
-
-    void LoadCode() const;
+    void LoadCodeAndContext() const;
 
     void OnInit() const;
 
@@ -54,6 +52,7 @@ public:
 
     template <typename T>
     void OnEvent(int eventType, T&& action) const {
+        LoadCodeAndContext();
         LE::CallFunction("OnEvent", Data.get(), eventType, action);
     }
 
@@ -64,5 +63,7 @@ public:
 private:
     std::string m_scriptPath{""};
     std::string m_scriptCode{""};
+
+    static std::string s_previousLoadedScript;
 };
 }  // namespace lua

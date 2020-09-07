@@ -19,25 +19,15 @@ void Scene::OnUpdate(const TimeStep& ts) {
         nsc.Instance->OnUpdate(ts);
     });
     // scripting update
-    static std::string previousLoadedScript;
     const auto& scriptsView = m_registry.view<ScriptComponent>();
     scriptsView.each([&](const auto entity, auto& sc) {
-        if (sc.EntityRef == nullptr) {
-            sc.Data.reset(new lua::DataBuffer());
-            sc.EntityRef.reset(new lua::LuaEntity());
-            sc.EntityRef->m_entity = Entity(entity, this);
-            sc.ReloadScript();
-            sc.LoadCode();
-            previousLoadedScript = sc.GetPath();
-            sc.SetContext();
-            sc.OnInit();
+        if (sc.Instance == nullptr) {
+            sc.Create();
+            sc.Instance->EntityRef->m_entity = Entity(entity, this);
+            sc.Instance->ReloadScript();
+            sc.Instance->OnInit();
         }
-        if (sc.GetPath() != previousLoadedScript) {
-            sc.LoadCode();
-            previousLoadedScript = sc.GetPath();
-        }
-        sc.SetContext();
-        sc.OnUpdate(ts);
+        sc.Instance->OnUpdate(ts);
     });
     // messaging
     // lua::MessageHandler::HandleMessages([&](const lua::Message& msg) {
@@ -73,15 +63,15 @@ void Scene::OnEvent(Event& event) {
     EventDispatcher dispatcher(event);
     const int eventType = static_cast<int>(event.GetEventType());
     m_registry.view<ScriptComponent>().each([&](const auto entity, auto& sc) {
-        if (!sc.AcquireEvents) {
+        if (!sc.Instance->AcquireEvents) {
             return;
         }
         dispatcher.Dispatch<KeyPressedEvent>([&](KeyPressedEvent& event) {
-            sc.OnEvent(eventType, event.GetKeyCode());
+            sc.Instance->OnEvent(eventType, event.GetKeyCode());
             return false;
         });
         dispatcher.Dispatch<MouseBtnPressedEvent>([&](MouseBtnPressedEvent& event) {
-            sc.OnEvent(eventType, event.GetMouseBtnCode());
+            sc.Instance->OnEvent(eventType, event.GetMouseBtnCode());
             return false;
         });
     });
