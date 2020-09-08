@@ -67,6 +67,8 @@ if(freetype-gl_WITH_GLAD)
     add_definitions(-DGL_WITH_GLAD)
 endif()
 
+set(FREETYPE_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/freetype/include" CACHE STRING "" FORCE)
+
 include_directories(
     ${OPENGL_INCLUDE_DIRS}
     ${FREETYPE_INCLUDE_DIRS}
@@ -78,8 +80,12 @@ if(MSVC)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE)
 endif(MSVC)
 
+add_subdirectory(freetype)
+
 file(GLOB_RECURSE SOURCES src/*.c)
 add_library(freetype-gl ${LIB_TYPE} ${SOURCES})
+
+target_link_libraries(freetype-gl PUBLIC freetype)
 
 target_include_directories(freetype-gl PUBLIC include)
 

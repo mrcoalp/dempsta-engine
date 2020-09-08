@@ -2,19 +2,30 @@
 
 #include <freetype-gl.h>
 
+#include "Core/core.h"
+#include "Renderer/texture.h"
+
 namespace de {
 class Text {
 public:
-    Text(const char* fontPath, float size) : m_fontPath(fontPath), m_size(size) {
-        m_Atlas = ftgl::texture_atlas_new(512, 512, 1);
-        m_Font = ftgl::texture_font_new_from_file(m_Atlas, size, fontPath);
-    }
+    Text(const char* fontPath, float size);
+
+    [[nodiscard]] inline unsigned GetID() const { return m_Atlas->id; }
+
+    [[nodiscard]] inline const std::string& GetContent() const { return m_content; }
+
+    [[nodiscard]] ftgl::texture_glyph_t* GetGylph(const char* codePoint) const;
+
+    [[nodiscard]] const Ref<Texture2D>& GetTexture() const { return m_texture; }
+
+    void Bind(unsigned slot) const;
+
+    void SetContent(const std::string& content) { m_content = content; }
 
 private:
-    ftgl::texture_atlas_t* m_Atlas;
-    ftgl::texture_font_t* m_Font;
-
-    const char* m_fontPath;
-    float m_size;
+    Scope<ftgl::texture_atlas_t> m_Atlas{nullptr};
+    Scope<ftgl::texture_font_t> m_Font{nullptr};
+    std::string m_content{""};
+    Ref<Texture2D> m_texture{nullptr};
 };
-}
+}  // namespace de

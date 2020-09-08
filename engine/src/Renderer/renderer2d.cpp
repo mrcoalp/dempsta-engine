@@ -245,6 +245,40 @@ void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& s
     ++data.statistics.quads;
 }
 
+void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Text>& text, const glm::vec4& tint) {
+    checkDrawCall();
+
+    float textureIndex = getOrAddUniqueTextureIndex(text->GetTexture());
+
+    auto posX = transform[3][0];
+
+    for (const auto c : text->GetContent()) {
+        auto* glyph = text->GetGylph(&c);
+
+        float x0 = posX + glyph->offset_x;
+        float y0 = transform[3][1] + glyph->offset_y;
+        float x1 = x0 + glyph->width;
+        float y1 = y0 + glyph->height;
+
+        const float x[4] = {x0, x1, x1, x0};
+        const float y[4] = {y0, y0, y1, y1};
+        const float u[4] = {glyph->s0, glyph->s1, glyph->s1, glyph->s0};
+        const float v[4] = {glyph->t0, glyph->t0, glyph->t1, glyph->t1};
+
+        for (uint8_t i = 0; i < 4; ++i) {
+            data.quadVertexBufferPtr->position = transform * glm::vec4(x[i], y[i], 0.f, 1.f);
+            data.quadVertexBufferPtr->color = tint;
+            data.quadVertexBufferPtr->texture = {u[i], v[i]};
+            data.quadVertexBufferPtr->textureIndex = textureIndex;
+            ++data.quadVertexBufferPtr;
+        }
+
+        posX += glyph->advance_x;
+        data.quadIndexCount += 6;
+        ++data.statistics.quads;
+    }
+}
+
 void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color) {
     DrawQuad({position.x, position.y, 0.0f}, size, color);
 }

@@ -15,19 +15,25 @@ void DempstaEditor::OnAttach() {
     auto spriteDog = SubTexture2D::CreateSprite("assets/textures/dog.jpg");
     auto spriteMask = SubTexture2D::CreateSprite("assets/textures/mask.png");
     auto spriteSphere = SubTexture2D::CreateSprite("assets/textures/sphere.png");
+    auto text = CreateRef<Text>("assets/fonts/arial.ttf", 1);
+    text->SetContent("Hello world");
 
-    m_sphere = m_activeScene->CreateEntity("Sphere");
-    m_sphere.AddComponent<SpriteComponent>().Texture = spriteSphere;
-    m_sphere.AddComponent<ScriptComponent>("assets/scripts/sphere.lua");
+    // m_sphere = m_activeScene->CreateEntity("Sphere");
+    // m_sphere.AddComponent<SpriteComponent>().Texture = spriteSphere;
+    // m_sphere.AddComponent<ScriptComponent>("assets/scripts/sphere.lua");
 
-    for (size_t i = 0; i < 500; ++i) {
-        auto mask = m_activeScene->CreateEntity("Mask_" + std::to_string(i));
-        mask.AddComponent<SpriteComponent>().Texture = spriteMask;
-        mask.AddComponent<ScriptComponent>("assets/scripts/mask.lua");
-    }
+    // for (size_t i = 0; i < 5; ++i) {
+    //     auto mask = m_activeScene->CreateEntity("Mask_" + std::to_string(i));
+    //     mask.AddComponent<SpriteComponent>().Texture = spriteMask;
+    //     mask.AddComponent<ScriptComponent>("assets/scripts/mask.lua");
+    // }
+
+    auto textEnt = m_activeScene->CreateEntity("TestText");
+    textEnt.AddComponent<TextComponent>().TextRef = text;
 
     auto camEntity = m_activeScene->CreateEntity("Primary Camera");
     camEntity.AddComponent<CameraComponent>().Primary = true;
+    camEntity.AddComponent<ScriptComponent>("assets/scripts/camera.lua");
 }
 
 void DempstaEditor::OnDetach() {}

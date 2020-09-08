@@ -62,8 +62,6 @@ add_subdirectory(external/stb_image)
 add_subdirectory(external/lua)
 # Add EnTT
 add_subdirectory(external/entt)
-# Add FreeType
-add_subdirectory(external/freetype)
 # Add freetype-gl
 set(GLAD_INCLUDE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/external/glad/include" CACHE STRING "" FORCE)
 add_subdirectory(external/freetype-gl)
@@ -80,7 +78,6 @@ target_link_libraries(dempsta
         stb_image
         lua
         entt
-        freetype
         freetype-gl)
 
 set_target_properties(dempsta PROPERTIES INSTALL_RPATH $ORIGIN)

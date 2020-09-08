@@ -15,7 +15,7 @@ struct NameComponent {
     NameComponent() = default;
     explicit NameComponent(std::string name) : Name(std::move(name)) {}
 
-    explicit operator const std::string&() const noexcept { return Name; }
+    explicit operator const std::string &() const noexcept { return Name; }
     explicit operator const char*() const noexcept { return Name.c_str(); }
 };
 
@@ -25,8 +25,8 @@ struct TransformComponent {
     TransformComponent() = default;
     explicit TransformComponent(const glm::mat4& transform) : Transform(transform) {}
 
-    explicit operator glm::mat4&() noexcept { return Transform; }
-    explicit operator const glm::mat4&() const noexcept { return Transform; }
+    explicit operator glm::mat4 &() noexcept { return Transform; }
+    explicit operator const glm::mat4 &() const noexcept { return Transform; }
 };
 
 struct SpriteComponent {
@@ -78,8 +78,8 @@ struct CameraComponent {
 };
 
 struct TextComponent {
-    std::string FontPath;
+    Ref<Text> TextRef;
 
-    TextComponent(std::string fontPath) : FontPath(std::move(fontPath)) {}
+    TextComponent() = default;
 };
 }  // namespace de

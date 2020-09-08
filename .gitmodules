@@ -7,6 +7,6 @@
 	url = https://github.com/mrcoalp/imgui.git
 	branch = docking
 [submodule "engine/external/freetype"]
-	path = engine/external/freetype
+	path = engine/external/freetype-gl/freetype
 	url = https://github.com/freetype/freetype2
 	branch = VER-2-10-2

@@ -41,14 +41,17 @@ void Scene::OnUpdate(const TimeStep& ts) {
             const auto& transform = transformComp.Transform;
             if (cameraComp.Primary) {
                 Renderer2D::BeginScene(camera.GetProjection(), transform);
-
-                m_registry.group<TransformComponent>(entt::get<SpriteComponent>)
-                    .each([](const auto& transformComp, const auto& spriteComp) {
+                m_registry.view<TransformComponent, SpriteComponent>().each(
+                    [](const auto& transformComp, const auto& spriteComp) {
                         if (spriteComp.Texture != nullptr) {
                             Renderer2D::DrawQuad(transformComp.Transform, spriteComp.Texture, spriteComp.Color);
                         } else {
                             Renderer2D::DrawQuad(transformComp.Transform, spriteComp.Color);
                         }
+                    });
+                m_registry.view<TransformComponent, TextComponent>().each(
+                    [](const auto& transformComp, const auto& textComp) {
+                        Renderer2D::DrawQuad(transformComp.Transform, textComp.TextRef, glm::vec4(1.f));
                     });
                 Renderer2D::EndScene();
                 return;
