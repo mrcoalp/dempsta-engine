@@ -65,16 +65,7 @@ add_subdirectory(external/entt)
 # Add FreeType
 add_subdirectory(external/freetype)
 # Add freetype-gl
-set(freetype-gl_WITH_GLAD ON CACHE BOOL "" FORCE)
 set(GLAD_INCLUDE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/external/glad/include" CACHE STRING "" FORCE)
-set(freetype-gl_WITH_GLEW_DEFAULT OFF CACHE BOOL "" FORCE)
-set(freetype-gl_WITH_GLEW OFF CACHE BOOL "" FORCE)
-set(freetype-gl_USE_VAO OFF CACHE BOOL "" FORCE)
-set(freetype-gl_BUILD_DEMOS OFF CACHE BOOL "" FORCE)
-set(freetype-gl_BUILD_APIDOC OFF CACHE BOOL "" FORCE)
-set(freetype-gl_BUILD_HARFBUZZ OFF CACHE BOOL "" FORCE)
-set(freetype-gl_BUILD_MAKEFONT OFF CACHE BOOL "" FORCE)
-set(freetype-gl_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 add_subdirectory(external/freetype-gl)
 
 target_include_directories(dempsta PUBLIC include)
