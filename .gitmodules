@@ -10,3 +10,6 @@
 	path = engine/external/freetype
 	url = https://github.com/freetype/freetype2
 	branch = VER-2-10-2
+[submodule "engine/external/freetype-gl"]
+	path = engine/external/freetype-gl
+	url = https://github.com/mrcoalp/freetype-gl.git
