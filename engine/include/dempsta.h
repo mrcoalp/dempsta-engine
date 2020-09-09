@@ -18,7 +18,7 @@
 #include "Renderer/framebuffer.h"
 #include "Renderer/renderer.h"
 #include "Renderer/renderer2d.h"
-#include "Renderer/text.h"
+#include "Renderer/label.h"
 #include "Renderer/texture.h"
 #include "Scene/components.h"
 #include "Scene/entity.h"

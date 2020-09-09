@@ -60,6 +60,7 @@ OpenGLTexture2D::~OpenGLTexture2D() { glDeleteTextures(1, &m_rendererId); }
 void OpenGLTexture2D::SetData(void* data, uint32_t size) {
     uint32_t bytesPerPixel = m_dataFormat == GL_RGB ? 3 : 4;
     DE_ASSERT(size == m_width * m_height * bytesPerPixel, "Size must be entire texture!")
+    // glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, m_width, m_height, 0, GL_RED, GL_UNSIGNED_BYTE, data);
     glTextureSubImage2D(m_rendererId, 0, 0, 0, m_width, m_height, m_dataFormat, GL_UNSIGNED_BYTE, data);
 }
 

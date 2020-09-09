@@ -60,7 +60,7 @@ if(NOT HAVE_M_PI)
 endif()
 
 find_package(OpenGL REQUIRED)
-find_package(Freetype REQUIRED)
+# find_package(Freetype REQUIRED)
 
 if(freetype-gl_WITH_GLAD)
     message("freetype-gl - including GLAD in ${GLAD_INCLUDE_PATH}")

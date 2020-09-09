@@ -2,7 +2,7 @@
 
 #include "Renderer/camera.h"
 #include "Renderer/subtexture.h"
-#include "Renderer/text.h"
+#include "Renderer/label.h"
 #include "Renderer/texture.h"
 
 namespace de {

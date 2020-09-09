@@ -4,7 +4,7 @@
 
 #include "Core/core.h"
 #include "Renderer/subtexture.h"
-#include "Renderer/text.h"
+#include "Renderer/label.h"
 #include "Scene/scenecamera.h"
 #include "Scripting/scriptentity.h"
 

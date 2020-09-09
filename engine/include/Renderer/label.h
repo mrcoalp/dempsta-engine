@@ -18,13 +18,11 @@ public:
 
     [[nodiscard]] const Ref<Texture2D>& GetTexture() const { return m_texture; }
 
-    void Bind(unsigned slot) const;
-
     void SetContent(const std::string& content) { m_content = content; }
 
 private:
-    Scope<ftgl::texture_atlas_t> m_Atlas{nullptr};
-    Scope<ftgl::texture_font_t> m_Font{nullptr};
+    ftgl::texture_atlas_t* m_Atlas{nullptr};
+    ftgl::texture_font_t* m_Font{nullptr};
     std::string m_content{""};
     Ref<Texture2D> m_texture{nullptr};
 };
