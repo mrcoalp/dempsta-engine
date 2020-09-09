@@ -7,6 +7,7 @@
 
 namespace de {
 class Entity;
+class SceneHierarchyPanel;
 
 /**
  * @brief Handles all scene related stuff.
@@ -52,5 +53,6 @@ private:
     uint32_t m_viewportHeight{0};
 
     friend class Entity;
+    friend class SceneHierarchyPanel;
 };
 }  // namespace de

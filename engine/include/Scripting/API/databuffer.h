@@ -32,7 +32,7 @@ namespace lua {
 class DataBuffer {
 public:
     template <typename T>
-    using Data = std::unordered_map<std::string, T>;
+    using Data = std::map<std::string, T>;
 
     DataBuffer() = default;
 
@@ -178,6 +178,10 @@ public:
         } else {
             LE::PushNull();
         }
+    }
+
+    std::tuple<Data<double>&, Data<bool>&, Data<std::string>&> GetData() {
+        return std::tie(m_doubles, m_bools, m_strings);
     }
 
 private:

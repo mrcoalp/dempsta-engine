@@ -3,8 +3,8 @@
 #include <glm/glm.hpp>
 
 #include "Core/core.h"
-#include "Renderer/subtexture.h"
 #include "Renderer/label.h"
+#include "Renderer/subtexture.h"
 #include "Scene/scenecamera.h"
 #include "Scripting/scriptentity.h"
 
