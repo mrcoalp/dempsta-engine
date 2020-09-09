@@ -11,23 +11,23 @@ namespace de {
 void Scene::OnUpdate(const TimeStep& ts) {
     // native scripting update
     m_registry.view<NativeScriptComponent>().each([&](const auto entity, auto& nsc) {
-        if (nsc.Instance == nullptr) {
-            nsc.Instance = nsc.Create();
-            nsc.Instance->m_entity = Entity(entity, this);
-            nsc.Instance->OnInit();
+        if (nsc.instance == nullptr) {
+            nsc.instance = nsc.Create();
+            nsc.instance->m_entity = Entity(entity, this);
+            nsc.instance->OnInit();
         }
-        nsc.Instance->OnUpdate(ts);
+        nsc.instance->OnUpdate(ts);
     });
     // scripting update
     const auto& scriptsView = m_registry.view<ScriptComponent>();
     scriptsView.each([&](const auto entity, auto& sc) {
-        if (sc.Instance == nullptr) {
+        if (sc.instance == nullptr) {
             sc.Create();
-            sc.Instance->EntityRef->m_entity = Entity(entity, this);
-            sc.Instance->ReloadScript();
-            sc.Instance->OnInit();
+            sc.instance->EntityRef->m_entity = Entity(entity, this);
+            sc.instance->ReloadScript();
+            sc.instance->OnInit();
         }
-        sc.Instance->OnUpdate(ts);
+        sc.instance->OnUpdate(ts);
     });
     // messaging
     // lua::MessageHandler::HandleMessages([&](const lua::Message& msg) {
@@ -37,21 +37,21 @@ void Scene::OnUpdate(const TimeStep& ts) {
     m_registry.view<TransformComponent, CameraComponent>().each(
         // cameraEntity can be avoided to be captured
         [&]([[maybe_unused]] const auto cameraEntity, const auto& transformComp, const auto& cameraComp) {
-            const auto& camera = cameraComp.Camera;
-            const auto& transform = transformComp.Transform;
-            if (cameraComp.Primary) {
+            const auto& camera = cameraComp.camera;
+            const auto& transform = transformComp.transform;
+            if (cameraComp.primary) {
                 Renderer2D::BeginScene(camera.GetProjection(), transform);
                 m_registry.view<TransformComponent, SpriteComponent>().each(
                     [](const auto& transformComp, const auto& spriteComp) {
-                        if (spriteComp.Texture != nullptr) {
-                            Renderer2D::DrawQuad(transformComp.Transform, spriteComp.Texture, spriteComp.Color);
+                        if (spriteComp.texture != nullptr) {
+                            Renderer2D::DrawQuad(transformComp.transform, spriteComp.texture, spriteComp.color);
                         } else {
-                            Renderer2D::DrawQuad(transformComp.Transform, spriteComp.Color);
+                            Renderer2D::DrawQuad(transformComp.transform, spriteComp.color);
                         }
                     });
-                m_registry.view<TransformComponent, TextComponent>().each(
+                m_registry.view<TransformComponent, LabelComponent>().each(
                     [](const auto& transformComp, const auto& textComp) {
-                        Renderer2D::DrawQuad(transformComp.Transform, textComp.TextRef, glm::vec4(1.f));
+                        Renderer2D::DrawQuad(transformComp.transform, textComp.label, glm::vec4(1.f));
                     });
                 Renderer2D::EndScene();
                 return;
@@ -61,20 +61,20 @@ void Scene::OnUpdate(const TimeStep& ts) {
 
 void Scene::OnEvent(Event& event) {
     // native scripting update
-    m_registry.view<NativeScriptComponent>().each([&](const auto entity, auto& nsc) { nsc.Instance->OnEvent(event); });
+    m_registry.view<NativeScriptComponent>().each([&](const auto entity, auto& nsc) { nsc.instance->OnEvent(event); });
     // scripting update
     EventDispatcher dispatcher(event);
     const int eventType = static_cast<int>(event.GetEventType());
     m_registry.view<ScriptComponent>().each([&](const auto entity, auto& sc) {
-        if (!sc.Instance->AcquireEvents) {
+        if (!sc.instance->AcquireEvents) {
             return;
         }
         dispatcher.Dispatch<KeyPressedEvent>([&](KeyPressedEvent& event) {
-            sc.Instance->OnEvent(eventType, event.GetKeyCode());
+            sc.instance->OnEvent(eventType, event.GetKeyCode());
             return false;
         });
         dispatcher.Dispatch<MouseBtnPressedEvent>([&](MouseBtnPressedEvent& event) {
-            sc.Instance->OnEvent(eventType, event.GetMouseBtnCode());
+            sc.instance->OnEvent(eventType, event.GetMouseBtnCode());
             return false;
         });
     });
@@ -85,8 +85,8 @@ void Scene::OnViewportResize(uint32_t width, uint32_t height) {
     m_viewportHeight = height;
 
     m_registry.view<CameraComponent>().each([&]([[maybe_unused]] const auto entity, auto& cameraComp) {
-        if (!cameraComp.FixedAspectRatio) {
-            cameraComp.Camera.SetViewportSize(width, height);
+        if (!cameraComp.fixedAspectRatio) {
+            cameraComp.camera.SetViewportSize(width, height);
         }
     });
 }

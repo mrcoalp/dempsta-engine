@@ -10,49 +10,49 @@
 
 namespace de {
 struct NameComponent {
-    std::string Name;
+    std::string name;
 
     NameComponent() = default;
-    explicit NameComponent(std::string name) : Name(std::move(name)) {}
+    explicit NameComponent(std::string name) : name(std::move(name)) {}
 
-    explicit operator const std::string &() const noexcept { return Name; }
-    explicit operator const char*() const noexcept { return Name.c_str(); }
+    explicit operator const std::string &() const noexcept { return name; }
+    explicit operator const char*() const noexcept { return name.c_str(); }
 };
 
 struct TransformComponent {
-    glm::mat4 Transform = glm::mat4(1.0f);
+    glm::mat4 transform = glm::mat4(1.0f);
 
     TransformComponent() = default;
-    explicit TransformComponent(const glm::mat4& transform) : Transform(transform) {}
+    explicit TransformComponent(const glm::mat4& transform) : transform(transform) {}
 
-    explicit operator glm::mat4 &() noexcept { return Transform; }
-    explicit operator const glm::mat4 &() const noexcept { return Transform; }
+    explicit operator glm::mat4 &() noexcept { return transform; }
+    explicit operator const glm::mat4 &() const noexcept { return transform; }
 };
 
 struct SpriteComponent {
-    glm::vec4 Color = glm::vec4(1.0f);
-    Ref<SubTexture2D> Texture;
+    glm::vec4 color = glm::vec4(1.0f);
+    Ref<SubTexture2D> texture;
 
     SpriteComponent() = default;
 };
 
 struct ScriptComponent {
-    std::string Path;
-    Scope<lua::ScriptEntity> Instance;
+    std::string path;
+    Scope<lua::ScriptEntity> instance;
 
-    void Create() { Instance.reset(new lua::ScriptEntity(Path)); }
+    void Create() { instance.reset(new lua::ScriptEntity(path)); }
 
     void Destroy() {
-        Instance->OnDestroy();
-        Instance.reset(nullptr);
+        instance->OnDestroy();
+        instance.reset(nullptr);
     }
 
     ScriptComponent() = default;
-    explicit ScriptComponent(std::string path) : Path(std::move(path)) {}
+    explicit ScriptComponent(std::string path) : path(std::move(path)) {}
 };
 
 struct NativeScriptComponent {
-    NativeScriptEntity* Instance = nullptr;
+    NativeScriptEntity* instance = nullptr;
 
     NativeScriptEntity* (*Create)();
     void (*Destroy)(NativeScriptComponent*);
@@ -61,8 +61,8 @@ struct NativeScriptComponent {
     void Bind() {
         Create = []() { return dynamic_cast<NativeScriptEntity*>(new Script()); };
         Destroy = [](NativeScriptComponent* nsc) {
-            delete nsc->Instance;
-            nsc->Instance = nullptr;
+            delete nsc->instance;
+            nsc->instance = nullptr;
         };
     }
 
@@ -70,16 +70,16 @@ struct NativeScriptComponent {
 };
 
 struct CameraComponent {
-    SceneCamera Camera;
-    bool Primary = false;
-    bool FixedAspectRatio = false;
+    SceneCamera camera;
+    bool primary = false;
+    bool fixedAspectRatio = false;
 
     CameraComponent() = default;
 };
 
-struct TextComponent {
-    Ref<Text> TextRef;
+struct LabelComponent {
+    Ref<Label> label;
 
-    TextComponent() = default;
+    LabelComponent() = default;
 };
 }  // namespace de

@@ -6,9 +6,9 @@
 #include "Renderer/texture.h"
 
 namespace de {
-class Text {
+class Label {
 public:
-    Text(const char* fontPath, float size);
+    Label(const char* fontPath, float size);
 
     [[nodiscard]] inline unsigned GetID() const { return m_Atlas->id; }
 

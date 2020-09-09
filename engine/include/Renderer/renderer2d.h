@@ -35,7 +35,7 @@ public:
                          const glm::vec4& tint = glm::vec4(1.0f));
     static void DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& subTexture,
                          const glm::vec4& tint = glm::vec4(1.0f));
-    static void DrawQuad(const glm::mat4& transform, const Ref<Text>& text, const glm::vec4& tint = glm::vec4(1.0f));
+    static void DrawQuad(const glm::mat4& transform, const Ref<Label>& text, const glm::vec4& tint = glm::vec4(1.0f));
 
     static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
     static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);

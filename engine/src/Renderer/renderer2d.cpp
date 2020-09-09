@@ -245,7 +245,7 @@ void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& s
     ++data.statistics.quads;
 }
 
-void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Text>& text, const glm::vec4& tint) {
+void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Label>& text, const glm::vec4& tint) {
     checkDrawCall();
 
     float textureIndex = getOrAddUniqueTextureIndex(text->GetTexture());
