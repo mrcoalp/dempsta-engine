@@ -250,10 +250,10 @@ void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Label>& text, co
 
     float textureIndex = getOrAddUniqueTextureIndex(text->GetTexture());
 
-    auto posX = transform[3][0];
+    auto posX = transform[3].x;
     const char* content = text->GetContent().c_str();
 
-    for (size_t i = 0; strlen(content); ++i) {
+    for (size_t i = 0; i < strlen(content); ++i) {
         auto* glyph = text->GetGylph(content + i);
 
         float kerning = 0.0f;
@@ -263,7 +263,7 @@ void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Label>& text, co
 
         posX += kerning;
         float x0 = posX + glyph->offset_x;
-        float y0 = transform[3][1] + glyph->offset_y;
+        float y0 = transform[3].y + glyph->offset_y;
         float x1 = x0 + glyph->width;
         float y1 = y0 + glyph->height;
 

@@ -10,7 +10,7 @@ class Label {
 public:
     Label(const char* fontPath, float size);
 
-    [[nodiscard]] inline unsigned GetID() const { return m_Atlas->id; }
+    [[nodiscard]] inline unsigned GetID() const { return m_atlas->id; }
 
     [[nodiscard]] inline const std::string& GetContent() const { return m_content; }
 
@@ -21,8 +21,8 @@ public:
     void SetContent(const std::string& content) { m_content = content; }
 
 private:
-    ftgl::texture_atlas_t* m_Atlas{nullptr};
-    ftgl::texture_font_t* m_Font{nullptr};
+    ftgl::texture_atlas_t* m_atlas{nullptr};
+    ftgl::texture_font_t* m_font{nullptr};
     std::string m_content{""};
     Ref<Texture2D> m_texture{nullptr};
 };
