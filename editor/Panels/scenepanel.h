@@ -4,11 +4,11 @@
 #include "Scene/entity.h"
 
 namespace de {
-class SceneHierarchyPanel {
+class ScenePanel {
 public:
-    SceneHierarchyPanel() = default;
+    ScenePanel() = default;
 
-    explicit SceneHierarchyPanel(const Ref<Scene>& context);
+    explicit ScenePanel(const Ref<Scene>& context);
 
     void SetContext(const Ref<Scene>& context);
 

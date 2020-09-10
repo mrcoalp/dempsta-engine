@@ -16,8 +16,8 @@ void DempstaEditor::OnAttach() {
     auto spriteDog = SubTexture2D::CreateSprite("assets/textures/dog.jpg");
     auto spriteMask = SubTexture2D::CreateSprite("assets/textures/mask.png");
     auto spriteSphere = SubTexture2D::CreateSprite("assets/textures/sphere.png");
-    auto text = CreateRef<Label>("assets/fonts/arial.ttf", 1);
-    text->SetContent("Hello world");
+    // auto text = CreateRef<Label>("assets/fonts/arial.ttf", 1);
+    // text->SetContent("Hello world");
 
     m_sphere = m_activeScene->CreateEntity("Sphere");
     m_sphere.AddComponent<SpriteComponent>().texture = spriteSphere;

@@ -2,7 +2,7 @@
 
 #include <dempsta.h>
 
-#include "Panels/scenehierarchy.h"
+#include "Panels/scenepanel.h"
 
 namespace de {
 class DempstaEditor : public Layer {
@@ -29,6 +29,6 @@ private:
 
     glm::vec2 m_viewportSize{glm::vec2(0.f)};
 
-    SceneHierarchyPanel m_sceneHierarchyPanel;
+    ScenePanel m_sceneHierarchyPanel;
 };
 }  // namespace de

@@ -43,5 +43,8 @@ To compile and run the tests:
 - [x] 2D renderer capable of render quads;
 - [x] Basic capability to expose C++ to Lua and vice-versa;
 - [x] Pseudo editor using ImGui;
+
+### In Progress
 - [ ] Entity component system;
 - [ ] Entity edition in editor;
+- [ ] Text rendering;

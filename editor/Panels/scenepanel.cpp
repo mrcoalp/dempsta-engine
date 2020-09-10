@@ -1,22 +1,22 @@
-#include "scenehierarchy.h"
+#include "scenepanel.h"
 
 #include <imgui.h>
 
 #include "Scene/components.h"
 
 namespace de {
-SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context) { SetContext(context); }
+ScenePanel::ScenePanel(const Ref<Scene>& context) { SetContext(context); }
 
-void SceneHierarchyPanel::SetContext(const Ref<Scene>& context) { m_context = context; }
+void ScenePanel::SetContext(const Ref<Scene>& context) { m_context = context; }
 
-void SceneHierarchyPanel::OnImGuiRender() {
+void ScenePanel::OnImGuiRender() {
     if (ImGui::Begin("Scene Hierarchy")) {
         m_context->m_registry.each([this](auto entityID) { drawEntityNode(Entity(entityID, m_context.get())); });
         ImGui::End();
     }
 }
 
-void SceneHierarchyPanel::drawEntityNode(Entity entity) {
+void ScenePanel::drawEntityNode(Entity entity) {
     ImGuiTreeNodeFlags flags =
         (entity == m_selected ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
     auto& name = entity.GetComponent<NameComponent>().name;
@@ -35,7 +35,7 @@ void SceneHierarchyPanel::drawEntityNode(Entity entity) {
     }
 }
 
-void SceneHierarchyPanel::drawTransformNode(Entity entity) {
+void ScenePanel::drawTransformNode(Entity entity) {
     ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
     bool open = ImGui::TreeNodeEx("Position", flags);
     if (open) {
@@ -50,7 +50,7 @@ void SceneHierarchyPanel::drawTransformNode(Entity entity) {
     }
 }
 
-void SceneHierarchyPanel::drawScriptingNode(Entity entity) {
+void ScenePanel::drawScriptingNode(Entity entity) {
     ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
     bool open = ImGui::TreeNodeEx("Scripting", flags);
     if (open) {
