@@ -36,9 +36,9 @@ class ScriptEntity {
 public:
     explicit ScriptEntity(const std::string& scriptPath);
 
-    de::Scope<DataBuffer> Data;
-    de::Scope<LuaEntity> EntityRef;
-    bool AcquireEvents = false;
+    de::Scope<DataBuffer> dataBuffer;
+    de::Scope<LuaEntity> entityRef;
+    bool acquireEvents = false;
 
     void ReloadScript();
 
@@ -53,7 +53,7 @@ public:
     template <typename T>
     void OnEvent(int eventType, T&& action) const {
         LoadCodeAndContext();
-        LE::CallFunction("OnEvent", Data.get(), eventType, action);
+        LE::CallFunction("OnEvent", dataBuffer.get(), eventType, action);
     }
 
     void OnMessage(const std::string& id, DataBuffer* data, const std::string& sender) const;

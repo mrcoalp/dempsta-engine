@@ -55,8 +55,8 @@ void ScenePanel::drawScriptingNode(Entity entity) {
     bool open = ImGui::TreeNodeEx("Scripting", flags);
     if (open) {
         if (ImGui::Begin("Edit")) {
-            const auto& component = entity.GetComponent<ScriptComponent>().instance;
-            auto [doubles, bools, strings] = component->Data->GetData();
+            const auto& scriptEntity = entity.GetComponent<ScriptComponent>().instance;
+            auto [doubles, bools, strings] = scriptEntity->dataBuffer->GetData();
             for (auto& d : doubles) {
                 auto d1 = static_cast<float>(d.second);
                 ImGui::InputFloat(d.first.c_str(), &d1, 1.f, 10.f);

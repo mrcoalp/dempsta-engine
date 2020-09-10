@@ -6,14 +6,14 @@ namespace lua {
 std::string ScriptEntity::s_previousLoadedScript = "";
 
 ScriptEntity::ScriptEntity(const std::string& scriptPath) : m_scriptPath(scriptPath) {
-    Data.reset(new lua::DataBuffer());
-    EntityRef.reset(new lua::LuaEntity());
+    dataBuffer.reset(new lua::DataBuffer());
+    entityRef.reset(new lua::LuaEntity());
 }
 
 void ScriptEntity::ReloadScript() { m_scriptCode = de::FileUtils::ReadFile(m_scriptPath); }
 
 void ScriptEntity::LoadCodeAndContext() const {
-    LE::PushGlobalVariable("this", EntityRef.get());
+    LE::PushGlobalVariable("this", entityRef.get());
     if (s_previousLoadedScript != m_scriptPath) {
         LE::RunCode(m_scriptCode.c_str());
         s_previousLoadedScript = m_scriptPath;
@@ -22,21 +22,21 @@ void ScriptEntity::LoadCodeAndContext() const {
 
 void ScriptEntity::OnInit() const {
     LoadCodeAndContext();
-    LE::CallFunction("OnInit", Data.get());
+    LE::CallFunction("OnInit", dataBuffer.get());
 }
 
 void ScriptEntity::OnUpdate(const de::TimeStep& ts) const {
     LoadCodeAndContext();
-    LE::CallFunction("OnUpdate", Data.get(), (float)ts);
+    LE::CallFunction("OnUpdate", dataBuffer.get(), (float)ts);
 }
 
-void ScriptEntity::OnMessage(const std::string& id, DataBuffer* data, const std::string& sender) const {
+void ScriptEntity::OnMessage(const std::string& id, DataBuffer* dataToSend, const std::string& sender) const {
     LoadCodeAndContext();
-    LE::CallFunction("OnMessage", Data.get(), id, data, sender);
+    LE::CallFunction("OnMessage", dataBuffer.get(), id, dataToSend, sender);
 }
 
 void ScriptEntity::OnDestroy() {
-    EntityRef.reset(nullptr);
-    Data.reset(nullptr);
+    entityRef.reset(nullptr);
+    dataBuffer.reset(nullptr);
 }
 }  // namespace lua

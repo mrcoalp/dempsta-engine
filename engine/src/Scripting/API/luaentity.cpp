@@ -83,12 +83,12 @@ int LuaEntity::SetAlpha(lua_State* L) {
 }
 
 int LuaEntity::GetAcquireEvents(lua_State* L) {
-    LE::PushValue(m_entity.GetComponent<de::ScriptComponent>().instance->AcquireEvents);
+    LE::PushValue(m_entity.GetComponent<de::ScriptComponent>().instance->acquireEvents);
     return 1;
 }
 
 int LuaEntity::SetAcquireEvents(lua_State* L) {
-    m_entity.GetComponent<de::ScriptComponent>().instance->AcquireEvents = LE::GetValue<bool>();
+    m_entity.GetComponent<de::ScriptComponent>().instance->acquireEvents = LE::GetValue<bool>();
     return 0;
 }
 

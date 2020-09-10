@@ -23,7 +23,7 @@ void Scene::OnUpdate(const TimeStep& ts) {
     scriptsView.each([&](const auto entity, auto& sc) {
         if (sc.instance == nullptr) {
             sc.Create();
-            sc.instance->EntityRef->m_entity = Entity(entity, this);
+            sc.instance->entityRef->m_entity = Entity(entity, this);
             sc.instance->ReloadScript();
             sc.instance->OnInit();
         }
@@ -66,7 +66,7 @@ void Scene::OnEvent(Event& event) {
     EventDispatcher dispatcher(event);
     const int eventType = static_cast<int>(event.GetEventType());
     m_registry.view<ScriptComponent>().each([&](const auto entity, auto& sc) {
-        if (!sc.instance->AcquireEvents) {
+        if (!sc.instance->acquireEvents) {
             return;
         }
         dispatcher.Dispatch<KeyPressedEvent>([&](KeyPressedEvent& event) {
