@@ -1,29 +1,21 @@
 #pragma once
 
-#include <freetype-gl.h>
-
-#include "Core/core.h"
-#include "Renderer/texture.h"
+#include "Renderer/font.h"
 
 namespace de {
 class Label {
 public:
-    Label(const char* fontPath, float size);
+    Label(const Ref<Font>& font, const std::string& content) : m_font(font), m_content(content) {}
 
-    [[nodiscard]] inline unsigned GetID() const { return m_atlas->id; }
+    [[nodiscard]] inline const Ref<Font>& GetFont() const { return m_font; }
 
     [[nodiscard]] inline const std::string& GetContent() const { return m_content; }
-
-    [[nodiscard]] ftgl::texture_glyph_t* GetGylph(const char* codePoint) const;
-
-    [[nodiscard]] const Ref<Texture2D>& GetTexture() const { return m_texture; }
 
     void SetContent(const std::string& content) { m_content = content; }
 
 private:
-    ftgl::texture_atlas_t* m_atlas{nullptr};
-    ftgl::texture_font_t* m_font{nullptr};
+    // TODO(mpinto): Change this when a proper font manager is implemented
+    Ref<Font> m_font;
     std::string m_content{""};
-    Ref<Texture2D> m_texture{nullptr};
 };
 }  // namespace de

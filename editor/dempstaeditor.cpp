@@ -16,12 +16,12 @@ void DempstaEditor::OnAttach() {
     auto spriteDog = SubTexture2D::CreateSprite("assets/textures/dog.jpg");
     auto spriteMask = SubTexture2D::CreateSprite("assets/textures/mask.png");
     auto spriteSphere = SubTexture2D::CreateSprite("assets/textures/sphere.png");
-    auto text = CreateRef<Label>("assets/fonts/arial.ttf", 1);
-    text->SetContent("Hello world");
+    auto font = CreateRef<Font>("Arial", "assets/fonts/DejaVuSans-Bold.ttf", 80);
+    auto label = CreateRef<Label>(font, "");
 
-    m_sphere = m_activeScene->CreateEntity("Sphere");
-    m_sphere.AddComponent<SpriteComponent>().texture = spriteSphere;
-    m_sphere.AddComponent<ScriptComponent>("assets/scripts/sphere.lua");
+    // m_sphere = m_activeScene->CreateEntity("Sphere");
+    // m_sphere.AddComponent<SpriteComponent>().texture = spriteSphere;
+    // m_sphere.AddComponent<ScriptComponent>("assets/scripts/sphere.lua");
 
     // for (size_t i = 0; i < 10; ++i) {
     //     auto mask = m_activeScene->CreateEntity("Mask_" + std::to_string(i));
@@ -30,7 +30,7 @@ void DempstaEditor::OnAttach() {
     // }
 
     auto textEnt = m_activeScene->CreateEntity("TestText");
-    textEnt.AddComponent<LabelComponent>().label = text;
+    textEnt.AddComponent<LabelComponent>().label = label;
 
     auto camEntity = m_activeScene->CreateEntity("Primary Camera");
     camEntity.AddComponent<CameraComponent>().primary = true;

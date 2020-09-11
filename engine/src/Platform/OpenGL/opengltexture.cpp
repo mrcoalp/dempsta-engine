@@ -10,12 +10,15 @@ OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height) : m_width(widt
     m_dataFormat = GL_RGBA;
 
     glCreateTextures(GL_TEXTURE_2D, 1, &m_rendererId);
-    glTextureStorage2D(m_rendererId, 1, internalFormat, m_width, m_height);
+    // glTextureStorage2D(m_rendererId, 1, internalFormat, m_width, m_height);
 
     glTextureParameteri(m_rendererId, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTextureParameteri(m_rendererId, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTextureParameteri(m_rendererId, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTextureParameteri(m_rendererId, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, m_dataFormat, width, height, 0, m_dataFormat, GL_UNSIGNED_BYTE, nullptr);
+    glGenerateMipmap(GL_TEXTURE_2D);
 }
 
 OpenGLTexture2D::OpenGLTexture2D(const std::string& filePath) : m_filePath(filePath), m_dataFormat(0) {
@@ -60,8 +63,8 @@ OpenGLTexture2D::~OpenGLTexture2D() { glDeleteTextures(1, &m_rendererId); }
 void OpenGLTexture2D::SetData(void* data, uint32_t size) {
     uint32_t bytesPerPixel = m_dataFormat == GL_RGB ? 3 : 4;
     DE_ASSERT(size == m_width * m_height * bytesPerPixel, "Size must be entire texture!")
-    // glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, m_width, m_height, 0, GL_RED, GL_UNSIGNED_BYTE, data);
-    glTextureSubImage2D(m_rendererId, 0, 0, 0, m_width, m_height, m_dataFormat, GL_UNSIGNED_BYTE, data);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_width, m_height, m_dataFormat, GL_UNSIGNED_BYTE, data);
+    // glTextureSubImage2D(m_rendererId, 0, 0, 0, m_width, m_height, m_dataFormat, GL_UNSIGNED_BYTE, data);
 }
 
 void OpenGLTexture2D::Bind(unsigned slot) const { glBindTextureUnit(slot, m_rendererId); }
