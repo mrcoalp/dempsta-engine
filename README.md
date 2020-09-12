@@ -13,6 +13,8 @@ The idea is to make it as cross-platform as possible. Currently tested in Linux 
 
 Using Lua as scripting language.
 
+Make sure to clone the repository with `--recursive` to fetch all the submodules.
+
 ### Compiling
 
 #### Linux
@@ -45,6 +47,7 @@ To compile and run the tests:
 - [x] Pseudo editor using ImGui;
 
 ### In Progress
+
 - [ ] Entity component system;
 - [ ] Entity edition in editor;
 - [ ] Text rendering;

@@ -40,8 +40,6 @@ class Font {
 public:
     Font(const FT_Library& library, const std::string& source, FT_Long faceIndex, unsigned size);
 
-    ~Font() = default;
-
     [[nodiscard]] const Ref<FontTextureAtlas>& GetAtlas() const { return m_atlas; }
 
 private:
@@ -67,7 +65,6 @@ private:
     FontManager() {}
 
     FT_Library m_library;
-    FT_Error m_error;
     FT_Long m_index{0};
 
     std::unordered_map<std::string, Font> m_fonts;

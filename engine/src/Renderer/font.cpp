@@ -56,8 +56,8 @@ FontManager& FontManager::GetInstance() {
 }
 
 void FontManager::InitFreeType() {
-    m_error = FT_Init_FreeType(&m_library);
-    if (m_error) {
+    auto error = FT_Init_FreeType(&m_library);
+    if (error) {
         LOG_ENGINE_ERROR("An error occurred during library initialization");
     }
 }

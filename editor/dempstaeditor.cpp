@@ -19,9 +19,9 @@ void DempstaEditor::OnAttach() {
     FontManager::GetInstance().AddFont("DejaVuSans-Bold", "assets/fonts/DejaVuSans-Bold.ttf", 18);
     auto label = CreateRef<Label>("DejaVuSans-Bold", "Marco");
 
-    auto sphere = m_activeScene->CreateEntity("Sphere");
-    sphere.AddComponent<SpriteComponent>().texture = spriteSphere;
-    sphere.AddComponent<ScriptComponent>("assets/scripts/sphere.lua");
+    // auto sphere = m_activeScene->CreateEntity("Sphere");
+    // sphere.AddComponent<SpriteComponent>().texture = spriteSphere;
+    // sphere.AddComponent<ScriptComponent>("assets/scripts/sphere.lua");
 
     // for (size_t i = 0; i < 10; ++i) {
     //     auto mask = m_activeScene->CreateEntity("Mask_" + std::to_string(i));

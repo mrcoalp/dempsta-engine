@@ -95,10 +95,10 @@ void Renderer2D::Init() {
 
     data.textures[0] = data.whiteTextureRef;
 
-    data.quadVerticesPosition[0] = {-0.5f, -0.5f, 0.0f, 1.0f};
-    data.quadVerticesPosition[1] = {0.5f, -0.5f, 0.0f, 1.0f};
-    data.quadVerticesPosition[2] = {0.5f, 0.5f, 0.0f, 1.0f};
-    data.quadVerticesPosition[3] = {-0.5f, 0.5f, 0.0f, 1.0f};
+    data.quadVerticesPosition[0] = {-3.f, -3.f, 0.0f, 1.0f};
+    data.quadVerticesPosition[1] = {3.f, -3.f, 0.0f, 1.0f};
+    data.quadVerticesPosition[2] = {3.f, 3.f, 0.0f, 1.0f};
+    data.quadVerticesPosition[3] = {-3.f, 3.f, 0.0f, 1.0f};
 }
 
 void Renderer2D::Shutdown() {}
@@ -222,7 +222,7 @@ void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Label>& text, co
     const auto characters = atlas->GetCharacters();
     auto translation = transform;
     float textureIndex = getOrAddUniqueTextureIndex(atlas->GetTexture());
-
+    // Testing whole texture
     constexpr const float x[4] = {0.0f, 1.0f, 1.0f, 0.0f};
     constexpr const float y[4] = {0.0f, 0.0f, 1.0f, 1.0f};
 
