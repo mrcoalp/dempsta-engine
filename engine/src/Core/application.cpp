@@ -2,6 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
+#include "Renderer/font.h"
 #include "Renderer/renderer.h"
 #include "Scripting/API/databuffer.h"
 #include "Scripting/API/helpers.h"
@@ -28,6 +29,7 @@ Application::Application(const WindowProps& windowProps) {
     m_window->SetEventCallback([this](Event& e) { OnEvent(e); });
 
     Renderer::Init();
+    FontManager::GetInstance().InitFreeType();
     LE::Init();
     RegisterScriptingAPI();
 

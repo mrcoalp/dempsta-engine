@@ -24,7 +24,8 @@ struct Renderer2DData {
 
     Ref<VertexBuffer> vertexBuffer;
     Ref<VertexArray> vertexArray;
-    Ref<Shader> shader;
+    ShaderLibrary shaderLibrary;
+    std::string shaderToUse = "quad";
     Ref<Texture2D> whiteTextureRef;  // Used to render "no" textured quads
 
     uint32_t quadIndexCount = 0;
@@ -81,23 +82,23 @@ void Renderer2D::Init() {
 
     data.whiteTextureRef = Texture2D::Create(1, 1);
     uint32_t _white = 0xffffffff;
-    data.whiteTextureRef->SetData(&_white, sizeof(uint32_t));
+    data.whiteTextureRef->SetData(&_white);
 
     int samplers[Renderer2DData::maxTextureSlots];
     for (uint32_t i = 0; i < Renderer2DData::maxTextureSlots; ++i) {
         samplers[i] = i;
     }
 
-    data.shader = Shader::Create("assets/shaders/quad.glsl");
-    data.shader->Bind();
-    data.shader->SetIntArray("u_textures", samplers, Renderer2DData::maxTextureSlots);
+    data.shaderLibrary.Load("quad", "assets/shaders/quad.glsl");
+    data.shaderLibrary.Get("quad")->Bind();
+    data.shaderLibrary.Get("quad")->SetIntArray("u_textures", samplers, Renderer2DData::maxTextureSlots);
 
     data.textures[0] = data.whiteTextureRef;
 
-    data.quadVerticesPosition[0] = {-3.f, -3.f, 0.0f, 1.0f};
-    data.quadVerticesPosition[1] = {3.f, -3.f, 0.0f, 1.0f};
-    data.quadVerticesPosition[2] = {3.f, 3.f, 0.0f, 1.0f};
-    data.quadVerticesPosition[3] = {-3.f, 3.f, 0.0f, 1.0f};
+    data.quadVerticesPosition[0] = {-0.5f, -0.5f, 0.0f, 1.0f};
+    data.quadVerticesPosition[1] = {0.5f, -0.5f, 0.0f, 1.0f};
+    data.quadVerticesPosition[2] = {0.5f, 0.5f, 0.0f, 1.0f};
+    data.quadVerticesPosition[3] = {-0.5f, 0.5f, 0.0f, 1.0f};
 }
 
 void Renderer2D::Shutdown() {}
@@ -129,14 +130,14 @@ void Renderer2D::flush() {
 
 void Renderer2D::BeginScene(const glm::mat4& projection, const glm::mat4& transform) {
     glm::mat4 viewProj = projection * glm::inverse(transform);
-    data.shader->Bind();
-    data.shader->SetMat4("u_viewProjection", viewProj);
+    data.shaderLibrary.Get(data.shaderToUse)->Bind();
+    data.shaderLibrary.Get(data.shaderToUse)->SetMat4("u_viewProjection", viewProj);
     resetBuffer();
 }
 
 void Renderer2D::BeginScene(const OrthographicCamera& camera) {
-    data.shader->Bind();
-    data.shader->SetMat4("u_viewProjection", camera.GetProjectionViewMatrix());
+    data.shaderLibrary.Get(data.shaderToUse)->Bind();
+    data.shaderLibrary.Get(data.shaderToUse)->SetMat4("u_viewProjection", camera.GetProjectionViewMatrix());
     resetBuffer();
 }
 
@@ -153,38 +154,6 @@ float Renderer2D::getOrAddUniqueTextureIndex(const Ref<Texture2D>& texture) {
     data.textures[data.textureSlotIndex] = texture;
     // return current index and increment after
     return (float)data.textureSlotIndex++;
-}
-
-void Renderer2D::DrawQuad(const Quad& quad) {
-    checkDrawCall();
-
-    float textureIndex = 0.0f;
-    if (quad.texture) {
-        textureIndex = getOrAddUniqueTextureIndex(quad.texture);
-    } else if (quad.subTexture) {
-        textureIndex = getOrAddUniqueTextureIndex(quad.subTexture->GetTexture());
-    }
-
-    glm::mat4 transform = quad.rotation != 0.0f
-                              ? glm::translate(glm::mat4(1.0f), quad.position) *
-                                    glm::rotate(glm::mat4(1.0f), glm::radians(quad.rotation), {0.0f, 0.0f, 1.0f}) *
-                                    glm::scale(glm::mat4(1.0f), {quad.size.x, quad.size.y, 1.0f})
-                              : glm::translate(glm::mat4(1.0f), quad.position) *
-                                    glm::scale(glm::mat4(1.0f), {quad.size.x, quad.size.y, 1.0f});
-
-    constexpr glm::vec2 coords[4] = {{0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f}};
-
-    for (uint8_t i = 0; i < 4; ++i) {
-        data.quadVertexBufferPtr->position = transform * data.quadVerticesPosition[i];
-        data.quadVertexBufferPtr->color = quad.tint;
-        data.quadVertexBufferPtr->texture = quad.subTexture ? quad.subTexture->GetCoordinates()[i] : coords[i];
-        data.quadVertexBufferPtr->textureIndex = textureIndex;
-        ++data.quadVertexBufferPtr;
-    }
-
-    data.quadIndexCount += 6;
-
-    ++data.statistics.quads;
 }
 
 void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color) {
@@ -248,13 +217,14 @@ void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& s
 void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Label>& text, const glm::vec4& tint) {
     checkDrawCall();
 
-    text->GetFont()->GetGylph("Qualquer cena");
+    const char* content = text->GetContent().c_str();
+    const auto& atlas = text->GetFont().GetAtlas();
+    const auto characters = atlas->GetCharacters();
+    auto translation = transform;
+    float textureIndex = getOrAddUniqueTextureIndex(atlas->GetTexture());
 
     constexpr const float x[4] = {0.0f, 1.0f, 1.0f, 0.0f};
     constexpr const float y[4] = {0.0f, 0.0f, 1.0f, 1.0f};
-
-    float textureIndex = getOrAddUniqueTextureIndex(text->GetFont()->GetTexture());
-    // data.textureSlotIndex++;
 
     for (uint8_t i = 0; i < 4; ++i) {
         data.quadVertexBufferPtr->position = transform * data.quadVerticesPosition[i];
@@ -268,41 +238,30 @@ void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Label>& text, co
 
     ++data.statistics.quads;
 
-    // auto& font = text->GetFont();
+    // for (const unsigned char* p = (const unsigned char*)content; *p; p++) {
+    //     auto glyph = characters[*p];
+    //     float x0 = glyph.uvOffsetX;
+    //     float y0 = glyph.uvOffsetY;
+    //     float x1 = x0 + glyph.bitmapWidth;
+    //     float y1 = y0 + glyph.bitmapHeight;
 
-    // float textureIndex = getOrAddUniqueTextureIndex(font->GetTexture());
-
-    // auto posX = transform[3].x;
-    // const char* content = text->GetContent().c_str();
-
-    // for (size_t i = 0; i < strlen(content); ++i) {
-    //     auto* glyph = font->GetGylph(content + i);
-
-    //     float kerning = 0.0f;
-    //     if (i > 0) {
-    //         kerning = font->GetKerning(glyph, content + i - 1);
-    //     }
-
-    //     posX += kerning;
-    //     float x0 = posX + glyph->offset_x;
-    //     float y0 = transform[3].y + glyph->offset_y;
-    //     float x1 = x0 + glyph->width;
-    //     float y1 = y0 + glyph->height;
+    //     if (!x1 || !y1) continue;
 
     //     const float x[4] = {x0, x1, x1, x0};
     //     const float y[4] = {y0, y0, y1, y1};
-    //     const float u[4] = {glyph->s0, glyph->s1, glyph->s1, glyph->s0};
-    //     const float v[4] = {glyph->t0, glyph->t0, glyph->t1, glyph->t1};
 
     //     for (uint8_t i = 0; i < 4; ++i) {
-    //         data.quadVertexBufferPtr->position = transform * glm::vec4(x[i], y[i], 0.f, 1.f);
+    //         LOG_ENGINE_TRACE("{} {}", x[i], y[i]);
+    //         data.quadVertexBufferPtr->position = translation * data.quadVerticesPosition[i];
     //         data.quadVertexBufferPtr->color = tint;
-    //         data.quadVertexBufferPtr->texture = {u[i], v[i]};
+    //         data.quadVertexBufferPtr->texture = {x[i], y[i]};
     //         data.quadVertexBufferPtr->textureIndex = textureIndex;
     //         ++data.quadVertexBufferPtr;
     //     }
 
-    //     posX += glyph->advance_x;
+    //     translation[3].x += glyph.advanceX;
+    //     translation[3].y += glyph.advanceY;
+
     //     data.quadIndexCount += 6;
     //     ++data.statistics.quads;
     // }

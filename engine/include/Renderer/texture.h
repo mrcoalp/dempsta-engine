@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glm/glm.hpp>
+
 #include "Core/core.h"
 
 namespace de {
@@ -11,7 +13,9 @@ public:
 
     [[nodiscard]] virtual unsigned GetHeight() const = 0;
 
-    virtual void SetData(void* data, uint32_t size) = 0;
+    virtual void SetData(void* data, const glm::vec2& offset = glm::vec2(0.f)) = 0;
+
+    virtual void SetData(void* data, const glm::vec2& offset, unsigned width, unsigned height) = 0;
 
     virtual void Bind(unsigned slot) const = 0;
 

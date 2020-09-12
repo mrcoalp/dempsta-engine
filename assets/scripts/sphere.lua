@@ -10,6 +10,7 @@ function OnInit(data)
         y = 1.5,
         z = 0
     }
+    this.x = -3
 end
 
 local function changeColor(colorID)
