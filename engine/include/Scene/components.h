@@ -40,7 +40,7 @@ struct ScriptComponent {
     std::string path;
     Scope<lua::ScriptEntity> instance;
 
-    void Create() { instance.reset(new lua::ScriptEntity(path)); }
+    void Create() { instance = CreateScope<lua::ScriptEntity>(path); }
 
     void Destroy() {
         instance->OnDestroy();

@@ -5,7 +5,7 @@
 namespace lua {
 std::string ScriptEntity::s_previousLoadedScript;
 
-ScriptEntity::ScriptEntity(const std::string& scriptPath) : m_scriptPath(scriptPath) {
+ScriptEntity::ScriptEntity(std::string scriptPath) : m_scriptPath(std::move(scriptPath)) {
     dataBuffer = de::CreateScope<DataBuffer>();
     entityRef = de::CreateScope<LuaEntity>();
 }

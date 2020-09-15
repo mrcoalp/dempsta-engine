@@ -15,7 +15,7 @@ void DempstaEditor::OnAttach() {
     auto spriteMask = SubTexture2D::CreateSprite("assets/textures/mask.png");
     auto spriteSphere = SubTexture2D::CreateSprite("assets/textures/sphere.png");
     FontManager::GetInstance().AddFont("DejaVuSans-Bold", "assets/fonts/DejaVuSans-Bold.ttf", 60);
-    auto label = CreateRef<Label>("DejaVuSans-Bold", "Marco Pinto");
+    auto label = CreateRef<Label>("DejaVuSans-Bold", "HP: 100");
 
     // auto sphere = m_activeScene->CreateEntity("Sphere");
     // sphere.AddComponent<SpriteComponent>().texture = spriteSphere;

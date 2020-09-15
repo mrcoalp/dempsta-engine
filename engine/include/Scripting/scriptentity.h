@@ -34,7 +34,7 @@ private:
 namespace lua {
 class ScriptEntity {
 public:
-    explicit ScriptEntity(const std::string& scriptPath);
+    explicit ScriptEntity(std::string scriptPath);
 
     de::Scope<DataBuffer> dataBuffer;
     de::Scope<LuaEntity> entityRef;

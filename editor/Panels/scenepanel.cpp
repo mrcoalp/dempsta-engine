@@ -22,7 +22,7 @@ void ScenePanel::drawEntityNode(Entity entity) {
     ImGuiTreeNodeFlags flags = (entity == m_selected ? ImGuiTreeNodeFlags_Selected : 0) |
                                ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
     auto& name = entity.GetComponent<NameComponent>().name;
-    bool open = ImGui::TreeNodeEx((void*)(unsigned)entity, flags, "%s", name.c_str());
+    bool open = ImGui::TreeNodeEx((void*)(uint64_t)entity, flags, "%s", name.c_str());
     if (ImGui::IsItemClicked()) {
         m_selected = entity;
     }
@@ -74,7 +74,7 @@ void ScenePanel::drawScriptingNode(Entity entity) {
         }
         for (auto& s : strings) {
             char* cstr = new char[s.second.length() + 1];
-            strcpy(cstr, s.second.c_str());
+            mempcpy(cstr, s.second.c_str(), s.second.length() + 1);
             ImGui::InputText(s.first.c_str(), cstr, 100);
             s.second = cstr;
             delete[] cstr;

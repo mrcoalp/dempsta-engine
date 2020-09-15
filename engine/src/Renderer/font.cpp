@@ -25,9 +25,13 @@ FontTextureAtlas::FontTextureAtlas(const FT_Face& face, unsigned height) {
         // TODO(mpinto): Check for max texture dimensions to also use rows and not only columns
         m_texture->SetData(glyph->bitmap.buffer, {x, 0}, glyph->bitmap.width, glyph->bitmap.rows);
 
-        FontCharacter character = {glyph->advance.x >> 6, glyph->advance.y >> 6, glyph->bitmap.width,
-                                   glyph->bitmap.rows,    glyph->bitmap_left,    glyph->bitmap_top,
-                                   (float)x / m_width};
+        FontCharacter character = {static_cast<float>(glyph->advance.x >> 6),
+                                   static_cast<float>(glyph->advance.y >> 6),
+                                   static_cast<float>(glyph->bitmap.width),
+                                   static_cast<float>(glyph->bitmap.rows),
+                                   static_cast<float>(glyph->bitmap_left),
+                                   static_cast<float>(glyph->bitmap_top),
+                                   static_cast<float>(x) / static_cast<float>(m_width)};
 
         m_characters.emplace(i, character);
 

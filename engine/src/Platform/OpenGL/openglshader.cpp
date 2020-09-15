@@ -205,8 +205,7 @@ std::unordered_map<GLenum, std::string> OpenGLShader::processFileData(const std:
 
         size_t nextLinePosition = fileSource.find_first_of('\n', _eol);
         position = fileSource.find(typeToken, nextLinePosition);
-        size_t endOfSourcePosition =
-            nextLinePosition == std::string::npos ? fileSource.size() - 1 : nextLinePosition;
+        size_t endOfSourcePosition = nextLinePosition == std::string::npos ? fileSource.size() - 1 : nextLinePosition;
         std::string _source = fileSource.substr(nextLinePosition, position - endOfSourcePosition);
 
         sources.emplace(ShaderTypeFromString(type), _source);

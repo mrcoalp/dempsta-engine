@@ -236,7 +236,7 @@ void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Label>& text, co
         float x1 = x0 + glyph.bitmapWidth / atlas->GetTexture()->GetWidth();
         float y1 = y0 + glyph.bitmapHeight / atlas->GetTexture()->GetHeight();
 
-        if (!x1 || !y1) {
+        if (x1 == 0.0f || y1 == 0.0f) {
             translation[3].x += glyph.advanceX / (float)font.GetSize();
             continue;
         }

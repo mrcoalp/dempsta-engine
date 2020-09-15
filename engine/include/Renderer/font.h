@@ -42,7 +42,7 @@ public:
 
     [[nodiscard]] const Ref<FontTextureAtlas>& GetAtlas() const { return m_atlas; }
 
-    [[nodiscard]] const unsigned GetSize() const { return m_size; }
+    [[nodiscard]] unsigned GetSize() const { return m_size; }
 
 private:
     Ref<FontTextureAtlas> m_atlas{nullptr};
@@ -65,7 +65,7 @@ public:
     [[nodiscard]] inline const Font& GetFont(const std::string& fontName) const { return m_fonts.at(fontName); }
 
 private:
-    FontManager() {}
+    FontManager() = default;
 
     FT_Library m_library;
     FT_Long m_index{0};

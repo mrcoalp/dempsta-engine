@@ -103,7 +103,7 @@ public:
      */
     bool operator!=(const Entity& other) const noexcept { return !(*(this) == other); }
 
-    explicit operator unsigned() const { return static_cast<unsigned>(m_handle); }
+    explicit operator uint64_t() const { return static_cast<uint64_t>(m_handle); }
 
 private:
     entt::entity m_handle{entt::null};
