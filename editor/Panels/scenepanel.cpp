@@ -2,6 +2,8 @@
 
 #include <imgui.h>
 
+#include <glm/gtc/type_ptr.hpp>
+
 #include "Scene/components.h"
 
 namespace de {
@@ -43,14 +45,12 @@ void ScenePanel::drawEntityNode(Entity entity) {
 void ScenePanel::drawTransformNode(Entity entity) {
     if (ImGui::CollapsingHeader("Position", nullptr, ImGuiTreeNodeFlags_DefaultOpen)) {
         ImGui::Spacing();
-        auto& translation = entity.GetComponent<TransformComponent>().transform[3];
+        auto& transform = entity.GetComponent<TransformComponent>().transform;
         // glm::vec3 scale, translation, skew;
         // glm::vec4 perspective;
         // glm::quat orientation;
         // glm::decompose(transform, scale, orientation, translation, skew, perspective);
-        ImGui::DragFloat("x", &translation.x, 0.1f);
-        ImGui::DragFloat("y", &translation.y, 0.1f);
-        ImGui::DragFloat("z", &translation.z, 0.1f);
+        ImGui::DragFloat3("Position", glm::value_ptr(transform[3]), 0.1f);
     }
 }
 

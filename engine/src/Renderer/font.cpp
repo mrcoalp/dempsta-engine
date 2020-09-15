@@ -4,7 +4,6 @@
 
 namespace de {
 FontTextureAtlas::FontTextureAtlas(const FT_Face& face, unsigned height) {
-    memset(m_characters, 0, sizeof(FontCharacter));
     FT_GlyphSlot glyph = face->glyph;
     // NOTE(mpinto): We skip the first 32 ASCII characters, since they are just control codes.
     for (uint16_t i = 32; i < 128; ++i) {
@@ -23,25 +22,23 @@ FontTextureAtlas::FontTextureAtlas(const FT_Face& face, unsigned height) {
         if (FT_Load_Char(face, i, FT_LOAD_RENDER) > FT_Err_Ok) {
             continue;
         }
+        // TODO(mpinto): Check for max texture dimensions to also use rows and not only columns
         m_texture->SetData(glyph->bitmap.buffer, {x, 0}, glyph->bitmap.width, glyph->bitmap.rows);
 
-        m_characters[i].advanceX = glyph->advance.x >> 6;
-        m_characters[i].advanceY = glyph->advance.y >> 6;
+        FontCharacter character = {glyph->advance.x >> 6, glyph->advance.y >> 6, glyph->bitmap.width,
+                                   glyph->bitmap.rows,    glyph->bitmap_left,    glyph->bitmap_top,
+                                   (float)x / m_width};
 
-        m_characters[i].bitmapWidth = (float)glyph->bitmap.width;
-        m_characters[i].bitmapHeight = (float)glyph->bitmap.rows;
+        m_characters.emplace(i, character);
 
-        m_characters[i].bitmapLeft = glyph->bitmap_left;
-        m_characters[i].bitmapTop = glyph->bitmap_top;
-
-        m_characters[i].uvOffsetX = (float)x / (float)m_width;
-        x += (int)glyph->bitmap.width;
+        x += glyph->bitmap.width + 1;
     }
 
-    LOG_ENGINE_TRACE("Generated a {} x {} ({} kb) texture atlas.", m_width, m_height, m_width * m_height / 1024);
+    LOG_ENGINE_TRACE("Generated a {} x {} ({} kb) texture atlas for font: {} - {}", m_width, m_height,
+                     m_width * m_height / 1024, face->family_name, face->style_name);
 }
 
-Font::Font(const FT_Library& library, const std::string& source, FT_Long faceIndex, unsigned size) {
+Font::Font(const FT_Library& library, const std::string& source, FT_Long faceIndex, unsigned size) : m_size(size) {
     auto error = FT_New_Face(library, source.c_str(), faceIndex, &m_face);
     if (error == FT_Err_Unknown_File_Format) {
         LOG_ENGINE_ERROR("Font file could be opened and read, but it appears that its font format is unsupported");

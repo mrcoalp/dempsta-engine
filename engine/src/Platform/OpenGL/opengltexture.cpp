@@ -11,12 +11,14 @@ OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height) : m_width(widt
     m_dataFormat = GL_RED;
 
     glCreateTextures(GL_TEXTURE_2D, 1, &m_rendererId);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
     glTextureStorage2D(m_rendererId, 1, internalFormat, m_width, m_height);
 
     glTextureParameteri(m_rendererId, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTextureParameteri(m_rendererId, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    // glTextureParameteri(m_rendererId, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    // glTextureParameteri(m_rendererId, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTextureParameteri(m_rendererId, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTextureParameteri(m_rendererId, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTextureParameteri(m_rendererId, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
 OpenGLTexture2D::OpenGLTexture2D(const std::string& filePath) : m_filePath(filePath), m_dataFormat(0) {
@@ -24,7 +26,7 @@ OpenGLTexture2D::OpenGLTexture2D(const std::string& filePath) : m_filePath(fileP
     int height;
     int channels;
 
-    stbi_set_flip_vertically_on_load(1);
+    // stbi_set_flip_vertically_on_load(1);
     auto* data = stbi_load(filePath.c_str(), &width, &height, &channels, 0);
     DE_ASSERT(data != nullptr, "Couldn't load texture: {0}! Reason: {1}", filePath, stbi_failure_reason())
     m_width = width;

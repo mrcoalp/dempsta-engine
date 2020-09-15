@@ -43,6 +43,8 @@ public:
 
     [[nodiscard]] const Ref<Shader>& Get(const std::string& name) const;
 
+    [[nodiscard]] const auto& GetShaders() const { return m_shaders; }
+
     [[nodiscard]] inline bool Exists(const std::string& name) const { return m_shaders.find(name) != m_shaders.end(); }
 
 private:

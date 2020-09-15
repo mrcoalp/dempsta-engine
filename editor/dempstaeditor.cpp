@@ -1,7 +1,5 @@
 #include "dempstaeditor.h"
 
-#include <glm/gtc/type_ptr.hpp>
-
 namespace de {
 DempstaEditor::DempstaEditor() : Layer("DempstaEditor") {}
 
@@ -12,12 +10,12 @@ void DempstaEditor::OnAttach() {
     m_sceneHierarchyPanel.SetContext(m_activeScene);
 
     auto spriteSheet = CreateRef<Atlas2D>("assets/textures/RPGpack_sheet_2X.png", glm::vec2(128.0f));
-    auto spriteBarrel = SubTexture2D::CreateSprite(spriteSheet, glm::vec2({8.0f, 0.0f}));
+    auto spriteBarrel = SubTexture2D::CreateSprite(spriteSheet, glm::vec2({8.f, 12.f}));
     auto spriteDog = SubTexture2D::CreateSprite("assets/textures/dog.jpg");
     auto spriteMask = SubTexture2D::CreateSprite("assets/textures/mask.png");
     auto spriteSphere = SubTexture2D::CreateSprite("assets/textures/sphere.png");
-    FontManager::GetInstance().AddFont("DejaVuSans-Bold", "assets/fonts/DejaVuSans-Bold.ttf", 18);
-    auto label = CreateRef<Label>("DejaVuSans-Bold", "Marco");
+    FontManager::GetInstance().AddFont("DejaVuSans-Bold", "assets/fonts/DejaVuSans-Bold.ttf", 60);
+    auto label = CreateRef<Label>("DejaVuSans-Bold", "Marco Pinto");
 
     // auto sphere = m_activeScene->CreateEntity("Sphere");
     // sphere.AddComponent<SpriteComponent>().texture = spriteSphere;
@@ -31,6 +29,12 @@ void DempstaEditor::OnAttach() {
 
     auto textEnt = m_activeScene->CreateEntity("TestText");
     textEnt.AddComponent<LabelComponent>().label = label;
+    // auto& labelTrans = textEnt.GetComponent<TransformComponent>().transform;
+    // labelTrans[0].x = 60.f;
+    // labelTrans[1].y = 3.f;
+
+    // auto barrel = m_activeScene->CreateEntity("Barrel");
+    // barrel.AddComponent<SpriteComponent>().texture = spriteBarrel;
 
     auto camEntity = m_activeScene->CreateEntity("Primary Camera");
     camEntity.AddComponent<CameraComponent>().primary = true;

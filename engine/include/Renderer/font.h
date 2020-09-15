@@ -25,14 +25,14 @@ class FontTextureAtlas {
 public:
     FontTextureAtlas(const FT_Face& face, unsigned height);
 
-    [[nodiscard]] inline FontCharacter* GetCharacters() { return m_characters; }
+    [[nodiscard]] inline const auto& GetCharacters() { return m_characters; }
 
     [[nodiscard]] inline const Ref<Texture2D>& GetTexture() const { return m_texture; }
 
 private:
     unsigned m_width{0};
     unsigned m_height{0};
-    FontCharacter m_characters[128];
+    std::unordered_map<char, FontCharacter> m_characters;
     Ref<Texture2D> m_texture{nullptr};
 };
 
@@ -42,9 +42,12 @@ public:
 
     [[nodiscard]] const Ref<FontTextureAtlas>& GetAtlas() const { return m_atlas; }
 
+    [[nodiscard]] const unsigned GetSize() const { return m_size; }
+
 private:
     Ref<FontTextureAtlas> m_atlas{nullptr};
     FT_Face m_face;
+    unsigned m_size{20};
 };
 
 class FontManager {

@@ -95,10 +95,10 @@ void Renderer2D::Init() {
 
     data.textures[0] = data.whiteTextureRef;
 
-    data.quadVerticesPosition[0] = {-3.f, -3.f, 0.0f, 1.0f};
-    data.quadVerticesPosition[1] = {3.f, -3.f, 0.0f, 1.0f};
-    data.quadVerticesPosition[2] = {3.f, 3.f, 0.0f, 1.0f};
-    data.quadVerticesPosition[3] = {-3.f, 3.f, 0.0f, 1.0f};
+    data.quadVerticesPosition[0] = {0.f, 1.f, 0.0f, 1.0f};
+    data.quadVerticesPosition[1] = {1.f, 1.f, 0.0f, 1.0f};
+    data.quadVerticesPosition[2] = {1.f, 0.f, 0.0f, 1.0f};
+    data.quadVerticesPosition[3] = {0.f, 0.f, 0.0f, 1.0f};
 }
 
 void Renderer2D::Shutdown() {}
@@ -130,14 +130,20 @@ void Renderer2D::flush() {
 
 void Renderer2D::BeginScene(const glm::mat4& projection, const glm::mat4& transform) {
     glm::mat4 viewProj = projection * glm::inverse(transform);
-    data.shaderLibrary.Get(data.shaderToUse)->Bind();
-    data.shaderLibrary.Get(data.shaderToUse)->SetMat4("u_viewProjection", viewProj);
+    const auto& shaders = data.shaderLibrary.GetShaders();
+    for (const auto& shader : shaders) {
+        shader.second->Bind();
+        shader.second->SetMat4("u_viewProjection", viewProj);
+    }
     resetBuffer();
 }
 
 void Renderer2D::BeginScene(const OrthographicCamera& camera) {
-    data.shaderLibrary.Get(data.shaderToUse)->Bind();
-    data.shaderLibrary.Get(data.shaderToUse)->SetMat4("u_viewProjection", camera.GetProjectionViewMatrix());
+    const auto& shaders = data.shaderLibrary.GetShaders();
+    for (const auto& shader : shaders) {
+        shader.second->Bind();
+        shader.second->SetMat4("u_viewProjection", camera.GetProjectionViewMatrix());
+    }
     resetBuffer();
 }
 
@@ -217,54 +223,49 @@ void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& s
 void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Label>& text, const glm::vec4& tint) {
     checkDrawCall();
 
-    const char* content = text->GetContent().c_str();
-    const auto& atlas = text->GetFont().GetAtlas();
+    const auto& font = text->GetFont();
+    const auto& atlas = font.GetAtlas();
     const auto characters = atlas->GetCharacters();
     auto translation = transform;
     float textureIndex = getOrAddUniqueTextureIndex(atlas->GetTexture());
-    // Testing whole texture
-    constexpr const float x[4] = {0.0f, 1.0f, 1.0f, 0.0f};
-    constexpr const float y[4] = {0.0f, 0.0f, 1.0f, 1.0f};
 
-    for (uint8_t i = 0; i < 4; ++i) {
-        data.quadVertexBufferPtr->position = transform * data.quadVerticesPosition[i];
-        data.quadVertexBufferPtr->color = tint;
-        data.quadVertexBufferPtr->texture = {x[i], y[i]};
-        data.quadVertexBufferPtr->textureIndex = textureIndex;
-        ++data.quadVertexBufferPtr;
+    for (const auto& c : text->GetContent()) {
+        auto glyph = characters.at(c);
+        float x0 = glyph.uvOffsetX;
+        float y0 = 0;
+        float x1 = x0 + glyph.bitmapWidth / atlas->GetTexture()->GetWidth();
+        float y1 = y0 + glyph.bitmapHeight / atlas->GetTexture()->GetHeight();
+
+        if (!x1 || !y1) {
+            translation[3].x += glyph.advanceX / (float)font.GetSize();
+            continue;
+        }
+
+        translation[0][0] = glyph.bitmapWidth / (float)font.GetSize();
+        translation[1][1] = glyph.bitmapHeight / (float)font.GetSize();
+
+        auto tmp = translation;
+        float posX = translation[3].x + glyph.bitmapLeft / (float)font.GetSize();
+        float posY = translation[3].y - (glyph.bitmapHeight - glyph.bitmapTop) / (float)font.GetSize();
+        translation[3] = {posX, posY, tmp[3].z, tmp[3].w};
+
+        const float x[4] = {x0, x1, x1, x0};
+        const float y[4] = {y0, y0, y1, y1};
+
+        for (uint8_t i = 0; i < 4; ++i) {
+            data.quadVertexBufferPtr->position = translation * data.quadVerticesPosition[i];
+            data.quadVertexBufferPtr->color = tint;
+            data.quadVertexBufferPtr->texture = {x[i], y[i]};
+            data.quadVertexBufferPtr->textureIndex = textureIndex;
+            ++data.quadVertexBufferPtr;
+        }
+        translation = tmp;
+        translation[3].x += glyph.advanceX / (float)font.GetSize();
+        // translation[3].y += glyph.advanceY;
+
+        data.quadIndexCount += 6;
+        ++data.statistics.quads;
     }
-
-    data.quadIndexCount += 6;
-
-    ++data.statistics.quads;
-
-    // for (const unsigned char* p = (const unsigned char*)content; *p; p++) {
-    //     auto glyph = characters[*p];
-    //     float x0 = glyph.uvOffsetX;
-    //     float y0 = glyph.uvOffsetY;
-    //     float x1 = x0 + glyph.bitmapWidth;
-    //     float y1 = y0 + glyph.bitmapHeight;
-
-    //     if (!x1 || !y1) continue;
-
-    //     const float x[4] = {x0, x1, x1, x0};
-    //     const float y[4] = {y0, y0, y1, y1};
-
-    //     for (uint8_t i = 0; i < 4; ++i) {
-    //         LOG_ENGINE_TRACE("{} {}", x[i], y[i]);
-    //         data.quadVertexBufferPtr->position = translation * data.quadVerticesPosition[i];
-    //         data.quadVertexBufferPtr->color = tint;
-    //         data.quadVertexBufferPtr->texture = {x[i], y[i]};
-    //         data.quadVertexBufferPtr->textureIndex = textureIndex;
-    //         ++data.quadVertexBufferPtr;
-    //     }
-
-    //     translation[3].x += glyph.advanceX;
-    //     translation[3].y += glyph.advanceY;
-
-    //     data.quadIndexCount += 6;
-    //     ++data.statistics.quads;
-    // }
 }
 
 void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color) {
