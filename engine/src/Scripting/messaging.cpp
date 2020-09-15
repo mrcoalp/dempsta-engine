@@ -10,7 +10,7 @@ void MessageHandler::HandleMessages(const std::function<void(const Message&)>& c
         const auto& msg = s_messageQueue.front();
         callback(msg);
         // Ensure data buffer deletion
-        delete msg.Data;
+        delete msg.data;
         s_messageQueue.pop();
     }
 }

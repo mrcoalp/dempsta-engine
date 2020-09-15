@@ -61,8 +61,8 @@ public:
     void OnDestroy();
 
 private:
-    std::string m_scriptPath{""};
-    std::string m_scriptCode{""};
+    std::string m_scriptPath;
+    std::string m_scriptCode;
 
     static std::string s_previousLoadedScript;
 };

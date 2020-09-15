@@ -3,11 +3,11 @@
 #include "Utils/fileutils.h"
 
 namespace lua {
-std::string ScriptEntity::s_previousLoadedScript = "";
+std::string ScriptEntity::s_previousLoadedScript;
 
 ScriptEntity::ScriptEntity(const std::string& scriptPath) : m_scriptPath(scriptPath) {
-    dataBuffer.reset(new lua::DataBuffer());
-    entityRef.reset(new lua::LuaEntity());
+    dataBuffer = de::CreateScope<DataBuffer>();
+    entityRef = de::CreateScope<LuaEntity>();
 }
 
 void ScriptEntity::ReloadScript() { m_scriptCode = de::FileUtils::ReadFile(m_scriptPath); }

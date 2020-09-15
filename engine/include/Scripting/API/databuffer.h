@@ -7,7 +7,7 @@
 
 namespace lua {
 /**
- * @brief Serves as buffer of data to kepp between updates in scripts.
+ * @brief Serves as buffer of data to keep between updates in scripts.
  * A special Lua bind is created to get and set values as indexes.
  * The class will hold those values in data structures for later use inside scripts.
  *

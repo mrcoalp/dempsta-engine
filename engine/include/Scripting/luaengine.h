@@ -31,7 +31,7 @@ enum class LuaType {
 class LuaEngine {
 public:
     /**
-     * @brief Intializes Lua state and opens libs.
+     * @brief Initializes Lua state and opens libs.
      */
     static void Init();
 

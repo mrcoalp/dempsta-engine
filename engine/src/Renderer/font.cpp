@@ -8,7 +8,7 @@ FontTextureAtlas::FontTextureAtlas(const FT_Face& face, unsigned height) {
     FT_GlyphSlot glyph = face->glyph;
     // NOTE(mpinto): We skip the first 32 ASCII characters, since they are just control codes.
     for (uint16_t i = 32; i < 128; ++i) {
-        if (FT_Load_Char(face, i, FT_LOAD_RENDER)) {
+        if (FT_Load_Char(face, i, FT_LOAD_RENDER) > FT_Err_Ok) {
             fprintf(stderr, "Loading character %c failed!\n", i);
             continue;
         }
@@ -20,20 +20,22 @@ FontTextureAtlas::FontTextureAtlas(const FT_Face& face, unsigned height) {
 
     int x = 0;
     for (uint16_t i = 32; i < 128; ++i) {
-        if (FT_Load_Char(face, i, FT_LOAD_RENDER)) continue;
+        if (FT_Load_Char(face, i, FT_LOAD_RENDER) > FT_Err_Ok) {
+            continue;
+        }
         m_texture->SetData(glyph->bitmap.buffer, {x, 0}, glyph->bitmap.width, glyph->bitmap.rows);
 
         m_characters[i].advanceX = glyph->advance.x >> 6;
         m_characters[i].advanceY = glyph->advance.y >> 6;
 
-        m_characters[i].bitmapWidth = glyph->bitmap.width;
-        m_characters[i].bitmapHeight = glyph->bitmap.rows;
+        m_characters[i].bitmapWidth = (float)glyph->bitmap.width;
+        m_characters[i].bitmapHeight = (float)glyph->bitmap.rows;
 
         m_characters[i].bitmapLeft = glyph->bitmap_left;
         m_characters[i].bitmapTop = glyph->bitmap_top;
 
-        m_characters[i].uvOffsetX = (float)x / m_width;
-        x += glyph->bitmap.width;
+        m_characters[i].uvOffsetX = (float)x / (float)m_width;
+        x += (int)glyph->bitmap.width;
     }
 
     LOG_ENGINE_TRACE("Generated a {} x {} ({} kb) texture atlas.", m_width, m_height, m_width * m_height / 1024);
@@ -43,7 +45,7 @@ Font::Font(const FT_Library& library, const std::string& source, FT_Long faceInd
     auto error = FT_New_Face(library, source.c_str(), faceIndex, &m_face);
     if (error == FT_Err_Unknown_File_Format) {
         LOG_ENGINE_ERROR("Font file could be opened and read, but it appears that its font format is unsupported");
-    } else if (error) {
+    } else if (error > FT_Err_Ok) {
         LOG_ENGINE_ERROR("Font file could not be opened or read. Or it's broken.");
     }
     FT_Set_Pixel_Sizes(m_face, 0, size);
@@ -56,9 +58,8 @@ FontManager& FontManager::GetInstance() {
 }
 
 void FontManager::InitFreeType() {
-    auto error = FT_Init_FreeType(&m_library);
-    if (error) {
-        LOG_ENGINE_ERROR("An error occurred during library initialization");
+    if (FT_Init_FreeType(&m_library) > FT_Err_Ok) {
+        LOG_ENGINE_ERROR("An error occurred during FreeType library initialization!");
     }
 }
 

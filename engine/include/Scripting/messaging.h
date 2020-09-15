@@ -7,12 +7,12 @@
 
 namespace lua {
 struct Message {
-    std::string ID;
-    lua::DataBuffer* Data;
-    std::string Sender;
+    std::string id;
+    lua::DataBuffer* data;
+    std::string sender;
 
     Message(std::string id, lua::DataBuffer* data, std::string sender)
-        : ID(std::move(id)), Data(data), Sender(std::move(sender)) {}
+        : id(std::move(id)), data(data), sender(std::move(sender)) {}
 };
 
 class MessageHandler {
