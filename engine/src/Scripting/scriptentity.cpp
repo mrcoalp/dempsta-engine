@@ -12,6 +12,8 @@ ScriptEntity::ScriptEntity(std::string scriptPath) : m_scriptPath(std::move(scri
 
 void ScriptEntity::ReloadScript() { m_scriptCode = de::FileUtils::ReadFile(m_scriptPath); }
 
+void ScriptEntity::SetPath(const std::string& newPath) { m_scriptPath = newPath; }
+
 void ScriptEntity::LoadCodeAndContext() const {
     LE::PushGlobalVariable("this", entityRef.get());
     if (s_previousLoadedScript != m_scriptPath) {

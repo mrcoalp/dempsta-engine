@@ -21,11 +21,44 @@ void ScenePanel::OnImGuiRender() {
             m_selected = {};
         }
 
+        if (ImGui::BeginPopupContextWindow(0, 1, false)) {
+            if (ImGui::MenuItem("Create Empty Entity")) {
+                m_context->CreateEntity();
+            }
+            ImGui::EndPopup();
+        }
+
         ImGui::End();
 
         if (ImGui::Begin("Properties")) {
             if (m_selected) {
                 drawComponents(m_selected);
+
+                if (ImGui::Button("Add Component")) {
+                    ImGui::OpenPopup("AddComponentPanel");
+                }
+
+                if (ImGui::BeginPopup("AddComponentPanel")) {
+                    if (!m_selected.HasComponent<CameraComponent>()) {
+                        if (ImGui::Button("Camera")) {
+                            m_selected.AddComponent<CameraComponent>();
+                            ImGui::CloseCurrentPopup();
+                        }
+                    }
+                    if (!m_selected.HasComponent<SpriteComponent>()) {
+                        if (ImGui::Button("Sprite")) {
+                            m_selected.AddComponent<SpriteComponent>();
+                            ImGui::CloseCurrentPopup();
+                        }
+                    }
+                    if (!m_selected.HasComponent<ScriptComponent>()) {
+                        if (ImGui::Button("Script")) {
+                            m_selected.AddComponent<ScriptComponent>();
+                            ImGui::CloseCurrentPopup();
+                        }
+                    }
+                    ImGui::EndPopup();
+                }
             }
             ImGui::End();
         }
@@ -82,11 +115,19 @@ void ScenePanel::drawScriptingNode(Entity entity) {
     if (ImGui::TreeNodeEx((void*)typeid(ScriptComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Scripting")) {
         ImGui::Spacing();
         const auto& scriptEntity = entity.GetComponent<ScriptComponent>().instance;
-        ImGui::SmallButton("Reload Script");
+        char buffer[128];
+        memset(buffer, 0, sizeof(buffer));
+        memcpy(buffer, scriptEntity->GetPath().c_str(), scriptEntity->GetPath().length());
+        if (ImGui::InputText("Script path", buffer, sizeof(buffer))) {
+            scriptEntity->SetPath(std::string(buffer));
+        }
+
         ImGui::Spacing();
+        ImGui::SmallButton("Reload Script");
         if (ImGui::IsItemClicked()) {
             scriptEntity->ReloadScript();
         }
+
         auto [doubles, bools, strings] = scriptEntity->dataBuffer->GetData();
         for (auto& d : doubles) {
             auto d1 = static_cast<float>(d.second);

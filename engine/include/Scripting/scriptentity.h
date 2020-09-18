@@ -44,6 +44,8 @@ public:
 
     [[nodiscard]] inline const std::string& GetPath() const { return m_scriptPath; }
 
+    void SetPath(const std::string& newPath);
+
     void LoadCodeAndContext() const;
 
     void OnInit() const;
