@@ -226,30 +226,27 @@ void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Label>& label, c
     const auto& atlas = font.GetAtlas();
     const auto characters = atlas->GetCharacters();
     auto translation = transform;
+    glm::vec2 globalScale = {translation[0].x, translation[1].y};
     float textureIndex = getOrAddUniqueTextureIndex(atlas->GetTexture());
 
     for (const auto& c : label->GetContent()) {
-        auto glyph = characters.at(c);
-        float x0 = glyph.uvOffsetX;
-        float y0 = glyph.uvOffsetY;
-        float x1 = x0 + glyph.bitmapWidth / atlas->GetTexture()->GetWidth();
-        float y1 = y0 + glyph.bitmapHeight / atlas->GetTexture()->GetHeight();
+        const auto& glyph = characters.at(c);
 
-        if (x1 == 0.0f || y1 == 0.0f) {
+        if (glyph.uvOffsetX1 == 0.0f || glyph.uvOffsetY1 == 0.0f) {
             translation[3].x += glyph.advanceX / (float)font.GetSize();
             continue;
         }
 
-        translation[0][0] = glyph.bitmapWidth / (float)font.GetSize();
-        translation[1][1] = glyph.bitmapHeight / (float)font.GetSize();
+        translation[0].x = globalScale.x * glyph.bitmapWidth / (float)font.GetSize();
+        translation[1].y = globalScale.y * glyph.bitmapHeight / (float)font.GetSize();
 
         auto tmp = translation;
         float posX = translation[3].x + glyph.bitmapLeft / (float)font.GetSize();
         float posY = translation[3].y - (glyph.bitmapHeight - glyph.bitmapTop) / (float)font.GetSize();
         translation[3] = {posX, posY, tmp[3].z, tmp[3].w};
 
-        const float x[4] = {x0, x1, x1, x0};
-        const float y[4] = {y0, y0, y1, y1};
+        const float x[4] = {glyph.uvOffsetX0, glyph.uvOffsetX1, glyph.uvOffsetX1, glyph.uvOffsetX0};
+        const float y[4] = {glyph.uvOffsetY0, glyph.uvOffsetY0, glyph.uvOffsetY1, glyph.uvOffsetY1};
 
         for (uint8_t i = 0; i < 4; ++i) {
             data.quadVertexBufferPtr->position = translation * data.quadVerticesPosition[i];
@@ -259,7 +256,7 @@ void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Label>& label, c
             ++data.quadVertexBufferPtr;
         }
         translation = tmp;
-        translation[3].x += glyph.advanceX / (float)font.GetSize();
+        translation[3].x += globalScale.x * glyph.advanceX / (float)font.GetSize();
 
         data.quadIndexCount += 6;
         ++data.statistics.quads;

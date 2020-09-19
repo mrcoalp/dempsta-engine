@@ -18,8 +18,10 @@ struct FontCharacter {
     float bitmapLeft;
     float bitmapTop;
 
-    float uvOffsetX;
-    float uvOffsetY;
+    float uvOffsetX0;
+    float uvOffsetY0;
+    float uvOffsetX1;
+    float uvOffsetY1;
 };
 
 class FontTextureAtlas {
@@ -64,6 +66,10 @@ public:
     void AddFont(const std::string& name, const std::string& source, unsigned size);
 
     [[nodiscard]] inline const Font& GetFont(const std::string& fontName) const { return m_fonts.at(fontName); }
+
+    [[nodiscard]] inline bool IsFontLoaded(const std::string& fontName) const {
+        return m_fonts.find(fontName) != m_fonts.end();
+    }
 
 private:
     FontManager() = default;

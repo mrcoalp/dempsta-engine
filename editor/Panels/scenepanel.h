@@ -19,8 +19,5 @@ private:
     Entity m_selected;
 
     void drawEntityNode(Entity entity);
-    void drawComponents(Entity entity);
-    void drawTransformNode(Entity entity);
-    void drawScriptingNode(Entity entity);
 };
 }  // namespace de

@@ -60,6 +60,15 @@ public:
     [[nodiscard]] inline const glm::vec2& GetAnchor() const { return m_anchor; }
 
     /**
+     * @brief Getter for the subtexture anchor.
+     * Each subtexture can have a different anchor, independent of the whole texture.
+     * (non-const)
+     *
+     * @return glm::vec2& anchor
+     */
+    inline glm::vec2& GetAnchor() { return m_anchor; }
+
+    /**
      * @brief Sets the subtexture anchor.
      *
      * @param anchor A vec2 anchor to set.

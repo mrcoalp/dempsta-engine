@@ -11,7 +11,7 @@ FontTextureAtlas::FontTextureAtlas(const FT_Face& face) {
     int roww = 0;
     int rowh = 0;
     // NOTE(mpinto): We skip the first 32 ASCII characters, since they are just control codes.
-    for (uint16_t i = 32; i < 128; ++i) {
+    for (uint16_t i = 32; i < /**face->num_glyphs*/128; ++i) {
         if (FT_Load_Char(face, i, FT_LOAD_RENDER) > FT_Err_Ok) {
             fprintf(stderr, "Loading character %c failed!\n", i);
             continue;
@@ -33,7 +33,7 @@ FontTextureAtlas::FontTextureAtlas(const FT_Face& face) {
 
     int x = 0;
     int y = 0;
-    for (uint16_t i = 32; i < 128; ++i) {
+    for (uint16_t i = 32; i < /**face->num_glyphs*/128; ++i) {
         if (FT_Load_Char(face, i, FT_LOAD_RENDER) > FT_Err_Ok) {
             continue;
         }
@@ -46,14 +46,19 @@ FontTextureAtlas::FontTextureAtlas(const FT_Face& face) {
 
         m_texture->SetData(glyph->bitmap.buffer, {x, y}, glyph->bitmap.width, glyph->bitmap.rows);
 
+        float uvOffsetX = static_cast<float>(x) / static_cast<float>(m_width);
+        float uvOffsetY = static_cast<float>(y) / static_cast<float>(m_height);
+
         FontCharacter character = {static_cast<float>(glyph->advance.x >> 6),
                                    static_cast<float>(glyph->advance.y >> 6),
                                    static_cast<float>(glyph->bitmap.width),
                                    static_cast<float>(glyph->bitmap.rows),
                                    static_cast<float>(glyph->bitmap_left),
                                    static_cast<float>(glyph->bitmap_top),
-                                   static_cast<float>(x) / static_cast<float>(m_width),
-                                   static_cast<float>(y) / static_cast<float>(m_height)};
+                                   uvOffsetX,
+                                   uvOffsetY,
+                                   uvOffsetX + static_cast<float>(glyph->bitmap.width) / static_cast<float>(m_width),
+                                   uvOffsetY + static_cast<float>(glyph->bitmap.rows) / static_cast<float>(m_height)};
 
         m_characters.emplace(i, character);
 
@@ -77,8 +82,8 @@ Font::Font(const FT_Library& library, const std::string& source, FT_Long faceInd
 }
 
 FontManager& FontManager::GetInstance() {
-    static FontManager instance;
-    return instance;
+    static auto* instance = new FontManager();
+    return *instance;
 }
 
 void FontManager::InitFreeType() {
@@ -88,6 +93,10 @@ void FontManager::InitFreeType() {
 }
 
 void FontManager::AddFont(const std::string& name, const std::string& source, unsigned size) {
+    if (IsFontLoaded(name)) {
+        LOG_ENGINE_WARN("Tried to add an already loaded font: {}", name);
+        return;
+    }
     Font font(m_library, source, m_index++, size);
     m_fonts.emplace(name, font);
 }

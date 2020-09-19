@@ -13,22 +13,24 @@ void DempstaEditor::OnAttach() {
     auto spriteBarrel = SubTexture2D::CreateSprite(spriteSheet, glm::vec2({8.f, 12.f}));
     auto spriteDog = SubTexture2D::CreateSprite("assets/textures/dog.jpg");
     auto spriteMask = SubTexture2D::CreateSprite("assets/textures/mask.png");
+    spriteMask->SetAnchor({0.5f, 0.5f});
     auto spriteSphere = SubTexture2D::CreateSprite("assets/textures/sphere.png");
-    FontManager::GetInstance().AddFont("DejaVuSans-Bold", "assets/fonts/DejaVuSans-Bold.ttf", 60);
-    auto label = CreateRef<Label>("DejaVuSans-Bold", "HP: 100");
+    spriteSphere->SetAnchor({0.5f, 0.5f});
+    // FontManager::GetInstance().AddFont("Arial", "assets/fonts/arial.ttf", 60);
+    // auto label = CreateRef<Label>("Arial", "Marco Pinto");
+    // auto textEnt = m_activeScene->CreateEntity("Test Text");
+    // textEnt.AddComponent<LabelComponent>().label = label;
 
-    // auto sphere = m_activeScene->CreateEntity("Sphere");
-    // sphere.AddComponent<SpriteComponent>().texture = spriteSphere;
-    // sphere.AddComponent<ScriptComponent>("assets/scripts/sphere.lua");
+    auto sphere = m_activeScene->CreateEntity("Sphere");
+    sphere.AddComponent<SpriteComponent>().texture = spriteSphere;
+    sphere.AddComponent<ScriptComponent>("assets/scripts/sphere.lua");
 
-    // for (size_t i = 0; i < 10; ++i) {
-    //     auto mask = m_activeScene->CreateEntity("Mask_" + std::to_string(i));
-    //     mask.AddComponent<SpriteComponent>().texture = spriteMask;
-    //     mask.AddComponent<ScriptComponent>("assets/scripts/mask.lua");
-    // }
+    for (size_t i = 0; i < 10; ++i) {
+        auto mask = m_activeScene->CreateEntity("Mask_" + std::to_string(i));
+        mask.AddComponent<SpriteComponent>().texture = spriteMask;
+        mask.AddComponent<ScriptComponent>("assets/scripts/mask.lua");
+    }
 
-    auto textEnt = m_activeScene->CreateEntity("Test Text");
-    textEnt.AddComponent<LabelComponent>().label = label;
     // auto& labelTrans = textEnt.GetComponent<TransformComponent>().transform;
     // labelTrans[0].x = 60.f;
     // labelTrans[1].y = 3.f;
