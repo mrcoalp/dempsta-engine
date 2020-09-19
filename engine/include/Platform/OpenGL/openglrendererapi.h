@@ -15,5 +15,7 @@ public:
     void Clear(glm::vec4& color) override;
 
     void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0) override;
+
+    uint32_t GetMaxTextureSize() const final;
 };
 }  // namespace de

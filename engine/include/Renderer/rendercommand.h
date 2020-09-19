@@ -18,6 +18,8 @@ public:
         s_rendererApi->DrawIndexed(vertexArray, indexCount);
     }
 
+    inline static uint32_t GetMaxTextureSize() { return s_rendererApi->GetMaxTextureSize(); }
+
 private:
     static Ref<RendererAPI> s_rendererApi;
 };

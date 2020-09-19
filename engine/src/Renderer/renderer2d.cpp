@@ -25,7 +25,6 @@ struct Renderer2DData {
     Ref<VertexBuffer> vertexBuffer;
     Ref<VertexArray> vertexArray;
     ShaderLibrary shaderLibrary;
-    std::string shaderToUse = "quad";
     Ref<Texture2D> whiteTextureRef;  // Used to render "no" textured quads
 
     uint32_t quadIndexCount = 0;
@@ -130,20 +129,16 @@ void Renderer2D::flush() {
 
 void Renderer2D::BeginScene(const glm::mat4& projection, const glm::mat4& transform) {
     glm::mat4 viewProj = projection * glm::inverse(transform);
-    const auto& shaders = data.shaderLibrary.GetShaders();
-    for (const auto& shader : shaders) {
-        shader.second->Bind();
-        shader.second->SetMat4("u_viewProjection", viewProj);
-    }
+    const auto& shader = data.shaderLibrary.Get("quad");
+    shader->Bind();
+    shader->SetMat4("u_viewProjection", viewProj);
     resetBuffer();
 }
 
 void Renderer2D::BeginScene(const OrthographicCamera& camera) {
-    const auto& shaders = data.shaderLibrary.GetShaders();
-    for (const auto& shader : shaders) {
-        shader.second->Bind();
-        shader.second->SetMat4("u_viewProjection", camera.GetProjectionViewMatrix());
-    }
+    const auto& shader = data.shaderLibrary.Get("quad");
+    shader->Bind();
+    shader->SetMat4("u_viewProjection", camera.GetProjectionViewMatrix());
     resetBuffer();
 }
 
@@ -220,19 +215,19 @@ void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& s
     ++data.statistics.quads;
 }
 
-void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Label>& text, const glm::vec4& tint) {
+void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Label>& label, const glm::vec4& tint) {
     checkDrawCall();
 
-    const auto& font = text->GetFont();
+    const auto& font = label->GetFont();
     const auto& atlas = font.GetAtlas();
     const auto characters = atlas->GetCharacters();
     auto translation = transform;
     float textureIndex = getOrAddUniqueTextureIndex(atlas->GetTexture());
 
-    for (const auto& c : text->GetContent()) {
+    for (const auto& c : label->GetContent()) {
         auto glyph = characters.at(c);
         float x0 = glyph.uvOffsetX;
-        float y0 = 0;
+        float y0 = glyph.uvOffsetY;
         float x1 = x0 + glyph.bitmapWidth / atlas->GetTexture()->GetWidth();
         float y1 = y0 + glyph.bitmapHeight / atlas->GetTexture()->GetHeight();
 
@@ -261,7 +256,6 @@ void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Label>& text, co
         }
         translation = tmp;
         translation[3].x += glyph.advanceX / (float)font.GetSize();
-        // translation[3].y += glyph.advanceY;
 
         data.quadIndexCount += 6;
         ++data.statistics.quads;

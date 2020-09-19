@@ -27,7 +27,7 @@ void DempstaEditor::OnAttach() {
     //     mask.AddComponent<ScriptComponent>("assets/scripts/mask.lua");
     // }
 
-    auto textEnt = m_activeScene->CreateEntity("TestText");
+    auto textEnt = m_activeScene->CreateEntity("Test Text");
     textEnt.AddComponent<LabelComponent>().label = label;
     // auto& labelTrans = textEnt.GetComponent<TransformComponent>().transform;
     // labelTrans[0].x = 60.f;

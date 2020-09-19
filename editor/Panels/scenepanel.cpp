@@ -3,8 +3,8 @@
 #include <imgui.h>
 
 #include <glm/gtc/type_ptr.hpp>
-
-// #include <glm/gtx/matrix_decompose.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 #include "Scene/components.h"
 
@@ -98,15 +98,37 @@ void ScenePanel::drawComponents(Entity entity) {
     }
 }
 
+static std::tuple<glm::vec3, glm::vec3, glm::vec3> GetTransformDecomposition(const glm::mat4& transform) {
+    glm::vec3 scale, translation, skew;
+    glm::vec4 perspective;
+    glm::quat orientation;
+    glm::decompose(transform, scale, orientation, translation, skew, perspective);
+    glm::vec3 rotation = glm::degrees(glm::eulerAngles(orientation));
+
+    return {translation, rotation, scale};
+}
+
 void ScenePanel::drawTransformNode(Entity entity) {
     if (ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Transform")) {
         ImGui::Spacing();
         auto& transform = entity.GetComponent<TransformComponent>().transform;
-        // glm::vec3 scale, translation, skew;
-        // glm::vec4 perspective;
-        // glm::quat orientation;
-        // glm::decompose(transform, scale, orientation, translation, skew, perspective);
-        ImGui::DragFloat3("Position", glm::value_ptr(transform[3]), 0.1f);
+        auto [translate, rotation, scale] = GetTransformDecomposition(transform);
+        bool dirty = false;
+        if (ImGui::DragFloat3("Position", glm::value_ptr(transform[3]), 0.1f)) {
+            dirty = true;
+        }
+        if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotation), 0.25f)) {
+            dirty = true;
+        }
+        if (ImGui::DragFloat3("Scale", glm::value_ptr(scale), 0.1f)) {
+            dirty = true;
+        }
+
+        if (dirty) {
+            transform = glm::translate(glm::mat4(1.0f), translate) * glm::toMat4(glm::quat(glm::radians(rotation))) *
+                        glm::scale(glm::mat4(1.0f), scale);
+        }
+
         ImGui::TreePop();
     }
 }
@@ -131,8 +153,9 @@ void ScenePanel::drawScriptingNode(Entity entity) {
         auto [doubles, bools, strings] = scriptEntity->dataBuffer->GetData();
         for (auto& d : doubles) {
             auto d1 = static_cast<float>(d.second);
-            ImGui::DragFloat(d.first.c_str(), &d1, 0.1f);
-            d.second = d1;
+            if (ImGui::DragFloat(d.first.c_str(), &d1, 0.1f)) {
+                d.second = d1;
+            }
         }
         for (auto& b : bools) {
             ImGui::Checkbox(b.first.c_str(), &b.second);
@@ -140,8 +163,9 @@ void ScenePanel::drawScriptingNode(Entity entity) {
         for (auto& s : strings) {
             char* cstr = new char[s.second.length() + 1];
             strcpy(cstr, s.second.c_str());
-            ImGui::InputText(s.first.c_str(), cstr, 100);
-            s.second = cstr;
+            if (ImGui::InputText(s.first.c_str(), cstr, 100)) {
+                s.second = cstr;
+            }
             delete[] cstr;
         }
         ImGui::TreePop();

@@ -19,11 +19,12 @@ struct FontCharacter {
     float bitmapTop;
 
     float uvOffsetX;
+    float uvOffsetY;
 };
 
 class FontTextureAtlas {
 public:
-    FontTextureAtlas(const FT_Face& face, unsigned height);
+    FontTextureAtlas(const FT_Face& face);
 
     [[nodiscard]] inline const auto& GetCharacters() { return m_characters; }
 
