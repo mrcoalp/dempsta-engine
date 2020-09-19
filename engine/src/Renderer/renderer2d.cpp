@@ -180,12 +180,14 @@ void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& text
     checkDrawCall();
 
     float textureIndex = getOrAddUniqueTextureIndex(texture);
+    const auto& anchor = texture->GetAnchor();
 
     constexpr const float x[4] = {0.0f, 1.0f, 1.0f, 0.0f};
     constexpr const float y[4] = {0.0f, 0.0f, 1.0f, 1.0f};
 
     for (uint8_t i = 0; i < 4; ++i) {
-        data.quadVertexBufferPtr->position = transform * data.quadVerticesPosition[i];
+        data.quadVertexBufferPtr->position =
+            transform * (data.quadVerticesPosition[i] - glm::vec4{anchor.x, anchor.y, 0.f, 0.f});
         data.quadVertexBufferPtr->color = tint;
         data.quadVertexBufferPtr->texture = {x[i], y[i]};
         data.quadVertexBufferPtr->textureIndex = textureIndex;
@@ -201,9 +203,11 @@ void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& s
     checkDrawCall();
 
     float textureIndex = getOrAddUniqueTextureIndex(subTexture->GetTexture());
+    const auto& anchor = subTexture->GetAnchor();
 
     for (uint8_t i = 0; i < 4; ++i) {
-        data.quadVertexBufferPtr->position = transform * data.quadVerticesPosition[i];
+        data.quadVertexBufferPtr->position =
+            transform * (data.quadVerticesPosition[i] - glm::vec4{anchor.x, anchor.y, 0.f, 0.f});
         data.quadVertexBufferPtr->color = tint;
         data.quadVertexBufferPtr->texture = subTexture->GetCoordinates()[i];
         data.quadVertexBufferPtr->textureIndex = textureIndex;

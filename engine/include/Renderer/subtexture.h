@@ -52,6 +52,21 @@ public:
     [[nodiscard]] inline const Ref<Texture2D>& GetTexture() const { return m_atlas->GetTexture(); }
 
     /**
+     * @brief Getter for the subtexture anchor.
+     * Each subtexture can have a different anchor, independent of the whole texture.
+     *
+     * @return const glm::vec2& anchor
+     */
+    [[nodiscard]] inline const glm::vec2& GetAnchor() const { return m_anchor; }
+
+    /**
+     * @brief Sets the subtexture anchor.
+     *
+     * @param anchor A vec2 anchor to set.
+     */
+    void SetAnchor(const glm::vec2& anchor);
+
+    /**
      * @brief Creates a subTexture based on coords in spriteSheet/atlas. Defaults to a cell of one by one.
      *
      * @param spriteSheet Atlas to be used to create subTexture
@@ -82,5 +97,6 @@ public:
 private:
     glm::vec2 m_textureCoords[4];
     Ref<Atlas2D> m_atlas;
+    glm::vec2 m_anchor{0.f, 0.f};
 };
 }  // namespace de
