@@ -14,6 +14,9 @@ public:
         LE::RegisterFunction("IsKeyPressed", IsKeyPressed);
         LE::RegisterFunction("RandomNumber", RandomNumber);
         LE::RegisterFunction("GenerateRandomSeed", GenerateRandomSeed);
+        LE::RegisterFunction("trace", trace);
+        LE::RegisterFunction("warn", warn);
+        LE::RegisterFunction("error", error);
     }
 
     static void RegisterKeyCodes() {
@@ -183,6 +186,21 @@ public:
         }
         LE::PushValue(low + (std::rand() % (high - low + 1)));
         return 1;
+    }
+
+    static LUA_METHOD(trace) {
+        LOG_TRACE(LE::GetValue<std::string>());
+        return 0;
+    }
+
+    static LUA_METHOD(warn) {
+        LOG_WARN(LE::GetValue<std::string>());
+        return 0;
+    }
+
+    static LUA_METHOD(error) {
+        LOG_ERROR(LE::GetValue<std::string>());
+        return 0;
     }
 };
 }  // namespace lua

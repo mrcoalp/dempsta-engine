@@ -37,6 +37,6 @@ end
 
 function OnMessage(data, msgId, message, sender)
     if msgId == "welcome" then
-        print(this.name .. " knows " .. sender .. " chasing state: " .. tostring(message.chasing))
+        -- trace(this.name .. " knows " .. sender .. " chasing state: " .. tostring(message.chasing))
     end
 end

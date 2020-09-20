@@ -25,7 +25,7 @@ void DempstaEditor::OnAttach() {
     sphere.AddComponent<SpriteComponent>().texture = spriteSphere;
     sphere.AddComponent<ScriptComponent>("assets/scripts/sphere.lua");
 
-    for (size_t i = 0; i < 10; ++i) {
+    for (size_t i = 0; i < 100; ++i) {
         auto mask = m_activeScene->CreateEntity("Mask_" + std::to_string(i));
         mask.AddComponent<SpriteComponent>().texture = spriteMask;
         mask.AddComponent<ScriptComponent>("assets/scripts/mask.lua");

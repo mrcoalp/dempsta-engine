@@ -82,10 +82,10 @@ end
 function OnEvent(data, event, action)
     if event == EVT_KEY_PRESSED and action == KEY_SPACE then
         data.chasing = not data.chasing
-        -- local buffer = DataBuffer()
-        -- buffer.msg = "Hello"
-        -- buffer.chasing = data.chasing
-        -- this.SendMessage("welcome", buffer)
+        local buffer = DataBuffer()
+        buffer.msg = "Hello"
+        buffer.chasing = data.chasing
+        this.SendMessage("welcome", buffer)
     end
 end
 

@@ -71,7 +71,7 @@ bool test_call_lua_function_from_cpp() {
     if (!LE::CallFunction(i, "Maths", 2, 3, 4)) {
         return false;
     }
-    if (!LE::CallFunction(vecRet, 3, "VecTest", 2.2, 3.14, 4.0)) {
+    if (!LE::CallFunction(vecRet, "VecTest", 2.2, 3.14, 4.0)) {
         return false;
     }
     LE::CloseState();

@@ -19,8 +19,7 @@ void Scene::OnUpdate(const TimeStep& ts) {
         nsc.instance->OnUpdate(ts);
     });
     // scripting update
-    const auto& scriptsView = m_registry.view<ScriptComponent>();
-    scriptsView.each([&](const auto entity, auto& sc) {
+    m_registry.view<ScriptComponent>().each([&](const auto entity, auto& sc) {
         if (sc.instance == nullptr) {
             sc.Create();
             sc.instance->entityRef->m_entity = Entity(entity, this);
@@ -28,11 +27,11 @@ void Scene::OnUpdate(const TimeStep& ts) {
             sc.instance->OnInit();
         }
         sc.instance->OnUpdate(ts);
+        // messaging
+        lua::MessageHandler::HandleMessages(
+            [&sc](const lua::Message& msg) { sc.instance->OnMessage(msg.id, msg.data, msg.sender); });
     });
-    // messaging
-    // lua::MessageHandler::HandleMessages([&](const lua::Message& msg) {
-    //     scriptsView.each([&msg](const auto entity, auto& sc) { sc.OnMessage(msg.ID, msg.Data, msg.Sender); });
-    // });
+    lua::MessageHandler::ClearMessages();
     // render
     m_registry.view<TransformComponent, CameraComponent>().each(
         // cameraEntity can be avoided to be captured

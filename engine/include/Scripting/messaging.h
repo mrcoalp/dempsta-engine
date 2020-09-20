@@ -1,7 +1,7 @@
 #pragma once
 
 #include <functional>
-#include <queue>
+#include <vector>
 
 #include "Scripting/API/databuffer.h"
 
@@ -15,13 +15,17 @@ struct Message {
         : id(std::move(id)), data(data), sender(std::move(sender)) {}
 };
 
+using MessageCallback = std::function<void(const Message&)>;
+
 class MessageHandler {
 public:
     static void AddMessage(const Message& msg);
 
-    static void HandleMessages(const std::function<void(const Message&)>& callback);
+    static void HandleMessages(MessageCallback&& callback);
+
+    static void ClearMessages();
 
 private:
-    static std::queue<Message> s_messageQueue;
+    static std::vector<Message> s_messages;
 };
 }  // namespace lua

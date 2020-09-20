@@ -62,13 +62,15 @@ public:
     }
 
     template <typename T>
-    static std::vector<T> GetVector(lua_State* L, size_t size, int index) {
+    static std::vector<T> GetValue(Type<std::vector<T>>, lua_State* L, int index) {
         ensure_type(lua_istable(L, index));
+        size_t size = lua_rawlen(L, -1);
         std::vector<T> vec;
         vec.reserve(size);
         for (size_t i = 1; i <= size; ++i) {
             lua_pushinteger(L, i);
             lua_gettable(L, -2);
+            if (lua_type(L, -1) == LUA_TNIL) break;
             vec.emplace_back(GetValue(Type<T>{}, L, -1));
             lua_pop(L, 1);
         }

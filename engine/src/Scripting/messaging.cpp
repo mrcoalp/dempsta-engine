@@ -1,17 +1,20 @@
 #include "Scripting/messaging.h"
 
 namespace lua {
-std::queue<Message> MessageHandler::s_messageQueue;
+std::vector<Message> MessageHandler::s_messages;
 
-void MessageHandler::AddMessage(const Message& msg) { s_messageQueue.emplace(msg); }
+void MessageHandler::AddMessage(const Message& msg) { s_messages.emplace_back(msg); }
 
-void MessageHandler::HandleMessages(const std::function<void(const Message&)>& callback) {
-    while (!s_messageQueue.empty()) {
-        const auto& msg = s_messageQueue.front();
+void MessageHandler::HandleMessages(MessageCallback&& callback) {
+    for (const auto& msg : s_messages) {
         callback(msg);
-        // Ensure data buffer deletion
-        delete msg.data;
-        s_messageQueue.pop();
     }
+}
+
+void MessageHandler::ClearMessages() {
+    for (const auto& msg : s_messages) {
+        delete msg.data;
+    }
+    s_messages.clear();
 }
 }  // namespace lua

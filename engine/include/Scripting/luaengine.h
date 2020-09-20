@@ -100,19 +100,6 @@ public:
         return r;
     }
 
-    /**
-     * @brief Get vector from Lua stack.
-     *
-     * @tparam T Vector type.
-     * @param size Vector size.
-     * @param index Stack index.
-     * @return std::vector<T>
-     */
-    template <typename T>
-    [[nodiscard]] static inline std::vector<T> GetVector(size_t size, const int index = 1) {
-        return MS::GetVector<T>(state, size, index);
-    }
-
     template <typename T>
     [[nodiscard]] static inline std::unordered_map<std::string, T> GetMap(const std::vector<const char*>& keys,
                                                                           int index = 1) {
@@ -243,32 +230,6 @@ public:
         PushValues(std::forward<Args>(args)...);
         lua_call(state, sizeof...(Args), 1);
         lValue = GetValue<T>(-1);
-        lua_pop(state, 1);
-        return true;
-    }
-
-    /**
-     * @brief Calls Lua funtion and saves return in lValue.
-     *
-     * @tparam T Return type for lValue.
-     * @tparam Args Args Lua function argument types.
-     * @param lValue Return from Lua function.
-     * @param size Number of elements to push to vector.
-     * @param name Name of the Lua function.
-     * @param args Lua function arguments.
-     * @return true Function successfully called.
-     * @return false Unable to call function.
-     */
-    template <typename T, typename... Args>
-    static bool CallFunction(std::vector<T>& lValue, size_t size, const char* name, Args&&... args) {
-        lua_getglobal(state, name);
-        if (!lua_isfunction(state, -1)) {
-            lua_pop(state, 1);
-            return false;
-        }
-        PushValues(std::forward<Args>(args)...);
-        lua_call(state, sizeof...(Args), 1);
-        lValue = GetVector<T>(size, -1);
         lua_pop(state, 1);
         return true;
     }
