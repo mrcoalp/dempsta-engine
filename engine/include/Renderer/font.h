@@ -26,7 +26,7 @@ struct FontCharacter {
 
 class FontTextureAtlas {
 public:
-    FontTextureAtlas(const FT_Face& face);
+    explicit FontTextureAtlas(const FT_Face& face);
 
     [[nodiscard]] inline const auto& GetCharacters() { return m_characters; }
 

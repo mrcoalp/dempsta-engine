@@ -8,12 +8,12 @@ namespace de {
 FontTextureAtlas::FontTextureAtlas(const FT_Face& face) {
     FT_GlyphSlot glyph = face->glyph;
     const uint32_t maxTextureSize = RenderCommand::GetMaxTextureSize();
-    int roww = 0;
-    int rowh = 0;
+    uint32_t roww = 0;
+    uint32_t rowh = 0;
     // NOTE(mpinto): We skip the first 32 ASCII characters, since they are just control codes.
-    for (uint16_t i = 32; i < /**face->num_glyphs*/128; ++i) {
+    for (uint32_t i = 32; i < face->num_glyphs; ++i) {
         if (FT_Load_Char(face, i, FT_LOAD_RENDER) > FT_Err_Ok) {
-            fprintf(stderr, "Loading character %c failed!\n", i);
+            LOG_ENGINE_WARN("Loading character {} failed!", i);
             continue;
         }
         if (roww + glyph->bitmap.width + 1 >= maxTextureSize) {
@@ -31,9 +31,9 @@ FontTextureAtlas::FontTextureAtlas(const FT_Face& face) {
 
     m_texture = Texture2D::Create(m_width, m_height);
 
-    int x = 0;
-    int y = 0;
-    for (uint16_t i = 32; i < /**face->num_glyphs*/128; ++i) {
+    uint32_t x = 0;
+    uint32_t y = 0;
+    for (uint32_t i = 32; i < face->num_glyphs; ++i) {
         if (FT_Load_Char(face, i, FT_LOAD_RENDER) > FT_Err_Ok) {
             continue;
         }

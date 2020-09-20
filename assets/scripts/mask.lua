@@ -20,23 +20,21 @@ function OnInit(data)
     multiplier = (RandomNumber(0, 1) == 0 and -1 or 1)
     data.dirY = (RandomNumber(5, 100) / 100) * multiplier
     changeColor(color)
+    data.moving = true
 end
 
 function OnUpdate(data, delta)
-    this.x = this.x + data.dirX * delta
-    this.y = this.y + data.dirY * delta
-
-    -- local buffer = DataBuffer()
-    -- buffer.x = this.x
-    -- buffer.y = this.y
-    -- this.SendMessage('barrel_position', buffer)
+    if data.moving then
+        this.x = this.x + data.dirX * delta
+        this.y = this.y + data.dirY * delta
+    end
 end
 
 function OnEvent(data, event, action)
 end
 
 function OnMessage(data, msgId, message, sender)
-    if msgId == "welcome" then
-        -- trace(this.name .. " knows " .. sender .. " chasing state: " .. tostring(message.chasing))
+    if msgId == "moving" then
+        data.moving = message.moving
     end
 end

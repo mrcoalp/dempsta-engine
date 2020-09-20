@@ -3,7 +3,7 @@ function OnInit(data)
     data.delta = 0
     data.speed = 10
     data.currentColor = -1
-    data.chasing = false
+    data.moving = true
     data.mult = 1
     this.scale = {
         x = 1.5,
@@ -54,7 +54,7 @@ local function handleMovement(data, delta)
 end
 
 function OnUpdate(data, delta)
-    if not data.chasing then
+    if data.moving then
         handleMovement(data, delta)
 
         if this.scale.x > 4 then
@@ -81,17 +81,12 @@ end
 
 function OnEvent(data, event, action)
     if event == EVT_KEY_PRESSED and action == KEY_SPACE then
-        data.chasing = not data.chasing
+        data.moving = not data.moving
         local buffer = DataBuffer()
-        buffer.msg = "Hello"
-        buffer.chasing = data.chasing
-        this.SendMessage("welcome", buffer)
+        buffer.moving = data.moving
+        this.SendMessage("moving", buffer)
     end
 end
 
 function OnMessage(data, msg_id, message, sender)
-    if msg_id == 'barrel_position' and data.chasing then
-        this.x = message.x
-        this.y = message.y
-    end
 end

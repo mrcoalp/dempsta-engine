@@ -70,7 +70,9 @@ public:
         for (size_t i = 1; i <= size; ++i) {
             lua_pushinteger(L, i);
             lua_gettable(L, -2);
-            if (lua_type(L, -1) == LUA_TNIL) break;
+            if (lua_type(L, -1) == LUA_TNIL) {
+                break;
+            }
             vec.emplace_back(GetValue(Type<T>{}, L, -1));
             lua_pop(L, 1);
         }

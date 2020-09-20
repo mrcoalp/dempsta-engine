@@ -14,7 +14,7 @@
 #define COMPUTE_SHADER "compute"
 
 namespace de {
-class OpenGLShader : public Shader {
+class OpenGLShader final : public Shader {
 public:
     explicit OpenGLShader(const std::string& filepath);
 

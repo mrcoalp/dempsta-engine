@@ -10,7 +10,9 @@
 
 namespace de {
 static std::tuple<glm::vec3, glm::vec3, glm::vec3> GetTransformDecomposition(const glm::mat4& transform) {
-    glm::vec3 scale, translation, skew;
+    glm::vec3 scale;
+    glm::vec3 translation;
+    glm::vec3 skew;
     glm::vec4 perspective;
     glm::quat orientation;
     glm::decompose(transform, scale, orientation, translation, skew, perspective);
@@ -28,7 +30,7 @@ static void drawTransformNode(Entity entity) {
         if (ImGui::DragFloat3("Position", glm::value_ptr(translate), 0.1f)) {
             dirty = true;
         }
-        if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotation), 0.25f)) {
+        if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotation), 0.1f)) {
             dirty = true;
         }
         if (ImGui::DragFloat3("Scale", glm::value_ptr(scale), 0.1f)) {
@@ -50,7 +52,7 @@ static void drawScriptingNode(Entity entity) {
         const auto& scriptEntity = entity.GetComponent<ScriptComponent>().instance;
         char buffer[128];
         memset(buffer, 0, sizeof(buffer));
-        memcpy(buffer, scriptEntity->GetPath().c_str(), scriptEntity->GetPath().length());
+        memcpy(buffer, scriptEntity->GetPath().c_str(), scriptEntity->GetPath().length() + 1);
         if (ImGui::InputText("Script path", buffer, sizeof(buffer))) {
             scriptEntity->SetPath(std::string(buffer));
         }
@@ -73,7 +75,7 @@ static void drawScriptingNode(Entity entity) {
         }
         for (auto& s : strings) {
             char* cstr = new char[s.second.length() + 1];
-            strcpy(cstr, s.second.c_str());
+            memcpy(cstr, s.second.c_str(), s.second.length() + 1);
             if (ImGui::InputText(s.first.c_str(), cstr, 100)) {
                 s.second = cstr;
             }
@@ -89,9 +91,11 @@ static void drawLabelNode(Entity entity) {
         auto& label = entity.GetComponent<LabelComponent>().label;
         char buffer[128];
         memset(buffer, 0, sizeof(buffer));
-        memcpy(buffer, label->GetContent().c_str(), label->GetContent().length());
+        memcpy(buffer, label->GetContent().c_str(), label->GetContent().length() + 1);
         if (ImGui::InputText("Content", buffer, sizeof(buffer))) {
-            label->SetContent(std::string(buffer));
+            if (strlen(buffer) > 0) {
+                label->SetContent(std::string(buffer));
+            }
         }
 
         ImGui::TreePop();
@@ -103,7 +107,7 @@ static void drawSpriteNode(Entity entity) {
         ImGui::Spacing();
         auto& sprite = entity.GetComponent<SpriteComponent>();
         ImGui::ColorEdit4("Color", glm::value_ptr(sprite.color));
-        ImGui::DragFloat2("Anchor", glm::value_ptr(sprite.texture->GetAnchor()));
+        ImGui::DragFloat2("Anchor", glm::value_ptr(sprite.texture->GetAnchor()), 0.1f);
 
         ImGui::TreePop();
     }
@@ -114,7 +118,7 @@ static void drawComponents(Entity entity) {
         auto& name = entity.GetComponent<NameComponent>().name;
         char buffer[128];
         memset(buffer, 0, sizeof(buffer));
-        memcpy(buffer, name.c_str(), name.length());
+        memcpy(buffer, name.c_str(), name.length() + 1);
         if (ImGui::InputText("Name", buffer, sizeof(buffer))) {
             name = std::string(buffer);
         }
@@ -149,7 +153,7 @@ void ScenePanel::OnImGuiRender() {
             m_selected = {};
         }
 
-        if (ImGui::BeginPopupContextWindow(0, 1, false)) {
+        if (ImGui::BeginPopupContextWindow(nullptr, 1, false)) {
             if (ImGui::MenuItem("Create Empty Entity")) {
                 m_context->CreateEntity();
             }
