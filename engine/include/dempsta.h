@@ -16,11 +16,16 @@
 #include "Input/mousebuttoncodes.h"
 #include "Renderer/camera.h"
 #include "Renderer/framebuffer.h"
+#include "Renderer/label.h"
 #include "Renderer/renderer.h"
 #include "Renderer/renderer2d.h"
 #include "Renderer/texture.h"
+#include "Scene/components.h"
+#include "Scene/entity.h"
+#include "Scene/scene.h"
 #include "Scripting/binding.h"
-#include "Scripting/scriptengine.h"
+#include "Scripting/luaengine.h"
+#include "Scripting/scriptentity.h"
 #include "Utils/fileutils.h"
 
 #endif  // DEMPSTA_H

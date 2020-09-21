@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/pch.h"
 #include "Core/timestep.h"
 #include "Events/event.h"
 

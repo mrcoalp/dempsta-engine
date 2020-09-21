@@ -14,25 +14,25 @@
 #define COMPUTE_SHADER "compute"
 
 namespace de {
-class OpenGLShader : public Shader {
+class OpenGLShader final : public Shader {
 public:
     explicit OpenGLShader(const std::string& filepath);
 
     OpenGLShader(std::string name, const std::string& vertexSource, const std::string& fragmentSource);
 
-    ~OpenGLShader() override;
+    ~OpenGLShader() final;
 
-    void Bind() const override;
+    void Bind() const final;
 
-    void Unbind() const override;
+    void Unbind() const final;
 
-    void SetMat4(const std::string& name, const glm::mat4& value) override;
-    void SetVec4(const std::string& name, const glm::vec4& value) override;
-    void SetVec3(const std::string& name, const glm::vec3& value) override;
-    void SetInt(const std::string& name, int value) override;
-    void SetIntArray(const std::string& name, const int* values, uint32_t count) override;
+    void SetMat4(const std::string& name, const glm::mat4& value) final;
+    void SetVec4(const std::string& name, const glm::vec4& value) final;
+    void SetVec3(const std::string& name, const glm::vec3& value) final;
+    void SetInt(const std::string& name, int value) final;
+    void SetIntArray(const std::string& name, const int* values, uint32_t count) final;
 
-    [[nodiscard]] inline const std::string& GetName() const override { return m_name; }
+    [[nodiscard]] inline const std::string& GetName() const final { return m_name; }
 
     void UploadUniformInt(const std::string& name, int value) const;
     void UploadUniformIntArray(const std::string& name, const int* values, uint32_t count) const;

@@ -1,18 +1,51 @@
 #include "dempstaeditor.h"
 
-DempstaEditor::DempstaEditor() : de::Layer("DempstaEditor"), m_cameraController(16.0f / 9.0f, true) {}
+namespace de {
+DempstaEditor::DempstaEditor() : Layer("DempstaEditor") {}
 
 void DempstaEditor::OnAttach() {
-    m_spriteSheet = de::CreateRef<de::Atlas2D>("assets/textures/RPGpack_sheet_2X.png", glm::vec2(128.0f));
-    m_spriteTree = de::SubTexture2D::CreateSprite(m_spriteSheet, glm::vec2({0.0f, 1.0f}), glm::vec2({1.0f, 2.0f}));
-    m_spriteBarrel = de::SubTexture2D::CreateSprite(m_spriteSheet, glm::vec2({8.0f, 0.0f}));
-    de::FrameBufferConfig fConfig = {1280, 720};
-    m_frameBuffer = de::FrameBuffer::Create(fConfig);
+    FrameBufferConfig fConfig = {1280, 720};
+    m_frameBuffer = FrameBuffer::Create(fConfig);
+    m_activeScene = CreateRef<Scene>();
+    m_sceneHierarchyPanel.SetContext(m_activeScene);
+
+    auto spriteSheet = CreateRef<Atlas2D>("assets/textures/RPGpack_sheet_2X.png", glm::vec2(128.0f));
+    auto spriteBarrel = SubTexture2D::CreateSprite(spriteSheet, glm::vec2({8.f, 12.f}));
+    auto spriteDog = SubTexture2D::CreateSprite("assets/textures/dog.jpg");
+    auto spriteMask = SubTexture2D::CreateSprite("assets/textures/mask.png");
+    spriteMask->SetAnchor({0.5f, 0.5f});
+    auto spriteSphere = SubTexture2D::CreateSprite("assets/textures/sphere.png");
+    spriteSphere->SetAnchor({0.5f, 0.5f});
+    // FontManager::GetInstance().AddFont("Arial", "assets/fonts/arial.ttf", 60);
+    // auto label = CreateRef<Label>("Arial", "Marco Pinto");
+    // auto textEnt = m_activeScene->CreateEntity("Test Text");
+    // textEnt.AddComponent<LabelComponent>().label = label;
+
+    auto sphere = m_activeScene->CreateEntity("Sphere");
+    sphere.AddComponent<SpriteComponent>().texture = spriteSphere;
+    sphere.AddComponent<ScriptComponent>("assets/scripts/sphere.lua");
+
+    for (size_t i = 0; i < 100; ++i) {
+        auto mask = m_activeScene->CreateEntity("Mask_" + std::to_string(i));
+        mask.AddComponent<SpriteComponent>().texture = spriteMask;
+        mask.AddComponent<ScriptComponent>("assets/scripts/mask.lua");
+    }
+
+    // auto& labelTrans = textEnt.GetComponent<TransformComponent>().transform;
+    // labelTrans[0].x = 60.f;
+    // labelTrans[1].y = 3.f;
+
+    // auto barrel = m_activeScene->CreateEntity("Barrel");
+    // barrel.AddComponent<SpriteComponent>().texture = spriteBarrel;
+
+    auto camEntity = m_activeScene->CreateEntity("Primary Camera");
+    camEntity.AddComponent<CameraComponent>().primary = true;
+    camEntity.AddComponent<ScriptComponent>("assets/scripts/camera.lua");
 }
 
 void DempstaEditor::OnDetach() {}
 
-void DempstaEditor::OnUpdate(const de::TimeStep& ts) {
+void DempstaEditor::OnUpdate(const TimeStep& ts) {
     m_ts = ts;
     m_timeAccumulator += (float)ts;
     // Update fps every half second
@@ -20,64 +53,31 @@ void DempstaEditor::OnUpdate(const de::TimeStep& ts) {
         m_timeAccumulator = 0.0f;
         m_fps = 1.0f / (float)ts;
     }
-    if (m_editingMode) {
-        m_cameraController.OnUpdate(ts);
+
+    auto fConfig = m_frameBuffer->GetConfig();
+
+    if (m_viewportSize.x > 0.0f && m_viewportSize.y > 0.0f &&
+        (fConfig.width != m_viewportSize.x || fConfig.height != m_viewportSize.y)) {
+        const auto width = (uint32_t)m_viewportSize.x;
+        const auto height = (uint32_t)m_viewportSize.y;
+        m_frameBuffer->Resize(width, height);
+        m_activeScene->OnViewportResize(width, height);
     }
 
-    if (m_editingMode) {
-        m_frameBuffer->Bind();
-    }
+    Renderer2D::ResetStatistics();
 
-    de::RenderCommand::Clear({0.4f, 0.4f, 0.2f, 1});
-    de::Renderer2D::ResetStatistics();
+    m_frameBuffer->Bind();
 
-    static float rotation = 0.0f;
-    rotation += 50.0f * (float)ts;
+    RenderCommand::Clear({0.2f, 0.2f, 0.2f, 1});
 
-    de::Renderer2D::BeginScene(m_cameraController.GetCamera());
-    de::Renderer2D::DrawQuad({0.0f, 0.0f}, {0.5f, 1.0f}, m_spriteTree);
+    m_activeScene->OnUpdate(ts);
 
-    m_quad.subTexture = m_spriteBarrel;
-    m_quad.position = glm::vec3({0.5f, 0.0f, 0.0f});
-    m_quad.size = glm::vec3({0.5f, 0.5f, 0.0f});
-    m_quad.rotation = 45.0f;
-    m_quad.tint = glm::vec4(1.0f, 0.1f, 0.2f, 0.7f);
-
-    de::Renderer2D::DrawQuad(m_quad);
-    de::Renderer2D::DrawRotatedQuad(rotation, {-1.0f, 0.f}, {1.0f, 1.0f}, m_spriteBarrel);
-
-    de::Renderer2D::EndScene();
-
-    if (m_editingMode) {
-        m_frameBuffer->Unbind();
-    }
+    m_frameBuffer->Unbind();
 }
 
-void DempstaEditor::OnEvent(de::Event& e) {
-    de::EventDispatcher eventDispatcher(e);
-
-    eventDispatcher.Dispatch<de::KeyPressedEvent>([this](de::KeyPressedEvent& event) {
-        if (event.GetKeyCode() == DE_KEY_TAB) {
-            m_editingMode = !m_editingMode;
-            LOG_TRACE("Editing Mode: {}", m_editingMode);
-            if (!m_editingMode) {
-                const auto& window = de::Application::GetInstance().GetWindow();
-                de::Renderer::OnWindowResize(window.GetWidth(), window.GetHeight());
-                m_cameraController.OnResize(window.GetWidth(), window.GetHeight());
-            }
-        }
-        return false;
-    });
-
-    m_cameraController.OnEvent(e);
-}
+void DempstaEditor::OnEvent(Event& e) { m_activeScene->OnEvent(e); }
 
 void DempstaEditor::OnImGuiRender() {
-    // Render only in editing mode
-    if (!m_editingMode) {
-        return;
-    }
-
     static bool opt_fullscreen_persistant = true;
     bool opt_fullscreen = opt_fullscreen_persistant;
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
@@ -119,40 +119,37 @@ void DempstaEditor::OnImGuiRender() {
         if (ImGui::BeginMenu("File")) {
             // ImGui::Separator();
             if (ImGui::MenuItem("Quit", nullptr, false, true)) {
-                de::Application::GetInstance().Close();
+                Application::GetInstance().Close();
             }
             ImGui::EndMenu();
         }
         ImGui::EndMenuBar();
     }
 
-    auto stats = de::Renderer2D::GetStatistics();
-    ImGui::Begin("Renderer2D Statistics");
-    ImGui::Text("Max Quads Per Draw: %d", stats.maxQuadsPerDraw);
-    ImGui::Text("Draw Calls: %d", stats.drawCalls);
-    ImGui::Text("Drawn Quads: %d", stats.quads);
-    ImGui::Text("Drawn Vertices: %d", stats.GetDrawnVertices());
-    ImGui::Text("Drawn Indices: %d", stats.GetDrawnIndices());
-    ImGui::Text("Time Per Frame: %.6f", (float)m_ts);
-    ImGui::Text("FPS: %.0f", m_fps);
-    ImGui::End();
+    if (ImGui::Begin("Renderer2D Statistics")) {
+        auto stats = Renderer2D::GetStatistics();
+        ImGui::Text("Max Quads Per Draw: %d", stats.maxQuadsPerDraw);
+        ImGui::Text("Draw Calls: %d", stats.drawCalls);
+        ImGui::Text("Drawn Quads: %d", stats.quads);
+        ImGui::Text("Drawn Vertices: %d", stats.GetDrawnVertices());
+        ImGui::Text("Drawn Indices: %d", stats.GetDrawnIndices());
+        ImGui::Text("Time Per Frame: %.6f", (float)m_ts);
+        ImGui::Text("FPS: %.0f", m_fps);
+        ImGui::End();
+    }
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(100.0f, 100.0f));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-    ImGui::Begin("ViewPort", &p_open, ImGuiWindowFlags_NoCollapse);
-    ImGui::PopStyleVar(2);
-    float contentWidth = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
-    float contentHeight = ImGui::GetWindowContentRegionMax().y - ImGui::GetWindowContentRegionMin().y;
-    if ((uint32_t)contentHeight != m_frameBuffer->GetConfig().height ||
-        (uint32_t)contentWidth != m_frameBuffer->GetConfig().width) {
-        // Handle ImGui ViewPort resize
-        m_frameBuffer->Resize((uint32_t)contentWidth, (uint32_t)contentHeight);
-        de::Renderer::OnWindowResize((uint32_t)contentWidth, (uint32_t)contentHeight);
-        m_cameraController.OnResize((uint32_t)contentWidth, (uint32_t)contentHeight);
+    if (ImGui::Begin("ViewPort", &p_open, ImGuiWindowFlags_NoCollapse)) {
+        ImGui::PopStyleVar(2);
+        ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+        ImGui::Image((void*)(uintptr_t)m_frameBuffer->GetColorAttachment(), viewportPanelSize, {0, 1}, {1, 0});
+        m_viewportSize = {viewportPanelSize.x, viewportPanelSize.y};
+        ImGui::End();
     }
 
-    ImGui::Image((void*)(uintptr_t)m_frameBuffer->GetColorAttachment(), {contentWidth, contentHeight}, {0, 1}, {1, 0});
-    ImGui::End();
+    m_sceneHierarchyPanel.OnImGuiRender();
 
     ImGui::End();
 }
+}  // namespace de

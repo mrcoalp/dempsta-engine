@@ -12,6 +12,8 @@ CHECK_ONLY=0
 TESTS=OFF
 # Whether or not to generate documentation
 DOC=OFF
+# Number of jobs
+JOBS=4
 
 usage() {
   echo "Usage
@@ -21,18 +23,19 @@ usage() {
     Builds the game, by default, with debug configuration.
 
 Options
-    -h | --help       - Show help
-    -d | --debug      - Build game with debug configuration
-    -r | --release    - Build game with release configuration
-    -c | --clean      - Clean build of configuration
-    -i | --install    - Install game to build/bin folder
-    --ninja           - Use Ninja as build system (default)
-    --make            - Use Make as build system
-    --cc <#version>   - Specify which GCC compiler <#version> to use. Ex: --cc 9
-    --clang           - Use Clang compiler
-    --check           - Only generate compilation database
-    -t | --tests      - Build tests
-    --doc             - Generate docs"
+    -h | --help         - Show help
+    -d | --debug        - Build game with debug configuration
+    -r | --release      - Build game with release configuration
+    -c | --clean        - Clean build of configuration
+    -i | --install      - Install game to build/bin folder
+    -j | --jobs <#jobs> - Number of jobs to use
+    --ninja             - Use Ninja as build system (default)
+    --make              - Use Make as build system
+    --cc <#version>     - Specify which GCC compiler <#version> to use. Ex: --cc 9
+    --clang             - Use Clang compiler
+    --check             - Only generate compilation database
+    -t | --tests        - Build tests
+    --doc               - Generate docs"
 }
 
 # Check for arguments
@@ -49,6 +52,10 @@ while test $# -gt 0; do
     ;;
   -i | --install)
     INSTALL=1
+    ;;
+  -j | --jobs)
+    JOBS=$2
+    shift
     ;;
   --ninja)
     BUILD_SYSTEM=-GNinja
@@ -119,9 +126,9 @@ if [ $CHECK_ONLY = 1 ]; then
 fi
 
 if [ -z $BUILD_SYSTEM ]; then
-  make -j 4 || exit 1
+  make -j $JOBS || exit 1
 else
-  ninja || exit 1
+  ninja -j $JOBS || exit 1
 fi
 
 # Install game

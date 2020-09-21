@@ -2,7 +2,6 @@
 
 #include <glad/glad.h>
 
-#include "Core/pch.h"
 #include "Renderer/texture.h"
 
 namespace de {
@@ -13,19 +12,21 @@ public:
 
     ~OpenGLTexture2D() override;
 
-    [[nodiscard]] inline uint32_t GetWidth() const override { return m_width; }
+    [[nodiscard]] inline uint32_t GetWidth() const final { return m_width; }
 
-    [[nodiscard]] inline uint32_t GetHeight() const override { return m_height; }
+    [[nodiscard]] inline uint32_t GetHeight() const final { return m_height; }
 
-    void SetData(void* data, uint32_t size) override;
+    void SetData(void* data, const glm::vec2& offset) final;
 
-    void Bind(unsigned slot = 0) const override;
+    void SetData(void* data, const glm::vec2& offset, unsigned width, unsigned height) final;
 
-    [[nodiscard]] inline bool Equals(const Texture& other) const override {
+    void Bind(unsigned slot = 0) const final;
+
+    [[nodiscard]] inline bool Equals(const Texture& other) const final {
         return ((OpenGLTexture2D&)other).GetRendererID() == m_rendererId;
     }
 
-    [[nodiscard]] inline uint32_t GetRendererID() const override { return m_rendererId; }
+    [[nodiscard]] inline uint32_t GetRendererID() const final { return m_rendererId; }
 
 private:
     std::string m_filePath;

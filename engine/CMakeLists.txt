@@ -62,6 +62,8 @@ add_subdirectory(external/stb_image)
 add_subdirectory(external/lua)
 # Add EnTT
 add_subdirectory(external/entt)
+# Add freetype-gl
+add_subdirectory(external/freetype)
 
 target_include_directories(dempsta PUBLIC include)
 
@@ -74,7 +76,8 @@ target_link_libraries(dempsta
         imgui
         stb_image
         lua
-        entt)
+        entt
+        freetype)
 
 set_target_properties(dempsta PROPERTIES INSTALL_RPATH $ORIGIN)
 

@@ -20,6 +20,8 @@ public:
 
     virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount) = 0;
 
+    [[nodiscard]] virtual uint32_t GetMaxTextureSize() const = 0;
+
     inline static API GetApi() { return s_api; }
 
 private:

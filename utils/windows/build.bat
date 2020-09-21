@@ -3,6 +3,8 @@
 set configuration=Debug
 set tests=OFF
 set clean=false
+set install=
+set doc=OFF
 
 :loop
     if "%~1" == "" goto end
@@ -10,6 +12,8 @@ set clean=false
     if %1 == -r set configuration=Release
     if %1 == -t set tests=ON
     if %1 == -c set clean=true
+    if %1 == -i set install=--target install
+    if %1 == --doc set doc=ON
     if %1 == -h call :usage
     shift
 
@@ -27,8 +31,8 @@ cd build\%configuration%
 set CC="cl.exe"
 set CXX="cl.exe"
 
-cmake -GNinja -DBUILD_TESTS=%tests% -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=%configuration% -DCMAKE_INSTALL_PREFIX=./bin ../..
-cmake --build . --target install
+cmake -GNinja -DBUILD_TESTS=%tests% -DBUILD_DOC=%doc% -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=%configuration% -DCMAKE_INSTALL_PREFIX=./bin ../..
+cmake --build . %install%
 
 cd ../..
 

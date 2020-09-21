@@ -124,6 +124,19 @@ public:
         }
     }
 
+    /**
+     * @brief Loads an instance of the class into the Lua stack, and provides you a pointer so you can modify it.
+     *
+     * @param L Lua State
+     * @param instance Instance to push
+     */
+    static void Push(lua_State* L, T* instance) {
+        T** a = static_cast<T**>(lua_newuserdata(L, sizeof(T*)));  // Create userdata
+        *a = instance;
+        luaL_getmetatable(L, T::Binding.GetName());
+        lua_setmetatable(L, -2);
+    }
+
 private:
     /**
      * @brief constructor (internal)
@@ -139,21 +152,6 @@ private:
         luaL_getmetatable(L, T::Binding.GetName());  // Fetch global metatable T::classname
         lua_setmetatable(L, -2);
         return 1;
-    }
-
-    /**
-     * @brief Loads an instance of the class into the Lua stack, and provides you a pointer so you can modify it.
-     *
-     * @param L Lua State
-     * @param instance Instance to push
-     */
-    static void push(lua_State* L, T* instance) {
-        T** a = (T**)lua_newuserdata(L, sizeof(T*));  // Create userdata
-        *a = instance;
-
-        luaL_getmetatable(L, T::Binding.GetName());
-
-        lua_setmetatable(L, -2);
     }
 
     /**
@@ -251,10 +249,14 @@ private:
      * @return int
      */
     static int gc_obj(lua_State* L) {
-        T** obj = static_cast<T**>(lua_touserdata(L, -1));
+        // NOTE(MPINTO): Defined in binding, whether or not to let Lua handle garbage collection
+        // Useful to use C++ existent object and avoid seg faults
+        if (T::GC) {
+            T** obj = static_cast<T**>(lua_touserdata(L, -1));
 
-        if (obj && *obj) {
-            delete (*obj);
+            if (obj && *obj) {
+                delete (*obj);
+            }
         }
 
         return 0;

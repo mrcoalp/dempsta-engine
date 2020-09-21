@@ -24,7 +24,7 @@ struct Renderer2DData {
 
     Ref<VertexBuffer> vertexBuffer;
     Ref<VertexArray> vertexArray;
-    Ref<Shader> shader;
+    ShaderLibrary shaderLibrary;
     Ref<Texture2D> whiteTextureRef;  // Used to render "no" textured quads
 
     uint32_t quadIndexCount = 0;
@@ -81,23 +81,23 @@ void Renderer2D::Init() {
 
     data.whiteTextureRef = Texture2D::Create(1, 1);
     uint32_t _white = 0xffffffff;
-    data.whiteTextureRef->SetData(&_white, sizeof(uint32_t));
+    data.whiteTextureRef->SetData(&_white);
 
     int samplers[Renderer2DData::maxTextureSlots];
     for (uint32_t i = 0; i < Renderer2DData::maxTextureSlots; ++i) {
         samplers[i] = i;
     }
 
-    data.shader = Shader::Create("assets/shaders/quad.glsl");
-    data.shader->Bind();
-    data.shader->SetIntArray("u_textures", samplers, Renderer2DData::maxTextureSlots);
+    data.shaderLibrary.Load("quad", "assets/shaders/quad.glsl");
+    data.shaderLibrary.Get("quad")->Bind();
+    data.shaderLibrary.Get("quad")->SetIntArray("u_textures", samplers, Renderer2DData::maxTextureSlots);
 
     data.textures[0] = data.whiteTextureRef;
 
-    data.quadVerticesPosition[0] = {-0.5f, -0.5f, 0.0f, 1.0f};
-    data.quadVerticesPosition[1] = {0.5f, -0.5f, 0.0f, 1.0f};
-    data.quadVerticesPosition[2] = {0.5f, 0.5f, 0.0f, 1.0f};
-    data.quadVerticesPosition[3] = {-0.5f, 0.5f, 0.0f, 1.0f};
+    data.quadVerticesPosition[0] = {0.f, 1.f, 0.0f, 1.0f};
+    data.quadVerticesPosition[1] = {1.f, 1.f, 0.0f, 1.0f};
+    data.quadVerticesPosition[2] = {1.f, 0.f, 0.0f, 1.0f};
+    data.quadVerticesPosition[3] = {0.f, 0.f, 0.0f, 1.0f};
 }
 
 void Renderer2D::Shutdown() {}
@@ -127,9 +127,18 @@ void Renderer2D::flush() {
     ++data.statistics.drawCalls;
 }
 
+void Renderer2D::BeginScene(const glm::mat4& projection, const glm::mat4& transform) {
+    glm::mat4 viewProj = projection * glm::inverse(transform);
+    const auto& shader = data.shaderLibrary.Get("quad");
+    shader->Bind();
+    shader->SetMat4("u_viewProjection", viewProj);
+    resetBuffer();
+}
+
 void Renderer2D::BeginScene(const OrthographicCamera& camera) {
-    data.shader->Bind();
-    data.shader->SetMat4("u_viewProjection", camera.GetProjectionViewMatrix());
+    const auto& shader = data.shaderLibrary.Get("quad");
+    shader->Bind();
+    shader->SetMat4("u_viewProjection", camera.GetProjectionViewMatrix());
     resetBuffer();
 }
 
@@ -148,47 +157,8 @@ float Renderer2D::getOrAddUniqueTextureIndex(const Ref<Texture2D>& texture) {
     return (float)data.textureSlotIndex++;
 }
 
-void Renderer2D::DrawQuad(const Quad& quad) {
+void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color) {
     checkDrawCall();
-
-    float textureIndex = 0.0f;
-    if (quad.texture) {
-        textureIndex = getOrAddUniqueTextureIndex(quad.texture);
-    } else if (quad.subTexture) {
-        textureIndex = getOrAddUniqueTextureIndex(quad.subTexture->GetTexture());
-    }
-
-    glm::mat4 transform = quad.rotation != 0.0f
-                              ? glm::translate(glm::mat4(1.0f), quad.position) *
-                                    glm::rotate(glm::mat4(1.0f), glm::radians(quad.rotation), {0.0f, 0.0f, 1.0f}) *
-                                    glm::scale(glm::mat4(1.0f), {quad.size.x, quad.size.y, 1.0f})
-                              : glm::translate(glm::mat4(1.0f), quad.position) *
-                                    glm::scale(glm::mat4(1.0f), {quad.size.x, quad.size.y, 1.0f});
-
-    constexpr glm::vec2 coords[4] = {{0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f}};
-
-    for (uint8_t i = 0; i < 4; ++i) {
-        data.quadVertexBufferPtr->position = transform * data.quadVerticesPosition[i];
-        data.quadVertexBufferPtr->color = quad.tint;
-        data.quadVertexBufferPtr->texture = quad.subTexture ? quad.subTexture->GetCoordinates()[i] : coords[i];
-        data.quadVertexBufferPtr->textureIndex = textureIndex;
-        ++data.quadVertexBufferPtr;
-    }
-
-    data.quadIndexCount += 6;
-
-    ++data.statistics.quads;
-}
-
-void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color) {
-    DrawQuad({position.x, position.y, 0.0f}, size, color);
-}
-
-void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color) {
-    checkDrawCall();
-
-    glm::mat4 transform =
-        glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
     constexpr const float x[4] = {0.0f, 1.0f, 1.0f, 0.0f};
     constexpr const float y[4] = {0.0f, 0.0f, 1.0f, 1.0f};
@@ -204,6 +174,104 @@ void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, cons
     data.quadIndexCount += 6;
 
     ++data.statistics.quads;
+}
+
+void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const glm::vec4& tint) {
+    checkDrawCall();
+
+    float textureIndex = getOrAddUniqueTextureIndex(texture);
+    const auto& anchor = texture->GetAnchor();
+
+    constexpr const float x[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+    constexpr const float y[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+
+    for (uint8_t i = 0; i < 4; ++i) {
+        data.quadVertexBufferPtr->position =
+            transform * (data.quadVerticesPosition[i] - glm::vec4{anchor.x, anchor.y, 0.f, 0.f});
+        data.quadVertexBufferPtr->color = tint;
+        data.quadVertexBufferPtr->texture = {x[i], y[i]};
+        data.quadVertexBufferPtr->textureIndex = textureIndex;
+        ++data.quadVertexBufferPtr;
+    }
+
+    data.quadIndexCount += 6;
+
+    ++data.statistics.quads;
+}
+
+void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& subTexture, const glm::vec4& tint) {
+    checkDrawCall();
+
+    float textureIndex = getOrAddUniqueTextureIndex(subTexture->GetTexture());
+    const auto& anchor = subTexture->GetAnchor();
+
+    for (uint8_t i = 0; i < 4; ++i) {
+        data.quadVertexBufferPtr->position =
+            transform * (data.quadVerticesPosition[i] - glm::vec4{anchor.x, anchor.y, 0.f, 0.f});
+        data.quadVertexBufferPtr->color = tint;
+        data.quadVertexBufferPtr->texture = subTexture->GetCoordinates()[i];
+        data.quadVertexBufferPtr->textureIndex = textureIndex;
+        ++data.quadVertexBufferPtr;
+    }
+
+    data.quadIndexCount += 6;
+
+    ++data.statistics.quads;
+}
+
+void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Label>& label, const glm::vec4& tint) {
+    checkDrawCall();
+
+    const auto& font = label->GetFont();
+    const auto& atlas = font.GetAtlas();
+    const auto characters = atlas->GetCharacters();
+    auto translation = transform;
+    glm::vec2 globalScale = {translation[0].x, translation[1].y};
+    float textureIndex = getOrAddUniqueTextureIndex(atlas->GetTexture());
+
+    for (const auto& c : label->GetContent()) {
+        const auto& glyph = characters.at(c);
+
+        if (glyph.uvOffsetX1 == 0.0f || glyph.uvOffsetY1 == 0.0f) {
+            translation[3].x += glyph.advanceX / (float)font.GetSize();
+            continue;
+        }
+
+        translation[0].x = globalScale.x * glyph.bitmapWidth / (float)font.GetSize();
+        translation[1].y = globalScale.y * glyph.bitmapHeight / (float)font.GetSize();
+
+        auto tmp = translation;
+        float posX = translation[3].x + glyph.bitmapLeft / (float)font.GetSize();
+        float posY = translation[3].y - (glyph.bitmapHeight - glyph.bitmapTop) / (float)font.GetSize();
+        translation[3] = {posX, posY, tmp[3].z, tmp[3].w};
+
+        const float x[4] = {glyph.uvOffsetX0, glyph.uvOffsetX1, glyph.uvOffsetX1, glyph.uvOffsetX0};
+        const float y[4] = {glyph.uvOffsetY0, glyph.uvOffsetY0, glyph.uvOffsetY1, glyph.uvOffsetY1};
+
+        for (uint8_t i = 0; i < 4; ++i) {
+            data.quadVertexBufferPtr->position = translation * data.quadVerticesPosition[i];
+            data.quadVertexBufferPtr->color = tint;
+            data.quadVertexBufferPtr->texture = {x[i], y[i]};
+            data.quadVertexBufferPtr->textureIndex = textureIndex;
+            ++data.quadVertexBufferPtr;
+        }
+        translation = tmp;
+        translation[3].x += globalScale.x * glyph.advanceX / (float)font.GetSize();
+
+        data.quadIndexCount += 6;
+        ++data.statistics.quads;
+    }
+}
+
+void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color) {
+    DrawQuad({position.x, position.y, 0.0f}, size, color);
+}
+
+void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color) {
+    glm::mat4 transform =
+        glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
+
+    DrawQuad(transform, color);
 }
 
 void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture) {
@@ -221,27 +289,10 @@ void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, cons
 
 void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture,
                           const glm::vec4& tint) {
-    checkDrawCall();
-
-    float textureIndex = getOrAddUniqueTextureIndex(texture);
-
     glm::mat4 transform =
         glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
-    constexpr const float x[4] = {0.0f, 1.0f, 1.0f, 0.0f};
-    constexpr const float y[4] = {0.0f, 0.0f, 1.0f, 1.0f};
-
-    for (uint8_t i = 0; i < 4; ++i) {
-        data.quadVertexBufferPtr->position = transform * data.quadVerticesPosition[i];
-        data.quadVertexBufferPtr->color = tint;
-        data.quadVertexBufferPtr->texture = {x[i], y[i]};
-        data.quadVertexBufferPtr->textureIndex = textureIndex;
-        ++data.quadVertexBufferPtr;
-    }
-
-    data.quadIndexCount += 6;
-
-    ++data.statistics.quads;
+    DrawQuad(transform, texture, tint);
 }
 
 void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture) {
@@ -259,24 +310,10 @@ void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, cons
 
 void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture,
                           const glm::vec4& tint) {
-    checkDrawCall();
-
-    float textureIndex = getOrAddUniqueTextureIndex(subTexture->GetTexture());
-
     glm::mat4 transform =
         glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
-    for (uint8_t i = 0; i < 4; ++i) {
-        data.quadVertexBufferPtr->position = transform * data.quadVerticesPosition[i];
-        data.quadVertexBufferPtr->color = tint;
-        data.quadVertexBufferPtr->texture = subTexture->GetCoordinates()[i];
-        data.quadVertexBufferPtr->textureIndex = textureIndex;
-        ++data.quadVertexBufferPtr;
-    }
-
-    data.quadIndexCount += 6;
-
-    ++data.statistics.quads;
+    DrawQuad(transform, subTexture, tint);
 }
 
 void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size,
@@ -286,26 +323,11 @@ void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec2& position, cons
 
 void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size,
                                  const glm::vec4& color) {
-    checkDrawCall();
-
     glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
                           glm::rotate(glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) *
                           glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
-    constexpr const float x[4] = {0.0f, 1.0f, 1.0f, 0.0f};
-    constexpr const float y[4] = {0.0f, 0.0f, 1.0f, 1.0f};
-
-    for (uint8_t i = 0; i < 4; ++i) {
-        data.quadVertexBufferPtr->position = transform * data.quadVerticesPosition[i];
-        data.quadVertexBufferPtr->color = color;
-        data.quadVertexBufferPtr->texture = {x[i], y[i]};
-        data.quadVertexBufferPtr->textureIndex = 0.0f;
-        ++data.quadVertexBufferPtr;
-    }
-
-    data.quadIndexCount += 6;
-
-    ++data.statistics.quads;
+    DrawQuad(transform, color);
 }
 
 void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size,
@@ -325,28 +347,11 @@ void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec2& position, cons
 
 void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size,
                                  const Ref<Texture2D>& texture, const glm::vec4& tint) {
-    checkDrawCall();
-
-    float textureIndex = getOrAddUniqueTextureIndex(texture);
-
     glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
                           glm::rotate(glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) *
                           glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
-    constexpr const float x[4] = {0.0f, 1.0f, 1.0f, 0.0f};
-    constexpr const float y[4] = {0.0f, 0.0f, 1.0f, 1.0f};
-
-    for (uint8_t i = 0; i < 4; ++i) {
-        data.quadVertexBufferPtr->position = transform * data.quadVerticesPosition[i];
-        data.quadVertexBufferPtr->color = tint;
-        data.quadVertexBufferPtr->texture = {x[i], y[i]};
-        data.quadVertexBufferPtr->textureIndex = textureIndex;
-        ++data.quadVertexBufferPtr;
-    }
-
-    data.quadIndexCount += 6;
-
-    ++data.statistics.quads;
+    DrawQuad(transform, texture, tint);
 }
 
 void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size,
@@ -366,24 +371,10 @@ void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec2& position, cons
 
 void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size,
                                  const Ref<SubTexture2D>& subTexture, const glm::vec4& tint) {
-    checkDrawCall();
-
-    float textureIndex = getOrAddUniqueTextureIndex(subTexture->GetTexture());
-
     glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
                           glm::rotate(glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) *
                           glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
-    for (uint8_t i = 0; i < 4; ++i) {
-        data.quadVertexBufferPtr->position = transform * data.quadVerticesPosition[i];
-        data.quadVertexBufferPtr->color = tint;
-        data.quadVertexBufferPtr->texture = subTexture->GetCoordinates()[i];
-        data.quadVertexBufferPtr->textureIndex = textureIndex;
-        ++data.quadVertexBufferPtr;
-    }
-
-    data.quadIndexCount += 6;
-
-    ++data.statistics.quads;
+    DrawQuad(transform, subTexture, tint);
 }
 }  // namespace de

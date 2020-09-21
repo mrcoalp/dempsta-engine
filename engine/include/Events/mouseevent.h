@@ -1,6 +1,6 @@
 #pragma once
 
-#include "event.h"
+#include "Events/event.h"
 
 namespace de {
 class MouseMovedEvent : public Event {

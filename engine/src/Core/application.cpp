@@ -2,10 +2,20 @@
 
 #include <GLFW/glfw3.h>
 
+#include "Renderer/font.h"
 #include "Renderer/renderer.h"
-#include "Scripting/scriptengine.h"
+#include "Scripting/API/databuffer.h"
+#include "Scripting/API/helpers.h"
+#include "Scripting/API/luaentity.h"
+#include "Scripting/luaengine.h"
 
 namespace de {
+static void RegisterScriptingAPI() {
+    lua::Helpers::Register();
+    lua::DataBuffer::Register();
+    LE::RegisterClass<lua::LuaEntity>();
+}
+
 Application* Application::m_instance = nullptr;
 
 Application::Application() : Application(WindowProps()) {}
@@ -19,13 +29,15 @@ Application::Application(const WindowProps& windowProps) {
     m_window->SetEventCallback([this](Event& e) { OnEvent(e); });
 
     Renderer::Init();
-    SE::Init();
+    FontManager::GetInstance().InitFreeType();
+    LE::Init();
+    RegisterScriptingAPI();
 
     m_imguiLayer = new ImGuiLayer();
     PushOverlay(m_imguiLayer);
 }
 
-Application::~Application() { SE::CloseState(); }
+Application::~Application() { LE::CloseState(); }
 
 void Application::OnEvent(Event& e) {
     EventDispatcher eventDispatcher(e);
