@@ -48,9 +48,8 @@ void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) {
     unsigned _i = 0;
     for (const auto& element : _layout) {
         glEnableVertexAttribArray(_i);
-        glVertexAttribPointer(_i, element.GetComponentCount(), ShaderDataTypeToOpenGLType(element.type),
-                              element.normalized ? GL_TRUE : GL_FALSE, _layout.GetStride(),
-                              (void*)(uintptr_t)element.offset);
+        glVertexAttribPointer(_i, element.GetComponentCount(), ShaderDataTypeToOpenGLType(element.type), element.normalized ? GL_TRUE : GL_FALSE,
+                              _layout.GetStride(), (void*)(uintptr_t)element.offset);
         ++_i;
     }
 

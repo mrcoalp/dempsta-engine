@@ -22,8 +22,7 @@ Window::Window(const WindowProps& windowProps) {
         GLFWInitialized = true;
     }
 
-    window =
-        glfwCreateWindow((int)windowProps.width, (int)windowProps.height, windowProps.title.c_str(), nullptr, nullptr);
+    window = glfwCreateWindow((int)windowProps.width, (int)windowProps.height, windowProps.title.c_str(), nullptr, nullptr);
 
     // Initialize context
     context = new OpenGLContext(window);
@@ -40,8 +39,7 @@ Window::Window(const WindowProps& windowProps) {
 }
 
 void Window::setGLFWCallbacks() {
-    glfwSetErrorCallback(
-        [](int error, const char* description) { LOG_ENGINE_ERROR("GLFW error ({0}): {2}", error, description); });
+    glfwSetErrorCallback([](int error, const char* description) { LOG_ENGINE_ERROR("GLFW error ({0}): {2}", error, description); });
 
     glfwSetWindowSizeCallback(window, [](GLFWwindow* pWwindow, int width, int height) {
         WindowData& _data = *(WindowData*)glfwGetWindowUserPointer(pWwindow);

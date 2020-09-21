@@ -56,8 +56,7 @@ OpenGLShader::OpenGLShader(const std::string& filepath) {
     compile(processFileData(FileUtils::ReadFile(filepath)));
 }
 
-OpenGLShader::OpenGLShader(std::string name, const std::string& vertexSource, const std::string& fragmentSource)
-    : m_name(std::move(name)) {
+OpenGLShader::OpenGLShader(std::string name, const std::string& vertexSource, const std::string& fragmentSource) : m_name(std::move(name)) {
     std::unordered_map<GLenum, std::string> sources;
     sources.emplace(GL_VERTEX_SHADER, vertexSource);
     sources.emplace(GL_FRAGMENT_SHADER, fragmentSource);
@@ -221,7 +220,5 @@ void OpenGLShader::SetVec3(const std::string& name, const glm::vec3& value) { Up
 
 void OpenGLShader::SetInt(const std::string& name, int value) { UploadUniformInt(name, value); }
 
-void OpenGLShader::SetIntArray(const std::string& name, const int* values, uint32_t count) {
-    UploadUniformIntArray(name, values, count);
-}
+void OpenGLShader::SetIntArray(const std::string& name, const int* values, uint32_t count) { UploadUniformIntArray(name, values, count); }
 }  // namespace de

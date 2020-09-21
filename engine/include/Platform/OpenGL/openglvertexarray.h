@@ -18,9 +18,7 @@ public:
 
     void AddIndexBuffer(const Ref<IndexBuffer>& indexBuffer) override;
 
-    [[nodiscard]] inline const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const override {
-        return m_vertexBuffers;
-    }
+    [[nodiscard]] inline const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const override { return m_vertexBuffers; }
 
     [[nodiscard]] inline const Ref<IndexBuffer>& GetIndexBuffer() const override { return m_indexBuffer; };
 

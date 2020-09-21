@@ -6,13 +6,11 @@
 
 namespace de {
 OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height) : m_width(width), m_height(height), m_dataFormat(0) {
-    // TODO(mpinto): Change this. Just for freetype render test
-    GLenum internalFormat = GL_R8;
-    m_dataFormat = GL_RED;
+    // TODO(mpinto): These should be passed as parameter
+    GLenum internalFormat = GL_RGBA8;
+    m_dataFormat = GL_RGBA;
 
     glCreateTextures(GL_TEXTURE_2D, 1, &m_rendererId);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glPixelStorei(GL_PACK_ALIGNMENT, 1);
     glTextureStorage2D(m_rendererId, 1, internalFormat, m_width, m_height);
 
     glTextureParameteri(m_rendererId, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

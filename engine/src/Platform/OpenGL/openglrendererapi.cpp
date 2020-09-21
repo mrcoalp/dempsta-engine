@@ -18,9 +18,7 @@ void OpenGLRendererAPI::Init() {
         glGetString(GL_VENDOR), glGetString(GL_RENDERER), glGetString(GL_VERSION), maxTexture);
 }
 
-void OpenGLRendererAPI::SetViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height) {
-    glViewport(x, y, width, height);
-}
+void OpenGLRendererAPI::SetViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height) { glViewport(x, y, width, height); }
 
 void OpenGLRendererAPI::Clear(glm::vec4& color) {
     glClearColor(color.r, color.g, color.b, color.a);

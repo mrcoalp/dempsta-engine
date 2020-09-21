@@ -19,10 +19,8 @@ public:
     static void EndScene();
 
     static void DrawQuad(const glm::mat4& transform, const glm::vec4& color);
-    static void DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture,
-                         const glm::vec4& tint = glm::vec4(1.0f));
-    static void DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& subTexture,
-                         const glm::vec4& tint = glm::vec4(1.0f));
+    static void DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const glm::vec4& tint = glm::vec4(1.0f));
+    static void DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& subTexture, const glm::vec4& tint = glm::vec4(1.0f));
     static void DrawQuad(const glm::mat4& transform, const Ref<Label>& label, const glm::vec4& tint = glm::vec4(1.0f));
 
     static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
@@ -30,40 +28,30 @@ public:
 
     static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture);
     static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture);
-    static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture,
-                         const glm::vec4& tint);
-    static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture,
-                         const glm::vec4& tint);
+    static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec4& tint);
+    static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec4& tint);
 
     static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture);
     static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture);
-    static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture,
-                         const glm::vec4& tint);
-    static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture,
-                         const glm::vec4& tint);
+    static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture, const glm::vec4& tint);
+    static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture, const glm::vec4& tint);
 
-    static void DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size,
-                                const glm::vec4& color);
-    static void DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size,
-                                const glm::vec4& color);
+    static void DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
+    static void DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
 
-    static void DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size,
-                                const Ref<Texture2D>& texture);
-    static void DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size,
-                                const Ref<Texture2D>& texture);
-    static void DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size,
-                                const Ref<Texture2D>& texture, const glm::vec4& tint);
-    static void DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size,
-                                const Ref<Texture2D>& texture, const glm::vec4& tint);
+    static void DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture);
+    static void DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture);
+    static void DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture,
+                                const glm::vec4& tint);
+    static void DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture,
+                                const glm::vec4& tint);
 
-    static void DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size,
-                                const Ref<SubTexture2D>& subTexture);
-    static void DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size,
-                                const Ref<SubTexture2D>& subTexture);
-    static void DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size,
-                                const Ref<SubTexture2D>& subTexture, const glm::vec4& tint);
-    static void DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size,
-                                const Ref<SubTexture2D>& subTexture, const glm::vec4& tint);
+    static void DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture);
+    static void DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture);
+    static void DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture,
+                                const glm::vec4& tint);
+    static void DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture,
+                                const glm::vec4& tint);
 
     struct Statistics {
         uint32_t maxQuadsPerDraw = 0;

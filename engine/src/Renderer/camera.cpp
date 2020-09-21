@@ -28,8 +28,7 @@ void OrthographicCamera::SetRotation(float rotation) {
 }
 
 void OrthographicCamera::updateViewMatrix() {
-    glm::mat4 _transform = glm::translate(glm::mat4(1.0f), m_position) *
-                           glm::rotate(glm::mat4(1.0f), glm::radians(m_rotation), glm::vec3(0, 0, 1));
+    glm::mat4 _transform = glm::translate(glm::mat4(1.0f), m_position) * glm::rotate(glm::mat4(1.0f), glm::radians(m_rotation), glm::vec3(0, 0, 1));
     m_viewMatrix = glm::inverse(_transform);
 }
 
@@ -53,8 +52,7 @@ void OrthographicCameraController::OnUpdate(const TimeStep& ts) {
         if (m_previousMousePosition == std::pair<float, float>(0.0f, 0.0f)) {
             m_previousMousePosition = Input::GetMousePosition();
         }
-        movementOffset = {m_previousMousePosition.first - Input::GetMouseX(),
-                          Input::GetMouseY() - m_previousMousePosition.second, 0.0f};
+        movementOffset = {m_previousMousePosition.first - Input::GetMouseX(), Input::GetMouseY() - m_previousMousePosition.second, 0.0f};
         m_previousMousePosition = Input::GetMousePosition();
         glm::vec3 _position = m_camera.GetPosition() + (m_zoomLevel * (float)ts * movementOffset * 0.2f);
         m_camera.SetPosition(_position);

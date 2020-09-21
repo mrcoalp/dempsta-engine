@@ -101,8 +101,7 @@ public:
     }
 
     template <typename T>
-    [[nodiscard]] static inline std::unordered_map<std::string, T> GetMap(const std::vector<const char*>& keys,
-                                                                          int index = 1) {
+    [[nodiscard]] static inline std::unordered_map<std::string, T> GetMap(const std::vector<const char*>& keys, int index = 1) {
         return MS::GetMap<T>(state, keys, index);
     }
 

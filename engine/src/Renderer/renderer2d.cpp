@@ -186,8 +186,7 @@ void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& text
     constexpr const float y[4] = {0.0f, 0.0f, 1.0f, 1.0f};
 
     for (uint8_t i = 0; i < 4; ++i) {
-        data.quadVertexBufferPtr->position =
-            transform * (data.quadVerticesPosition[i] - glm::vec4{anchor.x, anchor.y, 0.f, 0.f});
+        data.quadVertexBufferPtr->position = transform * (data.quadVerticesPosition[i] - glm::vec4{anchor.x, anchor.y, 0.f, 0.f});
         data.quadVertexBufferPtr->color = tint;
         data.quadVertexBufferPtr->texture = {x[i], y[i]};
         data.quadVertexBufferPtr->textureIndex = textureIndex;
@@ -206,8 +205,7 @@ void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& s
     const auto& anchor = subTexture->GetAnchor();
 
     for (uint8_t i = 0; i < 4; ++i) {
-        data.quadVertexBufferPtr->position =
-            transform * (data.quadVerticesPosition[i] - glm::vec4{anchor.x, anchor.y, 0.f, 0.f});
+        data.quadVertexBufferPtr->position = transform * (data.quadVerticesPosition[i] - glm::vec4{anchor.x, anchor.y, 0.f, 0.f});
         data.quadVertexBufferPtr->color = tint;
         data.quadVertexBufferPtr->texture = subTexture->GetCoordinates()[i];
         data.quadVertexBufferPtr->textureIndex = textureIndex;
@@ -268,8 +266,7 @@ void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, cons
 }
 
 void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color) {
-    glm::mat4 transform =
-        glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
+    glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
     DrawQuad(transform, color);
 }
@@ -282,15 +279,12 @@ void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, cons
     DrawQuad(position, size, texture, glm::vec4(1.0f));
 }
 
-void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture,
-                          const glm::vec4& tint) {
+void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec4& tint) {
     DrawQuad({position.x, position.y, 0.0f}, size, texture, tint);
 }
 
-void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture,
-                          const glm::vec4& tint) {
-    glm::mat4 transform =
-        glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
+void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec4& tint) {
+    glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
     DrawQuad(transform, texture, tint);
 }
@@ -303,76 +297,64 @@ void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, cons
     DrawQuad(position, size, subTexture, glm::vec4(1.0f));
 }
 
-void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture,
-                          const glm::vec4& tint) {
+void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture, const glm::vec4& tint) {
     DrawQuad({position.x, position.y, 0.0f}, size, subTexture, tint);
 }
 
-void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture,
-                          const glm::vec4& tint) {
-    glm::mat4 transform =
-        glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
+void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture, const glm::vec4& tint) {
+    glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
     DrawQuad(transform, subTexture, tint);
 }
 
-void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size,
-                                 const glm::vec4& color) {
+void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size, const glm::vec4& color) {
     DrawRotatedQuad(rotation, {position.x, position.y, 0.0f}, size, color);
 }
 
-void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size,
-                                 const glm::vec4& color) {
-    glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
-                          glm::rotate(glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) *
+void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size, const glm::vec4& color) {
+    glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::rotate(glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) *
                           glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
     DrawQuad(transform, color);
 }
 
-void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size,
-                                 const Ref<Texture2D>& texture) {
+void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture) {
     DrawRotatedQuad(rotation, {position.x, position.y, 0.0f}, size, texture);
 }
 
-void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size,
-                                 const Ref<Texture2D>& texture) {
+void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture) {
     DrawRotatedQuad(rotation, position, size, texture, glm::vec4(1.0f));
 }
 
-void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size,
-                                 const Ref<Texture2D>& texture, const glm::vec4& tint) {
+void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture,
+                                 const glm::vec4& tint) {
     DrawRotatedQuad(rotation, {position.x, position.y, 0.0f}, size, texture, tint);
 }
 
-void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size,
-                                 const Ref<Texture2D>& texture, const glm::vec4& tint) {
-    glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
-                          glm::rotate(glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) *
+void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture,
+                                 const glm::vec4& tint) {
+    glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::rotate(glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) *
                           glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
     DrawQuad(transform, texture, tint);
 }
 
-void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size,
-                                 const Ref<SubTexture2D>& subTexture) {
+void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture) {
     DrawRotatedQuad(rotation, {position.x, position.y, 0.0f}, size, subTexture);
 }
 
-void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size,
-                                 const Ref<SubTexture2D>& subTexture) {
+void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture) {
     DrawRotatedQuad(rotation, position, size, subTexture, glm::vec4(1.0f));
 }
 
-void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size,
-                                 const Ref<SubTexture2D>& subTexture, const glm::vec4& tint) {
+void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture,
+                                 const glm::vec4& tint) {
     DrawRotatedQuad(rotation, {position.x, position.y, 0.0f}, size, subTexture, tint);
 }
 
-void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size,
-                                 const Ref<SubTexture2D>& subTexture, const glm::vec4& tint) {
-    glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
-                          glm::rotate(glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) *
+void Renderer2D::DrawRotatedQuad(float rotation, const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture,
+                                 const glm::vec4& tint) {
+    glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::rotate(glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) *
                           glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
     DrawQuad(transform, subTexture, tint);

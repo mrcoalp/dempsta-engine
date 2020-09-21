@@ -81,9 +81,7 @@ public:
      * @param category
      * @return True if it is, false otherwise.
      */
-    [[nodiscard]] inline bool IsInCategory(EventCategory category) const {
-        return (GetCategoryFlags() & category) != 0;
-    }
+    [[nodiscard]] inline bool IsInCategory(EventCategory category) const { return (GetCategoryFlags() & category) != 0; }
 };
 
 /**

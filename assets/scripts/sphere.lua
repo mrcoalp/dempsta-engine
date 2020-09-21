@@ -5,6 +5,7 @@ function OnInit(data)
     data.currentColor = -1
     data.moving = true
     data.mult = 1
+    this.x = -2.5
     this.scale = {
         x = 1.5,
         y = 1.5,

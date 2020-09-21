@@ -22,9 +22,7 @@ public:
 
     void Bind(unsigned slot = 0) const final;
 
-    [[nodiscard]] inline bool Equals(const Texture& other) const final {
-        return ((OpenGLTexture2D&)other).GetRendererID() == m_rendererId;
-    }
+    [[nodiscard]] inline bool Equals(const Texture& other) const final { return ((OpenGLTexture2D&)other).GetRendererID() == m_rendererId; }
 
     [[nodiscard]] inline uint32_t GetRendererID() const final { return m_rendererId; }
 

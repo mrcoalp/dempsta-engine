@@ -90,9 +90,7 @@ public:
      * @return true Entities are equal.
      * @return false Entities are not equal.
      */
-    bool operator==(const Entity& other) const noexcept {
-        return m_handle == other.m_handle && m_scene == other.m_scene;
-    }
+    bool operator==(const Entity& other) const noexcept { return m_handle == other.m_handle && m_scene == other.m_scene; }
 
     /**
      * @brief Compares if two entities are different.

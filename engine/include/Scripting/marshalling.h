@@ -80,8 +80,7 @@ public:
     }
 
     template <typename T>
-    [[nodiscard]] static std::unordered_map<std::string, T> GetMap(lua_State* L, const std::vector<const char*>& keys,
-                                                                   int index) {
+    [[nodiscard]] static std::unordered_map<std::string, T> GetMap(lua_State* L, const std::vector<const char*>& keys, int index) {
         std::unordered_map<std::string, T> map;
         for (const auto& key : keys) {
             lua_getfield(L, -1, key);

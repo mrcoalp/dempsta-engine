@@ -21,8 +21,7 @@ Ref<Shader> Shader::Create(const std::string& filePath) {
     }
 }
 
-Ref<Shader> Shader::Create(const std::string& name, const std::string& vertexSource,
-                           const std::string& fragmentSource) {
+Ref<Shader> Shader::Create(const std::string& name, const std::string& vertexSource, const std::string& fragmentSource) {
     switch (Renderer::GetApi()) {
         case RendererAPI::API::None: {
             LOG_ENGINE_ERROR("NONE, for now, is not a valid renderer API!");

@@ -180,9 +180,7 @@ public:
         }
     }
 
-    std::tuple<Data<double>&, Data<bool>&, Data<std::string>&> GetData() {
-        return std::tie(m_doubles, m_bools, m_strings);
-    }
+    std::tuple<Data<double>&, Data<bool>&, Data<std::string>&> GetData() { return std::tie(m_doubles, m_bools, m_strings); }
 
 private:
     Data<double> m_doubles;

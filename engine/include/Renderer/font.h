@@ -67,9 +67,7 @@ public:
 
     [[nodiscard]] inline const Font& GetFont(const std::string& fontName) const { return m_fonts.at(fontName); }
 
-    [[nodiscard]] inline bool IsFontLoaded(const std::string& fontName) const {
-        return m_fonts.find(fontName) != m_fonts.end();
-    }
+    [[nodiscard]] inline bool IsFontLoaded(const std::string& fontName) const { return m_fonts.find(fontName) != m_fonts.end(); }
 
 private:
     FontManager() = default;

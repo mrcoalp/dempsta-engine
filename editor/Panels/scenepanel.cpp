@@ -38,8 +38,8 @@ static void drawTransformNode(Entity entity) {
         }
 
         if (dirty) {
-            transform = glm::translate(glm::mat4(1.0f), translate) * glm::toMat4(glm::quat(glm::radians(rotation))) *
-                        glm::scale(glm::mat4(1.0f), scale);
+            transform =
+                glm::translate(glm::mat4(1.0f), translate) * glm::toMat4(glm::quat(glm::radians(rotation))) * glm::scale(glm::mat4(1.0f), scale);
         }
 
         ImGui::TreePop();
@@ -88,15 +88,16 @@ static void drawScriptingNode(Entity entity) {
 static void drawLabelNode(Entity entity) {
     if (ImGui::TreeNodeEx((void*)typeid(LabelComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Label")) {
         ImGui::Spacing();
-        auto& label = entity.GetComponent<LabelComponent>().label;
+        auto& label = entity.GetComponent<LabelComponent>();
         char buffer[128];
         memset(buffer, 0, sizeof(buffer));
-        memcpy(buffer, label->GetContent().c_str(), label->GetContent().length() + 1);
+        memcpy(buffer, label.label->GetContent().c_str(), label.label->GetContent().length() + 1);
         if (ImGui::InputText("Content", buffer, sizeof(buffer))) {
             if (strlen(buffer) > 0) {
-                label->SetContent(std::string(buffer));
+                label.label->SetContent(std::string(buffer));
             }
         }
+        ImGui::ColorEdit4("Color", glm::value_ptr(label.color));
 
         ImGui::TreePop();
     }
@@ -198,8 +199,8 @@ void ScenePanel::OnImGuiRender() {
 }
 
 void ScenePanel::drawEntityNode(Entity entity) {
-    ImGuiTreeNodeFlags flags = (entity == m_selected ? ImGuiTreeNodeFlags_Selected : 0) |
-                               ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+    ImGuiTreeNodeFlags flags =
+        (entity == m_selected ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
     auto& name = entity.GetComponent<NameComponent>().name;
     bool open = ImGui::TreeNodeEx((void*)(uint64_t)entity, flags, "%s", name.c_str());
     if (ImGui::IsItemClicked()) {

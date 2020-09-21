@@ -11,8 +11,7 @@ struct Message {
     lua::DataBuffer* data;
     std::string sender;
 
-    Message(std::string id, lua::DataBuffer* data, std::string sender)
-        : id(std::move(id)), data(data), sender(std::move(sender)) {}
+    Message(std::string id, lua::DataBuffer* data, std::string sender) : id(std::move(id)), data(data), sender(std::move(sender)) {}
 };
 
 using MessageCallback = std::function<void(const Message&)>;

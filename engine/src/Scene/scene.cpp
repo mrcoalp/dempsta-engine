@@ -28,8 +28,7 @@ void Scene::OnUpdate(const TimeStep& ts) {
         }
         sc.instance->OnUpdate(ts);
         // messaging
-        lua::MessageHandler::HandleMessages(
-            [&sc](const lua::Message& msg) { sc.instance->OnMessage(msg.id, msg.data, msg.sender); });
+        lua::MessageHandler::HandleMessages([&sc](const lua::Message& msg) { sc.instance->OnMessage(msg.id, msg.data, msg.sender); });
     });
     lua::MessageHandler::ClearMessages();
     // render
@@ -40,18 +39,16 @@ void Scene::OnUpdate(const TimeStep& ts) {
             const auto& transform = transformComp.transform;
             if (cameraComp.primary) {
                 Renderer2D::BeginScene(camera.GetProjection(), transform);
-                m_registry.view<TransformComponent, SpriteComponent>().each(
-                    [](const auto& transformComp, const auto& spriteComp) {
-                        if (spriteComp.texture != nullptr) {
-                            Renderer2D::DrawQuad(transformComp.transform, spriteComp.texture, spriteComp.color);
-                        } else {
-                            Renderer2D::DrawQuad(transformComp.transform, spriteComp.color);
-                        }
-                    });
-                m_registry.view<TransformComponent, LabelComponent>().each(
-                    [](const auto& transformComp, const auto& textComp) {
-                        Renderer2D::DrawQuad(transformComp.transform, textComp.label, glm::vec4(1.f));
-                    });
+                m_registry.view<TransformComponent, SpriteComponent>().each([](const auto& transformComp, const auto& spriteComp) {
+                    if (spriteComp.texture != nullptr) {
+                        Renderer2D::DrawQuad(transformComp.transform, spriteComp.texture, spriteComp.color);
+                    } else {
+                        Renderer2D::DrawQuad(transformComp.transform, spriteComp.color);
+                    }
+                });
+                m_registry.view<TransformComponent, LabelComponent>().each([](const auto& transformComp, const auto& labelComp) {
+                    Renderer2D::DrawQuad(transformComp.transform, labelComp.label, labelComp.color);
+                });
                 Renderer2D::EndScene();
                 return;
             }

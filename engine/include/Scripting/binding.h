@@ -59,5 +59,4 @@ private:
     lua::Binding<BindingType> BindingType::Binding = lua::Binding<BindingType>(#_class)
 #define LUA_ADD_METHOD(_method) .AddMethod({#_method, &BindingType::_method})
 #define LUA_ADD_PROPERTY(_prop) .AddProperty({#_prop, &BindingType::Get_##_prop, &BindingType::Set_##_prop})
-#define LUA_ADD_PROPERTY_CUSTOM(_prop, _getter, _setter) \
-    .AddProperty({#_prop, &BindingType::_getter, &BindingType::_setter})
+#define LUA_ADD_PROPERTY_CUSTOM(_prop, _getter, _setter) .AddProperty({#_prop, &BindingType::_getter, &BindingType::_setter})

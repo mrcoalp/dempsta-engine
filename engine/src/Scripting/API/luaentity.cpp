@@ -47,8 +47,7 @@ int LuaEntity::SetZ(lua_State*) {
 
 int LuaEntity::GetScale(lua_State*) {
     const auto& transform = m_entity.GetComponent<de::TransformComponent>().transform;
-    std::unordered_map<std::string, float> scale = {
-        {"x", transform[0][0]}, {"y", transform[1][1]}, {"z", transform[2][2]}};
+    std::unordered_map<std::string, float> scale = {{"x", transform[0][0]}, {"y", transform[1][1]}, {"z", transform[2][2]}};
     LE::PushValue(scale);
     return 1;
 }

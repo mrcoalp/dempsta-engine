@@ -79,6 +79,7 @@ struct CameraComponent {
 
 struct LabelComponent {
     Ref<Label> label;
+    glm::vec4 color = glm::vec4(1.0f);
 
     LabelComponent() = default;
 };

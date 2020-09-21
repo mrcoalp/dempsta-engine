@@ -16,20 +16,20 @@ void DempstaEditor::OnAttach() {
     spriteMask->SetAnchor({0.5f, 0.5f});
     auto spriteSphere = SubTexture2D::CreateSprite("assets/textures/sphere.png");
     spriteSphere->SetAnchor({0.5f, 0.5f});
-    // FontManager::GetInstance().AddFont("Arial", "assets/fonts/arial.ttf", 60);
-    // auto label = CreateRef<Label>("Arial", "Marco Pinto");
-    // auto textEnt = m_activeScene->CreateEntity("Test Text");
-    // textEnt.AddComponent<LabelComponent>().label = label;
+    FontManager::GetInstance().AddFont("Arial", "assets/fonts/arial.ttf", 60);
+    auto label = CreateRef<Label>("Arial", "Marco Pinto");
+    auto textEnt = m_activeScene->CreateEntity("Test Text");
+    textEnt.AddComponent<LabelComponent>().label = label;
 
     auto sphere = m_activeScene->CreateEntity("Sphere");
     sphere.AddComponent<SpriteComponent>().texture = spriteSphere;
     sphere.AddComponent<ScriptComponent>("assets/scripts/sphere.lua");
 
-    for (size_t i = 0; i < 100; ++i) {
-        auto mask = m_activeScene->CreateEntity("Mask_" + std::to_string(i));
-        mask.AddComponent<SpriteComponent>().texture = spriteMask;
-        mask.AddComponent<ScriptComponent>("assets/scripts/mask.lua");
-    }
+    // for (size_t i = 0; i < 100; ++i) {
+    //     auto mask = m_activeScene->CreateEntity("Mask_" + std::to_string(i));
+    //     mask.AddComponent<SpriteComponent>().texture = spriteMask;
+    //     mask.AddComponent<ScriptComponent>("assets/scripts/mask.lua");
+    // }
 
     // auto& labelTrans = textEnt.GetComponent<TransformComponent>().transform;
     // labelTrans[0].x = 60.f;
@@ -56,8 +56,7 @@ void DempstaEditor::OnUpdate(const TimeStep& ts) {
 
     auto fConfig = m_frameBuffer->GetConfig();
 
-    if (m_viewportSize.x > 0.0f && m_viewportSize.y > 0.0f &&
-        (fConfig.width != m_viewportSize.x || fConfig.height != m_viewportSize.y)) {
+    if (m_viewportSize.x > 0.0f && m_viewportSize.y > 0.0f && (fConfig.width != m_viewportSize.x || fConfig.height != m_viewportSize.y)) {
         const auto width = (uint32_t)m_viewportSize.x;
         const auto height = (uint32_t)m_viewportSize.y;
         m_frameBuffer->Resize(width, height);
@@ -90,8 +89,7 @@ void DempstaEditor::OnImGuiRender() {
         ImGui::SetNextWindowViewport(viewport->ID);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-        window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
-                        ImGuiWindowFlags_NoMove;
+        window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
         window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
     }
 

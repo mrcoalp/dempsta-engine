@@ -44,7 +44,29 @@ FontTextureAtlas::FontTextureAtlas(const FT_Face& face) {
             x = 0;
         }
 
-        m_texture->SetData(glyph->bitmap.buffer, {x, y}, glyph->bitmap.width, glyph->bitmap.rows);
+        {
+            // NOTE(mpinto): Since freetype glyphs are only rendered to one channel, we need to expand it's data
+            // Expanded data will be rendered with all 4 channels, so we add RGB (all 255(white)) and define alpha with proper data
+            // This enables the use of all purpose shader in batch renderer
+            const auto width = glyph->bitmap.width;
+            const auto height = glyph->bitmap.rows;
+            auto* data = new unsigned char[4 * width * height];
+
+            for (uint32_t h = 0; h < height; ++h) {
+                for (uint32_t w = 0; w < width; ++w) {
+                    const uint32_t index = w + h * width;
+                    unsigned char alpha = glyph->bitmap.buffer[index];
+                    data[4 * index] = 0xff;       // red
+                    data[4 * index + 1] = 0xff;   // green
+                    data[4 * index + 2] = 0xff;   // blue
+                    data[4 * index + 3] = alpha;  // alpha
+                }
+            }
+            // Set subtexture (of glyph) data with this expanded one
+            m_texture->SetData(data, {x, y}, width, height);
+            // We can now delete this
+            delete[] data;
+        }
 
         float uvOffsetX = static_cast<float>(x) / static_cast<float>(m_width);
         float uvOffsetY = static_cast<float>(y) / static_cast<float>(m_height);
@@ -66,8 +88,8 @@ FontTextureAtlas::FontTextureAtlas(const FT_Face& face) {
         x += glyph->bitmap.width + 1;
     }
 
-    LOG_ENGINE_TRACE("Generated a {} x {} ({} kb) texture atlas for font: {} - {}", m_width, m_height,
-                     m_width * m_height / 1024, face->family_name, face->style_name);
+    LOG_ENGINE_TRACE("Generated a {} x {} ({} kb) texture atlas for font: {} - {}", m_width, m_height, m_width * m_height / 1024, face->family_name,
+                     face->style_name);
 }
 
 Font::Font(const FT_Library& library, const std::string& source, FT_Long faceIndex, unsigned size) : m_size(size) {
