@@ -10,3 +10,7 @@
 	path = engine/external/freetype
 	url = https://github.com/freetype/freetype2
 	branch = VER-2-10-2
+[submodule "engine/external/openal-soft"]
+	path = engine/external/openal-soft
+	url = https://github.com/kcat/openal-soft
+	branch = openal-soft-1.20.1

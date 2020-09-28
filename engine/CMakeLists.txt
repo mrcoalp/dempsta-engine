@@ -64,6 +64,15 @@ add_subdirectory(external/lua)
 add_subdirectory(external/entt)
 # Add freetype-gl
 add_subdirectory(external/freetype)
+# Add OpenAL
+set(ALSOFT_DLOPEN OFF CACHE BOOL "Check for the dlopen API for loading optional libs" FORCE)
+set(ALSOFT_UTILS OFF CACHE BOOL "Build and install utility programs" FORCE)
+set(ALSOFT_EXAMPLES OFF CACHE BOOL "Build and install example programs" FORCE)
+set(ALSOFT_TESTS OFF CACHE BOOL "Build and install test programs" FORCE)
+set(ALSOFT_CONFIG OFF CACHE BOOL "Install alsoft.conf sample configuration file" FORCE)
+set(ALSOFT_HRTF_DEFS OFF CACHE BOOL "Install HRTF definition files" FORCE)
+set(ALSOFT_AMBDEC_PRESETS OFF CACHE BOOL "Install AmbDec preset files" FORCE)
+add_subdirectory(external/openal-soft)
 
 target_include_directories(dempsta PUBLIC include)
 
@@ -77,7 +86,8 @@ target_link_libraries(dempsta
         stb_image
         lua
         entt
-        freetype)
+        freetype
+        OpenAL)
 
 set_target_properties(dempsta PROPERTIES INSTALL_RPATH $ORIGIN)
 
