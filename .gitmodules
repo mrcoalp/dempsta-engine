@@ -13,4 +13,3 @@
 [submodule "engine/external/openal-soft"]
 	path = engine/external/openal-soft
 	url = https://github.com/kcat/openal-soft
-	branch = openal-soft-1.20.1

@@ -65,6 +65,23 @@ add_subdirectory(external/entt)
 # Add freetype-gl
 add_subdirectory(external/freetype)
 # Add OpenAL
+# if (WIN32)
+# 	add_library(OpenAL STATIC IMPORTED GLOBAL)
+# 	set_target_properties(openal PROPERTIES
+# 		INTERFACE_INCLUDE_DIRECTORIES ${external}/AL/include
+#         IMPORTED_LOCATION ${external}/AL/libs/OpenAL32.lib
+#     )
+# elseif(LINUX)
+#     set(ALSOFT_DLOPEN OFF CACHE BOOL "Check for the dlopen API for loading optional libs" FORCE)
+#     set(ALSOFT_UTILS OFF CACHE BOOL "Build and install utility programs" FORCE)
+#     set(ALSOFT_EXAMPLES OFF CACHE BOOL "Build and install example programs" FORCE)
+#     set(ALSOFT_TESTS OFF CACHE BOOL "Build and install test programs" FORCE)
+#     set(ALSOFT_CONFIG OFF CACHE BOOL "Install alsoft.conf sample configuration file" FORCE)
+#     set(ALSOFT_HRTF_DEFS OFF CACHE BOOL "Install HRTF definition files" FORCE)
+#     set(ALSOFT_AMBDEC_PRESETS OFF CACHE BOOL "Install AmbDec preset files" FORCE)
+#     add_subdirectory(external/openal-soft)
+# endif()
+
 set(ALSOFT_DLOPEN OFF CACHE BOOL "Check for the dlopen API for loading optional libs" FORCE)
 set(ALSOFT_UTILS OFF CACHE BOOL "Build and install utility programs" FORCE)
 set(ALSOFT_EXAMPLES OFF CACHE BOOL "Build and install example programs" FORCE)

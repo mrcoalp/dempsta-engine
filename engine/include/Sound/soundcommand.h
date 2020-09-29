@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/core.h"
 #include "Sound/soundapi.h"
 
 namespace de {
