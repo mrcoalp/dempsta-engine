@@ -1,12 +1,22 @@
 #include <bit>
 #include <fstream>
 
+static bool is_big_endian() {
+    union UInt32 {
+        uint32_t i;
+        char c[4];
+    } bint = {0x01020304};
+
+    return bint.c[0] == 1;
+}
+
 std::int32_t convert_to_int(char* buffer, std::size_t len) {
     std::int32_t a = 0;
-    if (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
-        std::memcpy(&a, buffer, len);
-    else
+    if (is_big_endian()) {
         for (std::size_t i = 0; i < len; ++i) reinterpret_cast<char*>(&a)[3 - i] = buffer[i];
+    } else {
+        std::memcpy(&a, buffer, len);
+    }
     return a;
 }
 

@@ -39,7 +39,10 @@ Application::Application(const WindowProps& windowProps) {
     PushOverlay(m_imguiLayer);
 }
 
-Application::~Application() { LE::CloseState(); }
+Application::~Application() {
+    LE::CloseState();
+    SoundProvider::Release();
+}
 
 void Application::OnEvent(Event& e) {
     EventDispatcher eventDispatcher(e);

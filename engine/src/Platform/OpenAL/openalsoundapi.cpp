@@ -26,7 +26,7 @@ void OpenALSoundAPI::Init() {
     ALuint buffer;
     AL_CALL(alGenBuffers, 1, &buffer);
 
-    ALenum format;
+    ALenum format = 0;
     if (channels == 1 && bitsPerSample == 8)
         format = AL_FORMAT_MONO8;
     else if (channels == 1 && bitsPerSample == 16)
@@ -57,10 +57,12 @@ void OpenALSoundAPI::Init() {
 
     AL_CALL(alDeleteSources, 1, &source);
     AL_CALL(alDeleteBuffers, 1, &buffer);
+}
 
+void OpenALSoundAPI::Release() {
+    ALCboolean contextMadeCurrent = ALC_TRUE;
     ALC_CALL(alcMakeContextCurrent, contextMadeCurrent, m_internal->device, nullptr);
     ALC_CALL(alcDestroyContext, m_internal->device, m_internal->context);
-
     ALCboolean closed;
     ALC_CALL(alcCloseDevice, closed, m_internal->device, m_internal->device);
 }

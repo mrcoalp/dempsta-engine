@@ -12,6 +12,8 @@ public:
 
     void Init() final;
 
+    void Release() final;
+
 private:
     struct Internal {
         ALCdevice* device;
