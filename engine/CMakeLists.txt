@@ -56,8 +56,6 @@ add_subdirectory(external/glad)
 add_subdirectory(external/imgui)
 # Add glm
 add_subdirectory(external/glm)
-# Add stb_image
-add_subdirectory(external/stb_image)
 # Add lua
 add_subdirectory(external/lua)
 # Add freetype-gl
@@ -82,7 +80,6 @@ target_link_libraries(dempsta
         glad
         glm
         imgui
-        stb_image
         lua
         freetype
         OpenAL)
