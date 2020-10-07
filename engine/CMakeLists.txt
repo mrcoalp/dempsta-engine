@@ -75,7 +75,7 @@ set(ALSOFT_AMBDEC_PRESETS OFF CACHE BOOL "Install AmbDec preset files" FORCE)
 set(CMAKE_INSTALL_BINDIR .)
 add_subdirectory(external/openal-soft)
 
-target_include_directories(dempsta PUBLIC include)
+target_include_directories(dempsta PUBLIC include external/header_only)
 
 target_link_libraries(dempsta
         PUBLIC

@@ -4,7 +4,9 @@
 #include <AL/alc.h>
 
 #include "Platform/OpenAL/openalutils.h"
-#include "Sound/audiofile.h"
+
+#define DR_WAV_IMPLEMENTATION
+#include "dr_wav/dr_wav.h"
 
 namespace de {
 OpenALSoundAPI::OpenALSoundAPI() : m_internal(CreateScope<Internal>()) {}
@@ -18,11 +20,13 @@ void OpenALSoundAPI::Init() {
     DE_ASSERT(ALC_CALL(alcMakeContextCurrent, contextMadeCurrent, m_internal->device, m_internal->context) && contextMadeCurrent == ALC_TRUE,
               "Could not make audio context current!")
 
-    std::uint8_t channels;
-    std::int32_t sampleRate;
-    std::uint8_t bitsPerSample;
-    ALsizei size;
-    auto* data = load_wav("assets/sound/iamtheprotectorofthissystem.wav", channels, sampleRate, bitsPerSample, size);
+    drwav wav;
+
+    drwav_init_file(&wav, "assets/sound/iamtheprotectorofthissystem.wav", nullptr);
+    std::uint8_t channels = wav.channels;
+    std::int32_t sampleRate = wav.sampleRate;
+    std::uint8_t bitsPerSample = wav.bitsPerSample;
+    // auto* data = load_wav("assets/sound/iamtheprotectorofthissystem.wav", channels, sampleRate, bitsPerSample, size);
     ALuint buffer;
     AL_CALL(alGenBuffers, 1, &buffer);
 
@@ -36,7 +40,11 @@ void OpenALSoundAPI::Init() {
     else if (channels == 2 && bitsPerSample == 16)
         format = AL_FORMAT_STEREO16;
 
-    AL_CALL(alBufferData, buffer, format, data, size, sampleRate);
+    std::vector<uint8_t> soundData;
+    soundData.resize(wav.dataChunkDataSize);
+    size_t _framesread = drwav_read_pcm_frames(&wav, wav.totalPCMFrameCount, soundData.data());
+
+    AL_CALL(alBufferData, buffer, format, soundData.data(), soundData.size(), sampleRate);
 
     ALuint source;
     AL_CALL(alGenSources, 1, &source);
@@ -57,6 +65,7 @@ void OpenALSoundAPI::Init() {
 
     AL_CALL(alDeleteSources, 1, &source);
     AL_CALL(alDeleteBuffers, 1, &buffer);
+    drwav_uninit(&wav);
 }
 
 void OpenALSoundAPI::Release() {
