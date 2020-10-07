@@ -60,8 +60,6 @@ add_subdirectory(external/glm)
 add_subdirectory(external/stb_image)
 # Add lua
 add_subdirectory(external/lua)
-# Add EnTT
-add_subdirectory(external/entt)
 # Add freetype-gl
 add_subdirectory(external/freetype)
 # Add OpenAL
@@ -86,7 +84,6 @@ target_link_libraries(dempsta
         imgui
         stb_image
         lua
-        entt
         freetype
         OpenAL)
 

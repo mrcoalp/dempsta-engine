@@ -1,6 +1,6 @@
 #pragma once
 
-#include <entity/registry.hpp>
+#include <entt/entt.hpp>
 
 #include "Core/timestep.h"
 #include "Events/event.h"
