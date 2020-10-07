@@ -1,12 +1,15 @@
 #pragma once
 
-#include "Sound/soundcommand.h"
+#include "Sound/soundapi.h"
 
 namespace de {
 class SoundProvider {
 public:
-    static inline void Init() { SoundCommand::Init(); }
+    static inline void Init() { s_soundAPI->Init(); }
 
-    static inline void Release() { SoundCommand::Release(); }
+    static inline void Release() { s_soundAPI->Release(); }
+
+private:
+    static Ref<SoundAPI> s_soundAPI;
 };
 }  // namespace de

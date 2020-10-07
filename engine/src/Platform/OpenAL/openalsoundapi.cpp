@@ -23,10 +23,10 @@ void OpenALSoundAPI::Init() {
     drwav wav;
 
     drwav_init_file(&wav, "assets/sound/iamtheprotectorofthissystem.wav", nullptr);
-    std::uint8_t channels = wav.channels;
-    std::int32_t sampleRate = wav.sampleRate;
-    std::uint8_t bitsPerSample = wav.bitsPerSample;
-    // auto* data = load_wav("assets/sound/iamtheprotectorofthissystem.wav", channels, sampleRate, bitsPerSample, size);
+    uint8_t channels = wav.channels;
+    int32_t sampleRate = wav.sampleRate;
+    uint8_t bitsPerSample = wav.bitsPerSample;
+
     ALuint buffer;
     AL_CALL(alGenBuffers, 1, &buffer);
 
@@ -42,7 +42,7 @@ void OpenALSoundAPI::Init() {
 
     std::vector<uint8_t> soundData;
     soundData.resize(wav.dataChunkDataSize);
-    size_t _framesread = drwav_read_pcm_frames(&wav, wav.totalPCMFrameCount, soundData.data());
+    size_t framesread = drwav_read_pcm_frames(&wav, wav.totalPCMFrameCount, soundData.data());
 
     AL_CALL(alBufferData, buffer, format, soundData.data(), soundData.size(), sampleRate);
 
