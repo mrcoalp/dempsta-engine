@@ -1,15 +1,15 @@
 #include "Sound/sound.h"
 
-#include "Platform/OpenAL/openalsound.h"
+#include "Platform/OpenAL/openalsoundinstance.h"
 #include "Sound/soundapi.h"
 
 namespace de {
-Ref<Sound> Sound::CreateSound(const std::string& filePath) {
+Ref<SoundInstance> SoundInstance::CreateSound(const std::string& filePath) {
     switch (SoundAPI::GetAPI()) {
         case SoundAPI::API::None:
             return {};
         case SoundAPI::API::OpenAL:
-            return CreateRef<OpenALSound>(filePath);
+            return CreateRef<OpenALSoundInstance>(filePath);
         default:
             return {};
     }

@@ -86,9 +86,9 @@ struct LabelComponent {
 };
 
 struct SoundComponent {
-    Ref<Sound> sound;
+    Ref<SoundInstance> sound;
 
     SoundComponent() = default;
-    explicit SoundComponent(const std::string& filePath) : sound(CreateRef<Sound>(filePath)) {}
+    explicit SoundComponent(const std::string& filePath) : sound(SoundInstance::CreateSound(filePath)) {}
 };
 }  // namespace de

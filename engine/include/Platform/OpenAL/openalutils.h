@@ -37,8 +37,8 @@ public:
     }
 
 private:
-    static bool check_al_errors(const std::string& filename, const std::uint_fast32_t line);
-    static bool check_alc_errors(const std::string& filename, const std::uint_fast32_t line, ALCdevice* device);
+    static bool check_al_errors(const std::string& filename, std::uint_fast32_t line);
+    static bool check_alc_errors(const std::string& filename, std::uint_fast32_t line, ALCdevice* device);
 };
 
 #define AL_CALL(_function, ...) ::de::OpenALUtils::ALCallImpl(__FILE__, __LINE__, _function, __VA_ARGS__)
