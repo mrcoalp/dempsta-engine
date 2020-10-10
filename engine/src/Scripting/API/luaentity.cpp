@@ -81,6 +81,14 @@ int LuaEntity::SetAlpha(lua_State*) {
     return 0;
 }
 
+int LuaEntity::PlaySound(lua_State*) {
+    if (!check_component<de::SoundComponent>()) {
+        return 0;
+    }
+    m_entity.GetComponent<de::SoundComponent>().sound->Play();
+    return 0;
+}
+
 int LuaEntity::GetAcquireEvents(lua_State*) {
     LE::PushValue(m_entity.GetComponent<de::ScriptComponent>().instance->acquireEvents);
     return 1;
@@ -120,6 +128,7 @@ LUA_ADD_METHOD(SetColor)
 LUA_ADD_PROPERTY_CUSTOM(color, GetColor, SetColor)
 LUA_ADD_METHOD(GetAlpha)
 LUA_ADD_METHOD(SetAlpha)
+LUA_ADD_METHOD(PlaySound)
 LUA_ADD_PROPERTY_CUSTOM(alpha, GetAlpha, SetAlpha)
 LUA_ADD_PROPERTY_CUSTOM(acquire_events, GetAcquireEvents, SetAcquireEvents)
 LUA_ADD_METHOD(SendMessage);

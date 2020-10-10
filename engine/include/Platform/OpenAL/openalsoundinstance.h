@@ -28,5 +28,6 @@ private:
     uint8_t m_channels;
     int32_t m_sampleRate;
     uint8_t m_bitsPerSample;
+    bool m_hasSource{false};
 };
 }  // namespace de

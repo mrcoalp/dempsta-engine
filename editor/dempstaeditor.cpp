@@ -25,9 +25,13 @@ void DempstaEditor::OnAttach() {
     sphere.AddComponent<SpriteComponent>().texture = spriteSphere;
     sphere.AddComponent<ScriptComponent>("assets/scripts/sphere.lua");
 
-    auto sound = m_activeScene->CreateEntity("Sound");
-    sound.AddComponent<SoundComponent>("assets/sound/bg_music.wav");
-    sound.GetComponent<SoundComponent>().sound->Play();
+    auto bgMusic = m_activeScene->CreateEntity("Background Music");
+    bgMusic.AddComponent<SoundComponent>("assets/sound/bg_music.wav");
+    bgMusic.GetComponent<SoundComponent>().sound->Play();
+
+    auto protector = m_activeScene->CreateEntity("PROTECTOR!");
+    protector.AddComponent<SoundComponent>("assets/sound/iamtheprotectorofthissystem.wav");
+    protector.AddComponent<ScriptComponent>("assets/scripts/protector.lua");
 
     // for (size_t i = 0; i < 100; ++i) {
     //     auto mask = m_activeScene->CreateEntity("Mask_" + std::to_string(i));

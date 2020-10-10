@@ -30,6 +30,8 @@ public:
     LUA_METHOD(GetAlpha);
     LUA_METHOD(SetAlpha);
 
+    LUA_METHOD(PlaySound);
+
     LUA_METHOD(GetAcquireEvents);
     LUA_METHOD(SetAcquireEvents);
     LUA_METHOD(SendMessage);
@@ -37,5 +39,10 @@ public:
 private:
     de::Entity m_entity;
     friend class de::Scene;
+
+    template <typename Component>
+    bool check_component() {
+        return m_entity.HasComponent<Component>();
+    }
 };
 }  // namespace lua

@@ -41,7 +41,7 @@ Application::Application(const WindowProps& windowProps) {
 
 Application::~Application() {
     LE::CloseState();
-    SoundProvider::Release();
+    SoundProvider::Destroy();
 }
 
 void Application::OnEvent(Event& e) {

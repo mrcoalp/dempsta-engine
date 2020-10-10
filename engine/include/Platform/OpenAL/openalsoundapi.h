@@ -12,7 +12,11 @@ public:
 
     void Init() final;
 
-    void Release() final;
+    void Destroy() final;
+
+    bool CheckAndGetAvailableSource(uint32_t& source) final;
+
+    void ReleaseSource(uint32_t source) final;
 
 private:
     struct Internal {
@@ -21,5 +25,9 @@ private:
     };
 
     Scope<Internal> m_internal;
+
+    std::vector<uint32_t> m_availableSources;
+    std::vector<uint32_t> m_sourcesInUse;
+    std::vector<uint32_t> m_allSources;
 };
 }  // namespace de

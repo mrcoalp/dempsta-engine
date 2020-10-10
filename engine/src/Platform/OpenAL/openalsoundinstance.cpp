@@ -3,8 +3,21 @@
 #include <dr_wav/dr_wav.h>
 
 #include "Platform/OpenAL/openalutils.h"
+#include "Sound/soundprovider.h"
 
 namespace de {
+static ALenum GetFormat(uint8_t channels, uint8_t bitsPerSample) {
+    const bool stereo = channels > 1;
+    switch (bitsPerSample) {
+        case 8:
+            return stereo ? AL_FORMAT_STEREO8 : AL_FORMAT_MONO8;
+        case 16:
+            return stereo ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16;
+        default:
+            return AL_NONE;
+    }
+}
+
 OpenALSoundInstance::OpenALSoundInstance(const std::string& filePath) {
     drwav wav;
     if (drwav_init_file(&wav, filePath.c_str(), nullptr) == 0) {
@@ -15,18 +28,9 @@ OpenALSoundInstance::OpenALSoundInstance(const std::string& filePath) {
     m_channels = wav.channels;
     m_sampleRate = wav.sampleRate;
     m_bitsPerSample = wav.bitsPerSample;
+    m_format = GetFormat(m_channels, m_bitsPerSample);
 
     AL_CALL(alGenBuffers, 1, &m_buffer);
-
-    if (m_channels == 1 && m_bitsPerSample == 8) {
-        m_format = AL_FORMAT_MONO8;
-    } else if (m_channels == 1 && m_bitsPerSample == 16) {
-        m_format = AL_FORMAT_MONO16;
-    } else if (m_channels == 2 && m_bitsPerSample == 8) {
-        m_format = AL_FORMAT_STEREO8;
-    } else if (m_channels == 2 && m_bitsPerSample == 16) {
-        m_format = AL_FORMAT_STEREO16;
-    }
 
     std::vector<uint8_t> soundData;
     soundData.resize(wav.dataChunkDataSize);
@@ -39,30 +43,33 @@ OpenALSoundInstance::OpenALSoundInstance(const std::string& filePath) {
 
     AL_CALL(alBufferData, m_buffer, m_format, soundData.data(), soundData.size(), m_sampleRate);
 
-    AL_CALL(alGenSources, 1, &m_source);
-    AL_CALL(alSourcef, m_source, AL_PITCH, 1);
-    AL_CALL(alSourcef, m_source, AL_GAIN, 1.0f);
-    AL_CALL(alSource3f, m_source, AL_POSITION, 0, 0, 0);
-    AL_CALL(alSource3f, m_source, AL_VELOCITY, 0, 0, 0);
-    AL_CALL(alSourcei, m_source, AL_LOOPING, AL_FALSE);
-    AL_CALL(alSourcei, m_source, AL_BUFFER, m_buffer);
-
     drwav_uninit(&wav);
 }
 
 void OpenALSoundInstance::Update() {
-    if (m_state == SoundState::Playing) {
+    if (m_hasSource) {
         ALint state;
         AL_CALL(alGetSourcei, m_source, AL_SOURCE_STATE, &state);
-        if (state != AL_PLAYING) {
+        if (m_state == SoundState::Playing && state != AL_PLAYING) {
             Stop();
         }
     }
 }
 
 void OpenALSoundInstance::Play() {
-    AL_CALL(alSourcePlay, m_source);
-    m_state = SoundState::Playing;
+    Stop();
+    if (SoundProvider::CheckAndGetAvailableSource(m_source)) {
+        AL_CALL(alSourcef, m_source, AL_PITCH, 1);
+        AL_CALL(alSourcef, m_source, AL_GAIN, 1.0f);
+        AL_CALL(alSource3f, m_source, AL_POSITION, 0, 0, 0);
+        AL_CALL(alSource3f, m_source, AL_VELOCITY, 0, 0, 0);
+        AL_CALL(alSourcei, m_source, AL_LOOPING, AL_FALSE);
+        AL_CALL(alSourcei, m_source, AL_BUFFER, m_buffer);
+
+        AL_CALL(alSourcePlay, m_source);
+        m_state = SoundState::Playing;
+        m_hasSource = true;
+    }
 }
 
 void OpenALSoundInstance::Pause() {
@@ -74,8 +81,12 @@ void OpenALSoundInstance::Resume() {
 }
 
 void OpenALSoundInstance::Stop() {
-    alSourceStop(m_source);
-    alSourcei(m_source, AL_BUFFER, 0);
+    if (m_hasSource) {
+        AL_CALL(alSourceStop, m_source);
+        AL_CALL(alSourcei, m_source, AL_BUFFER, 0);
+        SoundProvider::ReleaseSource(m_source);
+        m_hasSource = false;
+    }
     m_state = SoundState::Stopped;
 }
 
