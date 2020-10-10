@@ -11,9 +11,17 @@ namespace de {
 enum class SoundState { Initial, Playing, Paused, Stopped };
 
 /**
- * @brief Holds all relevant audio data. To be defined in sound api implementation.
+ * @brief Holds all relevant audio data.
  */
-struct AudioData;
+struct AudioData {
+    bool looped{false};
+    uint8_t channels;
+    uint8_t bitsPerSample;
+    int32_t sampleRate;
+    float gain{1.f};
+    float pitch{1.f};
+    float pan{0.f};
+};
 
 class Sound {
 public:
@@ -72,11 +80,19 @@ public:
     [[nodiscard]] virtual bool IsPlaying() const = 0;
 
     /**
+     * @brief Whether or not the sound is paused.
+     *
+     * @return true
+     * @return false
+     */
+    [[nodiscard]] virtual bool IsPaused() const = 0;
+
+    /**
      * @brief Get the Audio Data ref object. To directly tweak properties.
      *
      * @return AudioData&
      */
-    [[nodiscard]] virtual AudioData& GetAudioData() = 0;
+    [[nodiscard]] virtual const AudioData& GetAudioData() const = 0;
 };
 
 class SoundInstance : public Sound {
@@ -90,6 +106,8 @@ public:
     static Ref<SoundInstance> CreateSound(const std::string& filePath);
 
     [[nodiscard]] inline bool IsPlaying() const final { return m_state == SoundState::Playing; }
+
+    [[nodiscard]] inline bool IsPaused() const final { return m_state == SoundState::Paused; }
 
 protected:
     SoundState m_state{SoundState::Initial};

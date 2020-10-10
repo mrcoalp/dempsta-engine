@@ -114,6 +114,51 @@ static void drawSpriteNode(Entity entity) {
     }
 }
 
+static void drawSoundNode(Entity entity) {
+    if (ImGui::TreeNodeEx((void*)typeid(SoundComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Sound")) {
+        ImGui::Spacing();
+        const auto& sound = entity.GetComponent<SoundComponent>().sound;
+        const auto& data = sound->GetAudioData();
+        ImGui::Text("Channels: %d", data.channels);
+        ImGui::Text("Sample Rate: %d", data.sampleRate);
+        ImGui::Text("Bits Per Channel: %d", data.bitsPerSample);
+        ImGui::Spacing();
+        if (ImGui::SmallButton("Play")) {
+            if (sound->IsPaused()) {
+                sound->Resume();
+            } else {
+                sound->Play();
+            }
+        }
+        ImGui::SameLine();
+        if (ImGui::SmallButton("Pause")) {
+            sound->Pause();
+        }
+        ImGui::SameLine();
+        if (ImGui::SmallButton("Stop")) {
+            sound->Stop();
+        }
+        ImGui::Spacing();
+        float gain = data.gain;
+        float pitch = data.pitch;
+        float pan = data.pan;
+        bool looped = data.looped;
+        if (ImGui::DragFloat("Gain", &gain, 0.05f, 0.f, 1.f)) {
+            sound->SetGain(gain);
+        }
+        if (ImGui::DragFloat("Pitch", &pitch, 0.05f, 0.5f, 2.f)) {
+            sound->SetPitch(pitch);
+        }
+        if (ImGui::DragFloat("Pan", &pan, 0.05f, -1.f, 1.f)) {
+            sound->SetPan(pan);
+        }
+        if (ImGui::Checkbox("Looped", &looped)) {
+            sound->SetLooped(looped);
+        }
+        ImGui::TreePop();
+    }
+}
+
 static void drawComponents(Entity entity) {
     if (entity.HasComponent<NameComponent>()) {
         auto& name = entity.GetComponent<NameComponent>().name;
@@ -138,6 +183,10 @@ static void drawComponents(Entity entity) {
     }
     if (entity.HasComponent<SpriteComponent>()) {
         drawSpriteNode(entity);
+        ImGui::Spacing();
+    }
+    if (entity.HasComponent<SoundComponent>()) {
+        drawSoundNode(entity);
         ImGui::Spacing();
     }
 }

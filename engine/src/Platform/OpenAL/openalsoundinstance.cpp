@@ -29,7 +29,7 @@ OpenALSoundInstance::OpenALSoundInstance(const std::string& filePath) {
     m_data.channels = wav.channels;
     m_data.sampleRate = wav.sampleRate;
     m_data.bitsPerSample = wav.bitsPerSample;
-    m_data.format = GetFormat(m_data.channels, m_data.bitsPerSample);
+    m_format = GetFormat(m_data.channels, m_data.bitsPerSample);
 
     AL_CALL(alGenBuffers, 1, &m_buffer);
 
@@ -42,7 +42,7 @@ OpenALSoundInstance::OpenALSoundInstance(const std::string& filePath) {
         return;
     }
 
-    AL_CALL(alBufferData, m_buffer, m_data.format, soundData.data(), soundData.size(), m_data.sampleRate);
+    AL_CALL(alBufferData, m_buffer, m_format, soundData.data(), soundData.size(), m_data.sampleRate);
 
     drwav_uninit(&wav);
 
@@ -65,7 +65,7 @@ void OpenALSoundInstance::Play() {
         AL_CALL(alSourcef, m_source, AL_GAIN, m_data.gain);
         AL_CALL(alSourcef, m_source, AL_PITCH, m_data.pitch);
         AL_CALL(alSource3f, m_source, AL_POSITION, m_data.pan, 0, 0);
-        AL_CALL(alSourcei, m_source, AL_LOOPING, m_data.looped);
+        AL_CALL(alSourcei, m_source, AL_LOOPING, m_data.looped ? AL_TRUE : AL_FALSE);
         AL_CALL(alSource3f, m_source, AL_VELOCITY, 0, 0, 0);
         AL_CALL(alSourcei, m_source, AL_BUFFER, m_buffer);
 
@@ -126,9 +126,9 @@ void OpenALSoundInstance::SetPan(float pan) {
 }
 
 void OpenALSoundInstance::SetLooped(bool looped) {
-    m_data.looped = looped ? AL_TRUE : AL_FALSE;
+    m_data.looped = looped;
     if (m_hasSource) {
-        AL_CALL(alSourcei, m_source, AL_LOOPING, m_data.looped);
+        AL_CALL(alSourcei, m_source, AL_LOOPING, m_data.looped ? AL_TRUE : AL_FALSE);
     }
 }
 

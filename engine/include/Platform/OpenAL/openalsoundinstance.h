@@ -5,17 +5,6 @@
 #include "Sound/sound.h"
 
 namespace de {
-struct AudioData {
-    ALenum format;
-    uint8_t channels;
-    int32_t sampleRate;
-    uint8_t bitsPerSample;
-    ALfloat gain{1.f};
-    ALfloat pitch{1.f};
-    ALfloat pan{0.f};
-    ALint looped{AL_FALSE};
-};
-
 class OpenALSoundInstance : public SoundInstance {
 public:
     explicit OpenALSoundInstance(const std::string& filePath);
@@ -44,12 +33,13 @@ public:
     [[nodiscard]] inline bool GetLooped() const final { return m_data.looped; }
     void SetLooped(bool looped) final;
 
-    [[nodiscard]] inline AudioData& GetAudioData() final { return m_data; }
+    [[nodiscard]] inline const AudioData& GetAudioData() const final { return m_data; }
 
 private:
+    bool m_hasSource{false};
     ALuint m_buffer;
     ALuint m_source;
-    bool m_hasSource{false};
+    ALenum m_format;
 
     AudioData m_data;
 };
