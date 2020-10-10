@@ -17,6 +17,7 @@ public:
 
     LUA_METHOD(GetName);
     LUA_METHOD(SetName);
+    // Transform
     LUA_METHOD(GetX);
     LUA_METHOD(SetX);
     LUA_METHOD(GetY);
@@ -29,8 +30,19 @@ public:
     LUA_METHOD(SetColor);
     LUA_METHOD(GetAlpha);
     LUA_METHOD(SetAlpha);
-
+    // Sound
     LUA_METHOD(PlaySound);
+    LUA_METHOD(PauseSound);
+    LUA_METHOD(ResumeSound);
+    LUA_METHOD(StopSound);
+    LUA_METHOD(GetGain);
+    LUA_METHOD(SetGain);
+    LUA_METHOD(GetPitch);
+    LUA_METHOD(SetPitch);
+    LUA_METHOD(GetPan);
+    LUA_METHOD(SetPan);
+    LUA_METHOD(GetLooped);
+    LUA_METHOD(SetLooped);
 
     LUA_METHOD(GetAcquireEvents);
     LUA_METHOD(SetAcquireEvents);

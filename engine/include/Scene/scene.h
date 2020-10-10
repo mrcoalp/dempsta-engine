@@ -41,7 +41,7 @@ public:
      * @param name Name of the entity. Adds a new NameComponent. Default = "New Entity"
      * @return Entity
      */
-    Entity CreateEntity(const std::string& name = "New Entity");
+    Entity CreateEntity(const std::string& name = "New Entity", bool addTransform = true);
 
 private:
     /**

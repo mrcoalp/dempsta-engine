@@ -89,10 +89,12 @@ void Scene::OnViewportResize(uint32_t width, uint32_t height) {
     });
 }
 
-Entity Scene::CreateEntity(const std::string& name) {
+Entity Scene::CreateEntity(const std::string& name, bool addTransform) {
     Entity entity(m_registry.create(), this);
-    entity.AddComponent<TransformComponent>();  // Add transform by default
     entity.AddComponent<NameComponent>(name);
+    if (addTransform) {
+        entity.AddComponent<TransformComponent>();  // Add transform by default
+    }
     return entity;
 }
 }  // namespace de

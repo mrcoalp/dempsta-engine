@@ -10,7 +10,10 @@ ScriptEntity::ScriptEntity(std::string scriptPath) : m_scriptPath(std::move(scri
     entityRef = de::CreateScope<LuaEntity>();
 }
 
-void ScriptEntity::ReloadScript() { m_scriptCode = de::FileUtils::ReadFile(m_scriptPath); }
+void ScriptEntity::ReloadScript() {
+    m_scriptCode = de::FileUtils::ReadFile(m_scriptPath);
+    OnInit();
+}
 
 void ScriptEntity::SetPath(const std::string& newPath) { m_scriptPath = newPath; }
 

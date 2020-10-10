@@ -15,6 +15,8 @@ public:
      */
     static inline void Destroy() { s_soundAPI->Destroy(); }
 
+    static inline void DestroyInstanceCallback(const std::function<void()>& callback) { s_soundAPI->DestroyInstanceCallback(callback); }
+
     /**
      * @brief Checks for available sources to be used in a sound instance. If there are any, source gets populated.
      *

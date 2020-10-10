@@ -13,6 +13,8 @@ public:
 
     virtual void Destroy() = 0;
 
+    virtual void DestroyInstanceCallback(const std::function<void()>& callback) = 0;
+
     virtual bool CheckAndGetAvailableSource(uint32_t& source) = 0;
 
     virtual void ReleaseSource(uint32_t source) = 0;

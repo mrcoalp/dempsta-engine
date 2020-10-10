@@ -25,11 +25,11 @@ void DempstaEditor::OnAttach() {
     sphere.AddComponent<SpriteComponent>().texture = spriteSphere;
     sphere.AddComponent<ScriptComponent>("assets/scripts/sphere.lua");
 
-    auto bgMusic = m_activeScene->CreateEntity("Background Music");
+    auto bgMusic = m_activeScene->CreateEntity("Background Music", false);
     bgMusic.AddComponent<SoundComponent>("assets/sound/bg_music.wav");
-    bgMusic.GetComponent<SoundComponent>().sound->Play();
+    bgMusic.AddComponent<ScriptComponent>("assets/scripts/bg_music.lua");
 
-    auto protector = m_activeScene->CreateEntity("PROTECTOR!");
+    auto protector = m_activeScene->CreateEntity("PROTECTOR!", false);
     protector.AddComponent<SoundComponent>("assets/sound/iamtheprotectorofthissystem.wav");
     protector.AddComponent<ScriptComponent>("assets/scripts/protector.lua");
 

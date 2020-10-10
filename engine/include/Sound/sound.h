@@ -10,6 +10,11 @@ namespace de {
  */
 enum class SoundState { Initial, Playing, Paused, Stopped };
 
+/**
+ * @brief Holds all relevant audio data. To be defined in sound api implementation.
+ */
+struct AudioData;
+
 class Sound {
 public:
     /**
@@ -42,6 +47,22 @@ public:
      */
     virtual void Unload() = 0;
 
+    [[nodiscard]] virtual float GetGain() const = 0;
+
+    virtual void SetGain(float gain) = 0;
+
+    [[nodiscard]] virtual float GetPitch() const = 0;
+
+    virtual void SetPitch(float pitch) = 0;
+
+    [[nodiscard]] virtual float GetPan() const = 0;
+
+    virtual void SetPan(float pan) = 0;
+
+    [[nodiscard]] virtual bool GetLooped() const = 0;
+
+    virtual void SetLooped(bool looped) = 0;
+
     /**
      * @brief Whether or not the sound is playing.
      *
@@ -49,6 +70,13 @@ public:
      * @return false
      */
     [[nodiscard]] virtual bool IsPlaying() const = 0;
+
+    /**
+     * @brief Get the Audio Data ref object. To directly tweak properties.
+     *
+     * @return AudioData&
+     */
+    [[nodiscard]] virtual AudioData& GetAudioData() = 0;
 };
 
 class SoundInstance : public Sound {

@@ -55,6 +55,11 @@ void OpenALSoundAPI::Destroy() {
         AL_CALL(alSourceStop, source);
         AL_CALL(alSourcei, source, AL_BUFFER, AL_NONE);
     }
+    AL_CALL(alDeleteSources, MAX_NUMBER_OF_SOURCES, &m_allSources[0]);
+    // TODO(mpinto): Replace this with a proper sound manager to unload all instances
+    for (const auto& destroyInstance : m_destroyInstanceCallbacks) {
+        destroyInstance();
+    }
     ALCboolean contextMadeCurrent = ALC_TRUE;
     ALC_CALL(alcMakeContextCurrent, contextMadeCurrent, m_internal->device, nullptr);
     ALC_CALL(alcDestroyContext, m_internal->device, m_internal->context);

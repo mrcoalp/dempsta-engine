@@ -89,6 +89,98 @@ int LuaEntity::PlaySound(lua_State*) {
     return 0;
 }
 
+int LuaEntity::PauseSound(lua_State*) {
+    if (!check_component<de::SoundComponent>()) {
+        return 0;
+    }
+    m_entity.GetComponent<de::SoundComponent>().sound->Pause();
+    return 0;
+}
+
+int LuaEntity::ResumeSound(lua_State*) {
+    if (!check_component<de::SoundComponent>()) {
+        return 0;
+    }
+    m_entity.GetComponent<de::SoundComponent>().sound->Resume();
+    return 0;
+}
+
+int LuaEntity::StopSound(lua_State*) {
+    if (!check_component<de::SoundComponent>()) {
+        return 0;
+    }
+    m_entity.GetComponent<de::SoundComponent>().sound->Stop();
+    return 0;
+}
+
+int LuaEntity::GetGain(lua_State*) {
+    if (!check_component<de::SoundComponent>()) {
+        LE::PushNull();
+        return 1;
+    }
+    LE::PushValue(m_entity.GetComponent<de::SoundComponent>().sound->GetGain());
+    return 1;
+}
+
+int LuaEntity::SetGain(lua_State*) {
+    if (!check_component<de::SoundComponent>()) {
+        return 0;
+    }
+    m_entity.GetComponent<de::SoundComponent>().sound->SetGain(LE::GetValue<float>());
+    return 0;
+}
+
+int LuaEntity::GetPitch(lua_State*) {
+    if (!check_component<de::SoundComponent>()) {
+        LE::PushNull();
+        return 1;
+    }
+    LE::PushValue(m_entity.GetComponent<de::SoundComponent>().sound->GetPitch());
+    return 1;
+}
+
+int LuaEntity::SetPitch(lua_State*) {
+    if (!check_component<de::SoundComponent>()) {
+        return 0;
+    }
+    m_entity.GetComponent<de::SoundComponent>().sound->SetPitch(LE::GetValue<float>());
+    return 0;
+}
+
+int LuaEntity::GetPan(lua_State*) {
+    if (!check_component<de::SoundComponent>()) {
+        LE::PushNull();
+        return 1;
+    }
+    LE::PushValue(m_entity.GetComponent<de::SoundComponent>().sound->GetPan());
+    return 1;
+}
+
+int LuaEntity::SetPan(lua_State*) {
+    if (!check_component<de::SoundComponent>()) {
+        return 0;
+    }
+    m_entity.GetComponent<de::SoundComponent>().sound->SetPan(LE::GetValue<float>());
+    return 0;
+}
+
+int LuaEntity::GetLooped(lua_State*) {
+    if (!check_component<de::SoundComponent>()) {
+        LE::PushNull();
+        return 1;
+    }
+    LE::PushValue(m_entity.GetComponent<de::SoundComponent>().sound->GetLooped());
+    return 1;
+}
+
+int LuaEntity::SetLooped(lua_State*) {
+    if (!check_component<de::SoundComponent>()) {
+        return 0;
+    }
+    m_entity.GetComponent<de::SoundComponent>().sound->SetLooped(LE::GetValue<bool>());
+    return 0;
+}
+
 int LuaEntity::GetAcquireEvents(lua_State*) {
     LE::PushValue(m_entity.GetComponent<de::ScriptComponent>().instance->acquireEvents);
     return 1;
@@ -129,6 +221,14 @@ LUA_ADD_PROPERTY_CUSTOM(color, GetColor, SetColor)
 LUA_ADD_METHOD(GetAlpha)
 LUA_ADD_METHOD(SetAlpha)
 LUA_ADD_METHOD(PlaySound)
+LUA_ADD_METHOD(PauseSound)
+LUA_ADD_METHOD(ResumeSound)
+LUA_ADD_METHOD(StopSound)
+LUA_ADD_PROPERTY_CUSTOM(gain, GetGain, SetGain)
+LUA_ADD_PROPERTY_CUSTOM(volume, GetGain, SetGain)
+LUA_ADD_PROPERTY_CUSTOM(pitch, GetPitch, SetPitch)
+LUA_ADD_PROPERTY_CUSTOM(pan, GetPan, SetPan)
+LUA_ADD_PROPERTY_CUSTOM(looped, GetLooped, SetLooped)
 LUA_ADD_PROPERTY_CUSTOM(alpha, GetAlpha, SetAlpha)
 LUA_ADD_PROPERTY_CUSTOM(acquire_events, GetAcquireEvents, SetAcquireEvents)
 LUA_ADD_METHOD(SendMessage);
