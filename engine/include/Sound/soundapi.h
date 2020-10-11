@@ -13,6 +13,7 @@ public:
 
     virtual void Destroy() = 0;
 
+    // TODO(mpinto): Remove this after implementing a proper assets manager
     virtual void DestroyInstanceCallback(const std::function<void()>& callback) = 0;
 
     virtual bool CheckAndGetAvailableSource(uint32_t& source) = 0;

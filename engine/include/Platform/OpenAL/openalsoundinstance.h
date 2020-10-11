@@ -46,7 +46,7 @@ private:
     bool loadFile(const std::string& filePath);
 
     /**
-     * @brief Updates stream, dequeuing used and queuing new buffers.
+     * @brief Updates stream, dequeue used and queuing new buffers.
      */
     void updateStream();
 

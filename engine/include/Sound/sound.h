@@ -15,8 +15,8 @@ enum class SoundState { Initial, Playing, Paused, Stopped };
  */
 struct AudioInfo {
     bool looped{false};
-    uint8_t channels;
-    uint8_t bitsPerSample;
+    uint16_t channels;
+    uint16_t bitsPerSample;
     int32_t sampleRate;
     float gain{1.f};
     float pitch{1.f};

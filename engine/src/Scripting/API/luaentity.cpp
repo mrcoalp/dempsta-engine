@@ -15,6 +15,7 @@ int LuaEntity::SetName(lua_State*) {
     return 0;
 }
 
+// TODO(mpinto): fix transform related properties setters and getters
 int LuaEntity::GetX(lua_State*) {
     LE::PushValue(m_entity.GetComponent<de::TransformComponent>().transform[3][0]);
     return 1;
