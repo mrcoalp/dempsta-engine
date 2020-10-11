@@ -1,6 +1,6 @@
 #pragma once
 
-#include <entity/registry.hpp>
+#include <entt/entt.hpp>
 
 #include "Core/timestep.h"
 #include "Events/event.h"
@@ -41,7 +41,7 @@ public:
      * @param name Name of the entity. Adds a new NameComponent. Default = "New Entity"
      * @return Entity
      */
-    Entity CreateEntity(const std::string& name = "New Entity");
+    Entity CreateEntity(const std::string& name = "New Entity", bool addTransform = true);
 
 private:
     /**

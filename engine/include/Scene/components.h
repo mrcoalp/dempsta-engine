@@ -7,6 +7,7 @@
 #include "Renderer/subtexture.h"
 #include "Scene/scenecamera.h"
 #include "Scripting/scriptentity.h"
+#include "Sound/sound.h"
 
 namespace de {
 struct NameComponent {
@@ -82,5 +83,12 @@ struct LabelComponent {
     glm::vec4 color = glm::vec4(1.0f);
 
     LabelComponent() = default;
+};
+
+struct SoundComponent {
+    Ref<SoundInstance> sound;
+
+    SoundComponent() = default;
+    explicit SoundComponent(const std::string& filePath) : sound(SoundInstance::CreateSound(filePath)) {}
 };
 }  // namespace de

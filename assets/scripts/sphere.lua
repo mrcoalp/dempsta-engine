@@ -11,6 +11,7 @@ function OnInit(data)
         y = 1.5,
         z = 0
     }
+    data.changeColor = true
 end
 
 local function changeColor(colorID)
@@ -29,7 +30,9 @@ end
 
 local function handleSecondElapsed(data)
     data.currentColor = (data.currentColor + 1) % 4
-    changeColor(data.currentColor)
+    if data.changeColor then
+        changeColor(data.currentColor)
+    end
 end
 
 local function handleMovement(data, delta)
@@ -58,7 +61,7 @@ function OnUpdate(data, delta)
     if data.moving then
         handleMovement(data, delta)
 
-        if this.scale.x > 4 then
+        if this.scale.x > 3 then
             data.mult = -1
         end
         if this.scale.x < 1.5 then
@@ -81,11 +84,25 @@ function OnUpdate(data, delta)
 end
 
 function OnEvent(data, event, action)
-    if event == EVT_KEY_PRESSED and action == KEY_SPACE then
-        data.moving = not data.moving
-        local buffer = DataBuffer()
-        buffer.moving = data.moving
-        this.SendMessage("moving", buffer)
+    if event == EVT_KEY_PRESSED then
+        if action == KEY_SPACE then
+            data.moving = not data.moving
+            data.changeColor = true
+            local buffer = DataBuffer()
+            buffer.moving = data.moving
+            this.SendMessage("moving", buffer)
+        end
+        if action == KEY_P then
+            data.moving = false
+            data.changeColor = false
+            this.color = '0xff0000'
+            this.scale = {
+                x = 5,
+                y = 5,
+                z = 0
+            }
+            this.SendMessage("protect", DataBuffer())
+        end
     end
 end
 

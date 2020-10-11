@@ -8,6 +8,7 @@
 #include "Scripting/API/helpers.h"
 #include "Scripting/API/luaentity.h"
 #include "Scripting/luaengine.h"
+#include "Sound/soundprovider.h"
 
 namespace de {
 static void RegisterScriptingAPI() {
@@ -29,6 +30,7 @@ Application::Application(const WindowProps& windowProps) {
     m_window->SetEventCallback([this](Event& e) { OnEvent(e); });
 
     Renderer::Init();
+    SoundProvider::Init();
     FontManager::GetInstance().InitFreeType();
     LE::Init();
     RegisterScriptingAPI();
@@ -37,7 +39,10 @@ Application::Application(const WindowProps& windowProps) {
     PushOverlay(m_imguiLayer);
 }
 
-Application::~Application() { LE::CloseState(); }
+Application::~Application() {
+    LE::CloseState();
+    SoundProvider::Destroy();
+}
 
 void Application::OnEvent(Event& e) {
     EventDispatcher eventDispatcher(e);
