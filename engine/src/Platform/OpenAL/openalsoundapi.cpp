@@ -5,12 +5,10 @@
 
 #include "Platform/OpenAL/openalutils.h"
 
-#define DR_WAV_IMPLEMENTATION
-#include "dr_wav/dr_wav.h"
-
-#define MAX_NUMBER_OF_SOURCES 32
-
 namespace de {
+/// Max number of sources that can play simultaneously.
+constexpr size_t MAX_NUMBER_OF_SOURCES{32};
+
 OpenALSoundAPI::OpenALSoundAPI() : m_internal(CreateScope<Internal>()) {}
 
 void OpenALSoundAPI::Init() {
@@ -22,13 +20,8 @@ void OpenALSoundAPI::Init() {
     DE_ASSERT(ALC_CALL(alcMakeContextCurrent, contextMadeCurrent, m_internal->device, m_internal->context) && contextMadeCurrent == ALC_TRUE,
               "Could not make audio context current!")
 
-    for (uint32_t i = 0; i < MAX_NUMBER_OF_SOURCES; ++i) {
-        ALuint src;
-        if (!AL_CALL(alGenSources, 1, &src)) {
-            break;
-        }
-        m_allSources.push_back(src);
-    }
+    m_allSources.resize(MAX_NUMBER_OF_SOURCES);
+    AL_CALL(alGenSources, MAX_NUMBER_OF_SOURCES, m_allSources.data());
     m_availableSources = m_allSources;
 }
 
@@ -55,7 +48,7 @@ void OpenALSoundAPI::Destroy() {
         AL_CALL(alSourceStop, source);
         AL_CALL(alSourcei, source, AL_BUFFER, AL_NONE);
     }
-    AL_CALL(alDeleteSources, MAX_NUMBER_OF_SOURCES, &m_allSources[0]);
+    AL_CALL(alDeleteSources, MAX_NUMBER_OF_SOURCES, m_allSources.data());
     // TODO(mpinto): Replace this with a proper sound manager to unload all instances
     for (const auto& destroyInstance : m_destroyInstanceCallbacks) {
         destroyInstance();
