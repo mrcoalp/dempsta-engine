@@ -13,7 +13,7 @@ enum class SoundState { Initial, Playing, Paused, Stopped };
 /**
  * @brief Holds all relevant audio data.
  */
-struct AudioData {
+struct AudioInfo {
     bool looped{false};
     uint8_t channels;
     uint8_t bitsPerSample;
@@ -90,9 +90,9 @@ public:
     /**
      * @brief Get the Audio Data ref object. To directly tweak properties.
      *
-     * @return AudioData&
+     * @return AudioInfo&
      */
-    [[nodiscard]] virtual const AudioData& GetAudioData() const = 0;
+    [[nodiscard]] virtual const AudioInfo& GetAudioInfo() const = 0;
 };
 
 class SoundInstance : public Sound {

@@ -118,10 +118,11 @@ static void drawSoundNode(Entity entity) {
     if (ImGui::TreeNodeEx((void*)typeid(SoundComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Sound")) {
         ImGui::Spacing();
         const auto& sound = entity.GetComponent<SoundComponent>().sound;
-        const auto& data = sound->GetAudioData();
+        const auto& data = sound->GetAudioInfo();
         ImGui::Text("Channels: %d", data.channels);
         ImGui::Text("Sample Rate: %d", data.sampleRate);
         ImGui::Text("Bits Per Channel: %d", data.bitsPerSample);
+        ImGui::Text("State: %s", sound->IsPlaying() ? "playing" : sound->IsPaused() ? "paused" : "stopped");
         ImGui::Spacing();
         if (ImGui::SmallButton("Play")) {
             if (sound->IsPaused()) {
