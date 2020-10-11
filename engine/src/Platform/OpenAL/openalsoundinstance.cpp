@@ -42,15 +42,12 @@ OpenALSoundInstance::OpenALSoundInstance(const std::string& filePath) {
     m_stream = m_soundData.size() > NUM_BUFFERS * BUFFER_SIZE;
 
     if (m_stream) {
-        m_allBuffers.resize(NUM_BUFFERS);
-        for (auto& buffer : m_allBuffers) {
-            AL_CALL(alGenBuffers, 1, &buffer);
-        }
-        m_freeBuffers = m_allBuffers;
+        m_buffers.resize(NUM_BUFFERS);
+        AL_CALL(alGenBuffers, NUM_BUFFERS, m_buffers.data());
     } else {
-        m_allBuffers.resize(1);
-        AL_CALL(alGenBuffers, 1, &m_allBuffers[0]);
-        AL_CALL(alBufferData, m_allBuffers[0], m_format, m_soundData.data(), m_soundData.size(), m_data.sampleRate);
+        m_buffers.resize(1);
+        AL_CALL(alGenBuffers, 1, m_buffers.data());
+        AL_CALL(alBufferData, m_buffers[0], m_format, m_soundData.data(), m_soundData.size(), m_data.sampleRate);
     }
 
     drwav_uninit(&wav);
@@ -65,7 +62,6 @@ void OpenALSoundInstance::updateStream() {
     while (buffersProcessed-- > 0) {
         ALuint buffer = 0;
         AL_CALL(alSourceUnqueueBuffers, m_source, 1, &buffer);
-        m_freeBuffers.push_back(buffer);
 
         ALsizei size = m_cursor + BUFFER_SIZE > m_soundData.size() ? m_soundData.size() - m_cursor : BUFFER_SIZE;
 
@@ -79,13 +75,23 @@ void OpenALSoundInstance::updateStream() {
 
 void OpenALSoundInstance::Update() {
     if (m_hasSource) {
-        ALint state;
         if (m_stream) {
             updateStream();
         }
+        ALint state;
         AL_CALL(alGetSourcei, m_source, AL_SOURCE_STATE, &state);
         if (m_state == SoundState::Playing && state != AL_PLAYING) {
-            Stop();
+            if (!m_stream) {  // When not streaming, we can stop the instance right here
+                Stop();
+                return;
+            }
+            // We need to handle the case where, for some reason, we stopped feeding new buffers to OpenAL
+            // however the instance has not yet finished
+            if (m_cursor >= m_soundData.size()) {  // If cursor has reached the end, play or stop instance based on lopping state
+                GetLooped() ? Play() : Stop();     // Looping is handled manually when streaming
+            } else {
+                AL_CALL(alSourcePlay, m_source);  // The instance is not finished yet, continue playing
+            }
         }
     }
 }
@@ -96,19 +102,19 @@ void OpenALSoundInstance::Play() {
         AL_CALL(alSourcef, m_source, AL_GAIN, m_data.gain);
         AL_CALL(alSourcef, m_source, AL_PITCH, m_data.pitch);
         AL_CALL(alSource3f, m_source, AL_POSITION, m_data.pan, 0, 0);
-        AL_CALL(alSourcei, m_source, AL_LOOPING, m_data.looped ? AL_TRUE : AL_FALSE);
         AL_CALL(alSource3f, m_source, AL_VELOCITY, 0, 0, 0);
-        if (m_stream) {
+        if (m_stream) {  // Start streaming to OpenAL
             size_t index = 0;
-            for (auto& buffer : m_freeBuffers) {
+            for (auto& buffer : m_buffers) {  // Queue all buffers
                 AL_CALL(alBufferData, buffer, m_format, &m_soundData[index * BUFFER_SIZE], BUFFER_SIZE, m_data.sampleRate);
                 AL_CALL(alSourceQueueBuffers, m_source, 1, &buffer);
                 ++index;
             }
-            m_freeBuffers.clear();
-            m_cursor = NUM_BUFFERS * BUFFER_SIZE;
+            m_cursor = NUM_BUFFERS * BUFFER_SIZE;  // Move cursor accordingly
         } else {
-            AL_CALL(alSourcei, m_source, AL_BUFFER, m_allBuffers[0]);
+            // Only set looping when not streaming, otherwise we would loop a buffer with part of the audio and not its entirety
+            AL_CALL(alSourcei, m_source, AL_LOOPING, m_data.looped ? AL_TRUE : AL_FALSE);
+            AL_CALL(alSourcei, m_source, AL_BUFFER, m_buffers[0]);
         }
 
         AL_CALL(alSourcePlay, m_source);
@@ -140,7 +146,6 @@ void OpenALSoundInstance::Stop() {
     if (m_hasSource) {
         AL_CALL(alSourceStop, m_source);
         AL_CALL(alSourcei, m_source, AL_BUFFER, AL_NONE);
-        m_freeBuffers = m_allBuffers;
         SoundProvider::ReleaseSource(m_source);
         m_hasSource = false;
     }
@@ -170,10 +175,11 @@ void OpenALSoundInstance::SetPan(float pan) {
 
 void OpenALSoundInstance::SetLooped(bool looped) {
     m_data.looped = looped;
-    if (m_hasSource) {
+    // Only set looping when not streaming, otherwise we would loop a buffer with part of the audio and not its entirety
+    if (m_hasSource && !m_stream) {
         AL_CALL(alSourcei, m_source, AL_LOOPING, m_data.looped ? AL_TRUE : AL_FALSE);
     }
 }
 
-void OpenALSoundInstance::Unload() { AL_CALL(alDeleteBuffers, m_stream ? NUM_BUFFERS : 1, m_allBuffers.data()); }
+void OpenALSoundInstance::Unload() { AL_CALL(alDeleteBuffers, m_stream ? NUM_BUFFERS : 1, m_buffers.data()); }
 }  // namespace de

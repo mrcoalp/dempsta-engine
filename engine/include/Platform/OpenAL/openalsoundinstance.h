@@ -44,8 +44,7 @@ private:
     bool m_hasSource{false};
     bool m_stream{false};
     size_t m_cursor{0};
-    std::vector<ALuint> m_allBuffers;
-    std::vector<ALuint> m_freeBuffers;
+    std::vector<ALuint> m_buffers;
     std::vector<uint8_t> m_soundData;
     ALuint m_source;
     ALenum m_format;
