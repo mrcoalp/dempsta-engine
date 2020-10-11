@@ -5,6 +5,9 @@
 #include "Sound/sound.h"
 
 namespace de {
+constexpr std::size_t NUM_BUFFERS{4};
+constexpr std::size_t BUFFER_SIZE{65536};  // 32kb of data in each buffer
+
 class OpenALSoundInstance : public SoundInstance {
 public:
     explicit OpenALSoundInstance(const std::string& filePath);
@@ -36,8 +39,14 @@ public:
     [[nodiscard]] inline const AudioData& GetAudioData() const final { return m_data; }
 
 private:
+    void updateStream();
+
     bool m_hasSource{false};
-    ALuint m_buffer;
+    bool m_stream{false};
+    size_t m_cursor{0};
+    std::vector<ALuint> m_allBuffers;
+    std::vector<ALuint> m_freeBuffers;
+    std::vector<uint8_t> m_soundData;
     ALuint m_source;
     ALenum m_format;
 
