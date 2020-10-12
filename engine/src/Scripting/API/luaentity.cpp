@@ -85,7 +85,11 @@ int LuaEntity::SetScale(lua_State*) {
     CHECK_SETTER(de::TransformComponent)
     auto& transform = m_entity.GetComponent<de::TransformComponent>().transform;
     auto [translate, rotation, scale] = de::Math::GetTransformDecomposition(transform);
-    auto scaleMap = LE::GetMap<float>({"x", "y", "z"});
+    auto scaleMap = LE::GetValue<LuaMap<float>>();
+    if (!LE::EnsureMapKeys({"x", "y", "z"}, scaleMap)) {
+        LOG_ENGINE_WARN("Scale map must contain: 'x' 'y' 'z' keys!");
+        return 0;
+    }
     scale = {scaleMap.at("x"), scaleMap.at("y"), scaleMap.at("z")};
     if (scale.x <= 0.f || scale.y <= 0.f || scale.z <= 0.f) {
         LOG_ENGINE_WARN("Tried to set invalid scale {}, {}, {} - all values must be greater than zero!", scale.x, scale.y, scale.z);

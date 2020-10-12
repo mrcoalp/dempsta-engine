@@ -3,11 +3,11 @@
 #include <lua.hpp>
 #include <map>
 #include <stdexcept>
-#include <unordered_map>
-#include <vector>
 
 namespace lua {
-// NOTE(MPINTO): Extend _type to check for primitive
+template <typename T>
+using LuaMap = std::unordered_map<std::string, T>;
+
 template <typename T>
 struct Type {};
 
@@ -80,12 +80,12 @@ public:
     }
 
     template <typename T>
-    [[nodiscard]] static std::unordered_map<std::string, T> GetMap(lua_State* L, const std::vector<const char*>& keys, int index) {
+    [[nodiscard]] static LuaMap<T> GetValue(Type<LuaMap<T>>, lua_State* L, int index) {
         ensure_type(lua_istable(L, index));
-        std::unordered_map<std::string, T> map;
-        for (const auto& key : keys) {
-            lua_getfield(L, -1, key);
-            map.emplace(key, GetValue(Type<T>{}, L, -1));
+        lua_pushnil(L);
+        LuaMap<T> map;
+        while (lua_next(L, -2) != 0) {
+            map.emplace(GetValue(Type<std::string>{}, L, -2), GetValue(Type<T>{}, L, -1));
             lua_pop(L, 1);
         }
         return map;

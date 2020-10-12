@@ -1,14 +1,12 @@
 #pragma once
 
-#include <lua.hpp>
-#include <string>
-#include <unordered_map>
+#include <algorithm>
 
 #include "Scripting/luaclass.h"
 #include "Scripting/marshalling.h"
 
 namespace lua {
-using lua_CFunction = int (*)(lua_State*);
+using LuaCFunction = int (*)(lua_State*);
 
 enum class LuaType {
     Null = LUA_TNIL,
@@ -48,7 +46,7 @@ public:
     [[nodiscard]] static inline lua_State* GetState() { return state; }
 
     /**
-     * @brief Loads Lua file script.
+     * @brief Loads Lua file script to stack.
      *
      * @param filePath Path to file to be loaded.
      * @return true File loaded successfully.
@@ -66,7 +64,7 @@ public:
     static bool RunCode(const char* code);
 
     /**
-     * @brief Get the type of value in stack at position index.
+     * @brief Get the type of value in stack, at position index.
      *
      * @param index Position of stack to check.
      * @return LuaType
@@ -82,7 +80,7 @@ public:
      */
     template <typename R>
     [[nodiscard]] static inline R GetValue(const int index = 1) {
-        return MS::GetValue(lua::Type<R>{}, state, index);
+        return MS::GetValue(Type<R>{}, state, index);
     }
 
     /**
@@ -100,9 +98,17 @@ public:
         return r;
     }
 
+    /**
+     * @brief Ensures that a given LuaMap contains all desired keys. Useful, since maps obtained from lua are dynamic.
+     *
+     * @tparam T LuaMap type.
+     * @param keys Keys to check in map.
+     * @param map Map to check.
+     * @return True if map contains all keys, false otherwise.
+     */
     template <typename T>
-    [[nodiscard]] static inline std::unordered_map<std::string, T> GetMap(const std::vector<const char*>& keys, int index = 1) {
-        return MS::GetMap<T>(state, keys, index);
+    static bool EnsureMapKeys(const std::vector<std::string>& keys, const LuaMap<T>& map) {
+        return std::all_of(keys.cbegin(), keys.cend(), [&map](const std::string& key) { return map.find(key) != map.cend(); });
     }
 
     /**
@@ -176,7 +182,7 @@ public:
      * @param name Name of the function to be used in Lua.
      * @param fn Function pointer.
      */
-    static void RegisterFunction(const char* name, lua_CFunction fn);
+    static void RegisterFunction(const char* name, LuaCFunction fn);
 
     /**
      * @brief Calls Lua function without arguments.

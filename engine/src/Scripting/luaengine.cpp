@@ -35,7 +35,7 @@ bool LuaEngine::RunCode(const char* code) {
 
 void LuaEngine::PushNull() { MS::PushNull(state); }
 
-void LuaEngine::RegisterFunction(const char* name, lua_CFunction fn) { lua_register(state, name, fn); }
+void LuaEngine::RegisterFunction(const char* name, LuaCFunction fn) { lua_register(state, name, fn); }
 
 bool LuaEngine::CallFunction(const char* name) {
     lua_getglobal(state, name);

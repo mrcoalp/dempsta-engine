@@ -24,7 +24,6 @@ void Scene::OnUpdate(const TimeStep& ts) {
             sc.Create();
             sc.instance->entityRef->m_entity = Entity(entity, this);
             sc.instance->ReloadScript();
-            sc.instance->OnInit();
         }
         sc.instance->OnUpdate(ts);
         // messaging
