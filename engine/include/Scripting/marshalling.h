@@ -120,7 +120,7 @@ public:
     }
 
     template <typename T>
-    static void PushValue(lua_State* L, const std::unordered_map<std::string, T>& value) {
+    static void PushValue(lua_State* L, const LuaMap<T>& value) {
         lua_newtable(L);
         for (const auto& element : value) {
             PushValue(L, element.first);
