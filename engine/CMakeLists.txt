@@ -37,7 +37,7 @@ if (BUILD_DOC)
     else (DOXYGEN_FOUND)
         message("Doxygen need to be installed to generate the doxygen documentation")
     endif (DOXYGEN_FOUND)
-endif(BUILD_DOC)
+endif (BUILD_DOC)
 
 file(GLOB_RECURSE SOURCES src/*.cpp)
 add_library(dempsta ${LIB_TYPE} ${SOURCES})

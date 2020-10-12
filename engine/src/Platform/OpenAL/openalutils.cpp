@@ -9,7 +9,7 @@ namespace de {
 bool OpenALUtils::check_al_errors(const std::string& filename, const std::uint_fast32_t line) {
     ALenum error = alGetError();
     if (error != AL_NO_ERROR) {
-        LOG_ENGINE_ERROR("AL ERROR: ({}: {})", filename, line);
+        LOG_ENGINE_ERROR("** AL ERROR ** - {}: {}", filename, line);
         switch (error) {
             case AL_INVALID_NAME:
                 LOG_ENGINE_ERROR("AL_INVALID_NAME: a bad name (ID) was passed to an OpenAL function");
@@ -37,7 +37,7 @@ bool OpenALUtils::check_al_errors(const std::string& filename, const std::uint_f
 bool OpenALUtils::check_alc_errors(const std::string& filename, const std::uint_fast32_t line, ALCdevice* device) {
     ALCenum error = alcGetError(device);
     if (error != ALC_NO_ERROR) {
-        LOG_ENGINE_ERROR("ALC ERROR: ({}: {})", filename, line);
+        LOG_ENGINE_ERROR("** ALC ERROR ** - {}: {}", filename, line);
         switch (error) {
             case ALC_INVALID_VALUE:
                 LOG_ENGINE_ERROR("ALC_INVALID_VALUE: an invalid value was passed to an OpenAL function");

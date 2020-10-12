@@ -41,6 +41,11 @@ private:
     static bool check_alc_errors(const std::string& filename, std::uint_fast32_t line, ALCdevice* device);
 };
 
+#ifdef NDEBUG
 #define AL_CALL(_function, ...) ::de::OpenALUtils::ALCallImpl(__FILE__, __LINE__, _function, __VA_ARGS__)
 #define ALC_CALL(function, device, ...) ::de::OpenALUtils::ALCCallImpl(__FILE__, __LINE__, function, device, __VA_ARGS__)
+#else
+#define AL_CALL(_function, ...)
+#define ALC_CALL(function, device, ...)
+#endif
 }  // namespace de

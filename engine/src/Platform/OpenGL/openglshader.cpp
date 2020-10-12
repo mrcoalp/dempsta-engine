@@ -4,6 +4,7 @@
 #include <utility>
 
 #include "Core/core.h"
+#include "Platform/OpenGL/openglutils.h"
 #include "Utils/fileutils.h"
 
 namespace de {
@@ -63,50 +64,50 @@ OpenGLShader::OpenGLShader(std::string name, const std::string& vertexSource, co
     compile(sources);
 }
 
-OpenGLShader::~OpenGLShader() { glDeleteProgram(m_rendererId); }
+OpenGLShader::~OpenGLShader() { GL_CALL(glDeleteProgram, m_rendererId); }
 
-void OpenGLShader::Bind() const { glUseProgram(m_rendererId); }
+void OpenGLShader::Bind() const { GL_CALL(glUseProgram, m_rendererId); }
 
-void OpenGLShader::Unbind() const { glUseProgram(0); }
+void OpenGLShader::Unbind() const { GL_CALL(glUseProgram, 0); }
 
 void OpenGLShader::UploadUniformInt(const std::string& name, int value) const {
-    int location = glGetUniformLocation(m_rendererId, name.c_str());
-    glUniform1i(location, value);
+    int location = GL_CALL(glGetUniformLocation, m_rendererId, name.c_str());
+    GL_CALL(glUniform1i, location, value);
 }
 
 void OpenGLShader::UploadUniformIntArray(const std::string& name, const int* values, uint32_t count) const {
-    int location = glGetUniformLocation(m_rendererId, name.c_str());
-    glUniform1iv(location, count, values);
+    int location = GL_CALL(glGetUniformLocation, m_rendererId, name.c_str());
+    GL_CALL(glUniform1iv, location, count, values);
 }
 
 void OpenGLShader::UploadUniformVec(const std::string& name, float value) const {
-    int location = glGetUniformLocation(m_rendererId, name.c_str());
-    glUniform1f(location, value);
+    int location = GL_CALL(glGetUniformLocation, m_rendererId, name.c_str());
+    GL_CALL(glUniform1f, location, value);
 }
 
 void OpenGLShader::UploadUniformVec2(const std::string& name, const glm::vec2& values) const {
-    int location = glGetUniformLocation(m_rendererId, name.c_str());
-    glUniform2f(location, values.x, values.y);
+    int location = GL_CALL(glGetUniformLocation, m_rendererId, name.c_str());
+    GL_CALL(glUniform2f, location, values.x, values.y);
 }
 
 void OpenGLShader::UploadUniformVec3(const std::string& name, const glm::vec3& values) const {
-    int location = glGetUniformLocation(m_rendererId, name.c_str());
-    glUniform3f(location, values.x, values.y, values.z);
+    int location = GL_CALL(glGetUniformLocation, m_rendererId, name.c_str());
+    GL_CALL(glUniform3f, location, values.x, values.y, values.z);
 }
 
 void OpenGLShader::UploadUniformVec4(const std::string& name, const glm::vec4& values) const {
-    int location = glGetUniformLocation(m_rendererId, name.c_str());
-    glUniform4f(location, values.x, values.y, values.z, values.w);
+    int location = GL_CALL(glGetUniformLocation, m_rendererId, name.c_str());
+    GL_CALL(glUniform4f, location, values.x, values.y, values.z, values.w);
 }
 
 void OpenGLShader::UploadUniformMat3(const std::string& name, const glm::mat3& matrix) const {
-    int location = glGetUniformLocation(m_rendererId, name.c_str());
-    glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+    int location = GL_CALL(glGetUniformLocation, m_rendererId, name.c_str());
+    GL_CALL(glUniformMatrix3fv, location, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
 void OpenGLShader::UploadUniformMat4(const std::string& name, const glm::mat4& matrix) const {
-    int location = glGetUniformLocation(m_rendererId, name.c_str());
-    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+    int location = GL_CALL(glGetUniformLocation, m_rendererId, name.c_str());
+    GL_CALL(glUniformMatrix4fv, location, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
 void OpenGLShader::compile(const std::unordered_map<GLenum, std::string>& sources) {
@@ -115,29 +116,29 @@ void OpenGLShader::compile(const std::unordered_map<GLenum, std::string>& source
 
     for (const auto& source : sources) {
         // Create an empty shader handle
-        GLuint shader = glCreateShader(source.first);
+        GLuint shader = GL_CALL(glCreateShader, source.first);
 
         // Send the shader source code to GL
         // Note that std::string's .c_str is NULL character terminated.
         const auto* code = source.second.c_str();
-        glShaderSource(shader, 1, &code, nullptr);
+        GL_CALL(glShaderSource, shader, 1, &code, nullptr);
 
         // Compile the shader
-        glCompileShader(shader);
+        GL_CALL(glCompileShader, shader);
 
         GLint isCompiled = 0;
-        glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
+        GL_CALL(glGetShaderiv, shader, GL_COMPILE_STATUS, &isCompiled);
 
         if (isCompiled == GL_FALSE) {
             GLint maxLength = 0;
-            glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
+            GL_CALL(glGetShaderiv, shader, GL_INFO_LOG_LENGTH, &maxLength);
 
             // The maxLength includes the NULL character
             std::vector<GLchar> infoLog(maxLength);
-            glGetShaderInfoLog(shader, maxLength, &maxLength, &infoLog[0]);
+            GL_CALL(glGetShaderInfoLog, shader, maxLength, &maxLength, &infoLog[0]);
 
             // We don't need the shader anymore.
-            glDeleteShader(shader);
+            GL_CALL(glDeleteShader, shader);
 
             // Use the infoLog as you see fit.
             DE_THROW("{0} shader not initialized: '{1}'", ShaderTypeToString(source.first), infoLog.data())
@@ -150,33 +151,33 @@ void OpenGLShader::compile(const std::unordered_map<GLenum, std::string>& source
     // Shaders are successfully compiled.
     // Now time to link them together into a program.
     // Get a program object and assign as your renderer id
-    m_rendererId = glCreateProgram();
+    m_rendererId = GL_CALL_NO_ARGS(glCreateProgram);
 
     // Attach our shaders to our program
     for (const auto& shader : shaders) {
-        glAttachShader(m_rendererId, shader);
+        GL_CALL(glAttachShader, m_rendererId, shader);
     }
 
     // Link our program
-    glLinkProgram(m_rendererId);
+    GL_CALL(glLinkProgram, m_rendererId);
 
     // Note the different functions here: glGetProgram* instead of glGetShader*.
     GLint _isLinked = 0;
-    glGetProgramiv(m_rendererId, GL_LINK_STATUS, &_isLinked);
+    GL_CALL(glGetProgramiv, m_rendererId, GL_LINK_STATUS, &_isLinked);
 
     if (_isLinked == GL_FALSE) {
         GLint maxLength = 0;
-        glGetProgramiv(m_rendererId, GL_INFO_LOG_LENGTH, &maxLength);
+        GL_CALL(glGetProgramiv, m_rendererId, GL_INFO_LOG_LENGTH, &maxLength);
 
         // The maxLength includes the NULL character
         std::vector<GLchar> infoLog(maxLength);
-        glGetProgramInfoLog(m_rendererId, maxLength, &maxLength, &infoLog[0]);
+        GL_CALL(glGetProgramInfoLog, m_rendererId, maxLength, &maxLength, &infoLog[0]);
 
         // We don't need the program anymore.
-        glDeleteProgram(m_rendererId);
+        GL_CALL(glDeleteProgram, m_rendererId);
         // Don't leak shaders either.
         for (const auto& shader : shaders) {
-            glDeleteShader(shader);
+            GL_CALL(glDeleteShader, shader);
         }
 
         DE_THROW("ProgramShader not initialized: '{0}'", infoLog.data())
@@ -184,7 +185,7 @@ void OpenGLShader::compile(const std::unordered_map<GLenum, std::string>& source
 
     // Always detach shaders after a successful link.
     for (const auto& shader : shaders) {
-        glDetachShader(m_rendererId, shader);
+        GL_CALL(glDetachShader, m_rendererId, shader);
     }
 }
 

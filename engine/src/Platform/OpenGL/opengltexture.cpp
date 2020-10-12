@@ -4,6 +4,7 @@
 #include <stb_image/stb_image.h>
 
 #include "Core/core.h"
+#include "Platform/OpenGL/openglutils.h"
 
 namespace de {
 OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height) : m_width(width), m_height(height), m_dataFormat(0) {
@@ -11,13 +12,13 @@ OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height) : m_width(widt
     GLenum internalFormat = GL_RGBA8;
     m_dataFormat = GL_RGBA;
 
-    glCreateTextures(GL_TEXTURE_2D, 1, &m_rendererId);
-    glTextureStorage2D(m_rendererId, 1, internalFormat, m_width, m_height);
+    GL_CALL(glCreateTextures, GL_TEXTURE_2D, 1, &m_rendererId);
+    GL_CALL(glTextureStorage2D, m_rendererId, 1, internalFormat, m_width, m_height);
 
-    glTextureParameteri(m_rendererId, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTextureParameteri(m_rendererId, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTextureParameteri(m_rendererId, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTextureParameteri(m_rendererId, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    GL_CALL(glTextureParameteri, m_rendererId, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    GL_CALL(glTextureParameteri, m_rendererId, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    GL_CALL(glTextureParameteri, m_rendererId, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    GL_CALL(glTextureParameteri, m_rendererId, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
 OpenGLTexture2D::OpenGLTexture2D(const std::string& filePath) : m_filePath(filePath), m_dataFormat(0) {
@@ -40,32 +41,32 @@ OpenGLTexture2D::OpenGLTexture2D(const std::string& filePath) : m_filePath(fileP
     } else if (channels == 4) {
         internalFormat = GL_RGBA8;
         m_dataFormat = dataFormat = GL_RGBA;
-        glTextureParameteri(m_rendererId, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTextureParameteri(m_rendererId, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     }
 
     DE_ASSERT(internalFormat && dataFormat, "Invalid RGB formats!")
 
-    glCreateTextures(GL_TEXTURE_2D, 1, &m_rendererId);
-    glTextureStorage2D(m_rendererId, 1, internalFormat, m_width, m_height);
+    GL_CALL(glCreateTextures, GL_TEXTURE_2D, 1, &m_rendererId);
+    GL_CALL(glTextureStorage2D, m_rendererId, 1, internalFormat, m_width, m_height);
 
-    glTextureParameteri(m_rendererId, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTextureParameteri(m_rendererId, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    GL_CALL(glTextureParameteri, m_rendererId, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    GL_CALL(glTextureParameteri, m_rendererId, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    GL_CALL(glTextureParameteri, m_rendererId, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    GL_CALL(glTextureParameteri, m_rendererId, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    glTextureSubImage2D(m_rendererId, 0, 0, 0, m_width, m_height, dataFormat, GL_UNSIGNED_BYTE, data);
+    GL_CALL(glTextureSubImage2D, m_rendererId, 0, 0, 0, m_width, m_height, dataFormat, GL_UNSIGNED_BYTE, data);
 
     stbi_image_free(data);
 }
 
-OpenGLTexture2D::~OpenGLTexture2D() { glDeleteTextures(1, &m_rendererId); }
+OpenGLTexture2D::~OpenGLTexture2D() { GL_CALL(glDeleteTextures, 1, &m_rendererId); }
 
 void OpenGLTexture2D::SetData(void* data, const glm::vec2& offset) {
-    glTextureSubImage2D(m_rendererId, 0, offset.x, offset.y, m_width, m_height, m_dataFormat, GL_UNSIGNED_BYTE, data);
+    GL_CALL(glTextureSubImage2D, m_rendererId, 0, offset.x, offset.y, m_width, m_height, m_dataFormat, GL_UNSIGNED_BYTE, data);
 }
 
 void OpenGLTexture2D::SetData(void* data, const glm::vec2& offset, unsigned width, unsigned height) {
-    glTextureSubImage2D(m_rendererId, 0, offset.x, offset.y, width, height, m_dataFormat, GL_UNSIGNED_BYTE, data);
+    GL_CALL(glTextureSubImage2D, m_rendererId, 0, offset.x, offset.y, width, height, m_dataFormat, GL_UNSIGNED_BYTE, data);
 }
 
-void OpenGLTexture2D::Bind(unsigned slot) const { glBindTextureUnit(slot, m_rendererId); }
+void OpenGLTexture2D::Bind(unsigned slot) const { GL_CALL(glBindTextureUnit, slot, m_rendererId); }
 }  // namespace de
