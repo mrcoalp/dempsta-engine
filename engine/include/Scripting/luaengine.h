@@ -194,7 +194,7 @@ public:
     static bool CallFunction(const char* name);
 
     /**
-     * @brief Calls Lua funtion.
+     * @brief Calls Lua function.
      *
      * @tparam Args Lua function argument types.
      * @param name Name of the Lua function.
@@ -215,7 +215,7 @@ public:
     }
 
     /**
-     * @brief Calls Lua funtion and saves return in lValue.
+     * @brief Calls Lua function and saves return in lValue.
      *
      * @tparam T Return type for lValue.
      * @tparam Args Args Lua function argument types.

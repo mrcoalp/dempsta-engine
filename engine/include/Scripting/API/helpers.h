@@ -158,7 +158,7 @@ public:
         LE::PushGlobalVariable("EVT_KEY_RELEASE", static_cast<int>(de::EventType::KeyReleased));
         LE::PushGlobalVariable("EVT_KEY_TYPED", static_cast<int>(de::EventType::KeyTyped));
         LE::PushGlobalVariable("EVT_MOUSE_BTN_PRESSED", static_cast<int>(de::EventType::MouseBtnPressed));
-        LE::PushGlobalVariable("EVT_MOUVE_BTN_RELEASED", static_cast<int>(de::EventType::MouseBtnReleased));
+        LE::PushGlobalVariable("EVT_MOUSE_BTN_RELEASED", static_cast<int>(de::EventType::MouseBtnReleased));
         LE::PushGlobalVariable("EVT_MOUSE_MOVED", static_cast<int>(de::EventType::MouseMoved));
         LE::PushGlobalVariable("EVT_MOUSE_SCROLLED", static_cast<int>(de::EventType::MouseScrolled));
     }

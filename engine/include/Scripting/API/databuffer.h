@@ -63,7 +63,7 @@ public:
     /**
      * @brief Construct a new lua data buffer object inside Lua
      *
-     * @warning Use with carefull since lua does not handle garbage collection for this class.
+     * @warning Use carefully, since lua does not handle garbage collection for this class.
      * Ensure a proper object deletion in C++ land when constructing inside lua.
      *
      * @param L Lua state.
