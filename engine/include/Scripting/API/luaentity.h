@@ -6,6 +6,23 @@
 #include "Scripting/binding.h"
 #include "Scripting/luaengine.h"
 
+#ifndef CHECK_GETTER
+#define CHECK_GETTER(_component)                                                \
+    if (!m_entity.HasComponent<_component>()) {                                 \
+        LOG_ENGINE_WARN("Component {} is not present in entity!", #_component); \
+        LE::PushNull();                                                         \
+        return 1;                                                               \
+    }
+#endif
+
+#ifndef CHECK_SETTER
+#define CHECK_SETTER(_component)                                                \
+    if (!m_entity.HasComponent<_component>()) {                                 \
+        LOG_ENGINE_WARN("Component {} is not present in entity!", #_component); \
+        return 0;                                                               \
+    }
+#endif
+
 namespace lua {
 class LuaEntity {
 public:
@@ -52,9 +69,12 @@ private:
     de::Entity m_entity;
     friend class de::Scene;
 
-    template <typename Component>
-    bool check_component() {
-        return m_entity.HasComponent<Component>();
-    }
+    glm::vec3 getTranslation();
+
+    glm::vec3 getRotation();
+
+    glm::vec3 getScale();
+
+    void setTranslation(size_t index, float value);
 };
 }  // namespace lua

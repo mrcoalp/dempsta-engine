@@ -2,30 +2,15 @@
 
 #include <imgui.h>
 
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/matrix_decompose.hpp>
-#include <glm/gtx/quaternion.hpp>
-
+#include "Core/math.h"
 #include "Scene/components.h"
 
 namespace de {
-static std::tuple<glm::vec3, glm::vec3, glm::vec3> GetTransformDecomposition(const glm::mat4& transform) {
-    glm::vec3 scale;
-    glm::vec3 translation;
-    glm::vec3 skew;
-    glm::vec4 perspective;
-    glm::quat orientation;
-    glm::decompose(transform, scale, orientation, translation, skew, perspective);
-    glm::vec3 rotation = glm::degrees(glm::eulerAngles(orientation));
-
-    return {translation, rotation, scale};
-}
-
 static void drawTransformNode(Entity entity) {
     if (ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Transform")) {
         ImGui::Spacing();
         auto& transform = entity.GetComponent<TransformComponent>().transform;
-        auto [translate, rotation, scale] = GetTransformDecomposition(transform);
+        auto [translate, rotation, scale] = Math::GetTransformDecomposition(transform);
         bool dirty = false;
         if (ImGui::DragFloat3("Position", glm::value_ptr(translate), 0.1f)) {
             dirty = true;
@@ -34,7 +19,7 @@ static void drawTransformNode(Entity entity) {
             dirty = true;
         }
         if (ImGui::DragFloat3("Scale", glm::value_ptr(scale), 0.1f)) {
-            dirty = true;
+            dirty = scale.x > 0.f && scale.y > 0.f && scale.z > 0.f;
         }
 
         if (dirty) {

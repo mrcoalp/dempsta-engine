@@ -9,7 +9,7 @@ function OnInit(data)
     this.scale = {
         x = 1.5,
         y = 1.5,
-        z = 0
+        z = 1
     }
     data.changeColor = true
 end
@@ -71,7 +71,7 @@ function OnUpdate(data, delta)
         this.scale = {
             x = this.scale.x + data.mult * delta,
             y = this.scale.y + data.mult * delta,
-            z = 0
+            z = this.scale.z
         }
     end
 

@@ -1,5 +1,9 @@
 #pragma once
 
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
+#include <glm/gtx/quaternion.hpp>
+
 namespace de {
 class Math {
 public:
@@ -25,6 +29,17 @@ public:
             return maxValue;
         }
         return value;
+    }
+
+    static std::tuple<glm::vec3, glm::vec3, glm::vec3> GetTransformDecomposition(const glm::mat4& transform) {
+        glm::vec3 scale;
+        glm::vec3 translation;
+        glm::vec3 skew;
+        glm::vec4 perspective;
+        glm::quat orientation;
+        glm::decompose(transform, scale, orientation, translation, skew, perspective);
+        glm::vec3 rotation = glm::degrees(glm::eulerAngles(orientation));
+        return {translation, rotation, scale};
     }
 };
 }  // namespace de

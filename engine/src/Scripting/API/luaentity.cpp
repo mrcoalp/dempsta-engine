@@ -1,64 +1,97 @@
 #include "Scripting/API/luaentity.h"
 
+#include "Core/math.h"
 #include "Renderer/color.h"
 #include "Scene/components.h"
 #include "Scripting/messaging.h"
 
 namespace lua {
+glm::vec3 LuaEntity::getTranslation() {
+    return std::get<0>(de::Math::GetTransformDecomposition(m_entity.GetComponent<de::TransformComponent>().transform));
+}
+
+glm::vec3 LuaEntity::getRotation() {
+    return std::get<1>(de::Math::GetTransformDecomposition(m_entity.GetComponent<de::TransformComponent>().transform));
+}
+
+glm::vec3 LuaEntity::getScale() {
+    return std::get<2>(de::Math::GetTransformDecomposition(m_entity.GetComponent<de::TransformComponent>().transform));
+}
+
+void LuaEntity::setTranslation(size_t index, float value) {
+    auto& transform = m_entity.GetComponent<de::TransformComponent>().transform;
+    auto [translate, rotation, scale] = de::Math::GetTransformDecomposition(transform);
+    translate[index] = value;
+    transform = glm::translate(glm::mat4(1.0f), translate) * glm::toMat4(glm::quat(glm::radians(rotation))) * glm::scale(glm::mat4(1.0f), scale);
+}
+
 int LuaEntity::GetName(lua_State*) {
+    CHECK_GETTER(de::NameComponent)
     LE::PushValue(m_entity.GetComponent<de::NameComponent>().name);
     return 1;
 }
 
 int LuaEntity::SetName(lua_State*) {
+    CHECK_SETTER(de::NameComponent)
     m_entity.GetComponent<de::NameComponent>().name = LE::GetValue<std::string>();
     return 0;
 }
 
-// TODO(mpinto): fix transform related properties setters and getters
 int LuaEntity::GetX(lua_State*) {
-    LE::PushValue(m_entity.GetComponent<de::TransformComponent>().transform[3][0]);
+    CHECK_GETTER(de::TransformComponent)
+    LE::PushValue(getTranslation().x);
     return 1;
 }
 
 int LuaEntity::SetX(lua_State*) {
-    m_entity.GetComponent<de::TransformComponent>().transform[3][0] = LE::GetValue<float>();
+    CHECK_SETTER(de::TransformComponent)
+    setTranslation(0, LE::GetValue<float>());
     return 0;
 }
 
 int LuaEntity::GetY(lua_State*) {
-    LE::PushValue(m_entity.GetComponent<de::TransformComponent>().transform[3][1]);
+    CHECK_GETTER(de::TransformComponent)
+    LE::PushValue(getTranslation().y);
     return 1;
 }
 
 int LuaEntity::SetY(lua_State*) {
-    m_entity.GetComponent<de::TransformComponent>().transform[3][1] = LE::GetValue<float>();
+    CHECK_SETTER(de::TransformComponent)
+    setTranslation(1, LE::GetValue<float>());
     return 0;
 }
 
 int LuaEntity::GetZ(lua_State*) {
-    LE::PushValue(m_entity.GetComponent<de::TransformComponent>().transform[3][2]);
+    CHECK_GETTER(de::TransformComponent)
+    LE::PushValue(getTranslation().z);
     return 1;
 }
 
 int LuaEntity::SetZ(lua_State*) {
-    m_entity.GetComponent<de::TransformComponent>().transform[3][2] = LE::GetValue<float>();
+    CHECK_SETTER(de::TransformComponent)
+    setTranslation(2, LE::GetValue<float>());
     return 0;
 }
 
 int LuaEntity::GetScale(lua_State*) {
-    const auto& transform = m_entity.GetComponent<de::TransformComponent>().transform;
-    std::unordered_map<std::string, float> scale = {{"x", transform[0][0]}, {"y", transform[1][1]}, {"z", transform[2][2]}};
-    LE::PushValue(scale);
+    CHECK_GETTER(de::TransformComponent)
+    auto scale = getScale();
+    std::unordered_map<std::string, float> scaleMap = {{"x", scale.x}, {"y", scale.y}, {"z", scale.z}};
+    LE::PushValue(scaleMap);
     return 1;
 }
 
 int LuaEntity::SetScale(lua_State*) {
+    CHECK_SETTER(de::TransformComponent)
     auto& transform = m_entity.GetComponent<de::TransformComponent>().transform;
-    auto scale = LE::GetMap<float>({"x", "y", "z"});
-    transform[0][0] = scale["x"];
-    transform[1][1] = scale["y"];
-    transform[2][2] = scale["z"];
+    auto [translate, rotation, scale] = de::Math::GetTransformDecomposition(transform);
+    auto scaleMap = LE::GetMap<float>({"x", "y", "z"});
+    scale = {scaleMap.at("x"), scaleMap.at("y"), scaleMap.at("z")};
+    if (scale.x <= 0.f || scale.y <= 0.f || scale.z <= 0.f) {
+        LOG_ENGINE_WARN("Tried to set invalid scale {}, {}, {} - all values must be greater than zero!", scale.x, scale.y, scale.z);
+        return 0;
+    }
+    transform = glm::translate(glm::mat4(1.0f), translate) * glm::toMat4(glm::quat(glm::radians(rotation))) * glm::scale(glm::mat4(1.0f), scale);
     return 0;
 }
 
@@ -83,101 +116,73 @@ int LuaEntity::SetAlpha(lua_State*) {
 }
 
 int LuaEntity::PlaySound(lua_State*) {
-    if (!check_component<de::SoundComponent>()) {
-        return 0;
-    }
+    CHECK_SETTER(de::SoundComponent)
     m_entity.GetComponent<de::SoundComponent>().sound->Play();
     return 0;
 }
 
 int LuaEntity::PauseSound(lua_State*) {
-    if (!check_component<de::SoundComponent>()) {
-        return 0;
-    }
+    CHECK_SETTER(de::SoundComponent)
     m_entity.GetComponent<de::SoundComponent>().sound->Pause();
     return 0;
 }
 
 int LuaEntity::ResumeSound(lua_State*) {
-    if (!check_component<de::SoundComponent>()) {
-        return 0;
-    }
+    CHECK_SETTER(de::SoundComponent)
     m_entity.GetComponent<de::SoundComponent>().sound->Resume();
     return 0;
 }
 
 int LuaEntity::StopSound(lua_State*) {
-    if (!check_component<de::SoundComponent>()) {
-        return 0;
-    }
+    CHECK_SETTER(de::SoundComponent)
     m_entity.GetComponent<de::SoundComponent>().sound->Stop();
     return 0;
 }
 
 int LuaEntity::GetGain(lua_State*) {
-    if (!check_component<de::SoundComponent>()) {
-        LE::PushNull();
-        return 1;
-    }
+    CHECK_GETTER(de::SoundComponent)
     LE::PushValue(m_entity.GetComponent<de::SoundComponent>().sound->GetGain());
     return 1;
 }
 
 int LuaEntity::SetGain(lua_State*) {
-    if (!check_component<de::SoundComponent>()) {
-        return 0;
-    }
+    CHECK_SETTER(de::SoundComponent)
     m_entity.GetComponent<de::SoundComponent>().sound->SetGain(LE::GetValue<float>());
     return 0;
 }
 
 int LuaEntity::GetPitch(lua_State*) {
-    if (!check_component<de::SoundComponent>()) {
-        LE::PushNull();
-        return 1;
-    }
+    CHECK_GETTER(de::SoundComponent)
     LE::PushValue(m_entity.GetComponent<de::SoundComponent>().sound->GetPitch());
     return 1;
 }
 
 int LuaEntity::SetPitch(lua_State*) {
-    if (!check_component<de::SoundComponent>()) {
-        return 0;
-    }
+    CHECK_SETTER(de::SoundComponent)
     m_entity.GetComponent<de::SoundComponent>().sound->SetPitch(LE::GetValue<float>());
     return 0;
 }
 
 int LuaEntity::GetPan(lua_State*) {
-    if (!check_component<de::SoundComponent>()) {
-        LE::PushNull();
-        return 1;
-    }
+    CHECK_GETTER(de::SoundComponent)
     LE::PushValue(m_entity.GetComponent<de::SoundComponent>().sound->GetPan());
     return 1;
 }
 
 int LuaEntity::SetPan(lua_State*) {
-    if (!check_component<de::SoundComponent>()) {
-        return 0;
-    }
+    CHECK_SETTER(de::SoundComponent)
     m_entity.GetComponent<de::SoundComponent>().sound->SetPan(LE::GetValue<float>());
     return 0;
 }
 
 int LuaEntity::GetLooped(lua_State*) {
-    if (!check_component<de::SoundComponent>()) {
-        LE::PushNull();
-        return 1;
-    }
+    CHECK_GETTER(de::SoundComponent)
     LE::PushValue(m_entity.GetComponent<de::SoundComponent>().sound->GetLooped());
     return 1;
 }
 
 int LuaEntity::SetLooped(lua_State*) {
-    if (!check_component<de::SoundComponent>()) {
-        return 0;
-    }
+    CHECK_SETTER(de::SoundComponent)
     m_entity.GetComponent<de::SoundComponent>().sound->SetLooped(LE::GetValue<bool>());
     return 0;
 }
