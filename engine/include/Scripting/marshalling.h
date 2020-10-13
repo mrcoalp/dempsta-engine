@@ -3,6 +3,7 @@
 #include <lua.hpp>
 #include <map>
 #include <stdexcept>
+#include <unordered_map>
 
 namespace lua {
 template <typename T>
