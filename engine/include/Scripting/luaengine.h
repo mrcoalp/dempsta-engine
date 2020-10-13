@@ -210,8 +210,7 @@ public:
             return false;
         }
         PushValues(std::forward<Args>(args)...);
-        lua_call(state, sizeof...(Args), 0);
-        return true;
+        return checkStatus(lua_pcall(state, sizeof...(Args), 0, 0), "Failed to call LUA function");
     }
 
     /**
@@ -233,7 +232,11 @@ public:
             return false;
         }
         PushValues(std::forward<Args>(args)...);
-        lua_call(state, sizeof...(Args), 1);
+        if (!checkStatus(lua_pcall(state, sizeof...(Args), 1, 0), "Failed to call LUA function")) {
+            lValue = T{};
+            lua_pop(state, 1);
+            return false;
+        }
         lValue = GetValue<T>(-1);
         lua_pop(state, 1);
         return true;
