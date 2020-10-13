@@ -46,6 +46,11 @@ public:
     [[nodiscard]] static inline lua_State* GetState() { return state; }
 
     /**
+     * @brief Prints all values current in the stack. Useful for debug purposes.
+     */
+    static void PrintStackDump();
+
+    /**
      * @brief Loads Lua file script to stack.
      *
      * @param filePath Path to file to be loaded.
@@ -211,6 +216,32 @@ public:
         }
         PushValues(std::forward<Args>(args)...);
         return checkStatus(lua_pcall(state, sizeof...(Args), 0, 0), "Failed to call LUA function");
+    }
+
+    /**
+     * @brief Calls Lua function and saves return in lValue.
+     *
+     * @tparam T Return type for lValue.
+     * @param lValue Return from Lua function.
+     * @param name Name of the Lua function.
+     * @return true Function successfully called.
+     * @return false Unable to call function.
+     */
+    template <typename T>
+    static bool CallFunction(T& lValue, const char* name) {
+        lua_getglobal(state, name);
+        if (!lua_isfunction(state, -1)) {
+            lua_pop(state, 1);
+            return false;
+        }
+        if (!checkStatus(lua_pcall(state, 0, 1, 0), "Failed to call LUA function")) {
+            lValue = T{};
+            lua_pop(state, 1);
+            return false;
+        }
+        lValue = GetValue<T>(-1);
+        lua_pop(state, 1);
+        return true;
     }
 
     /**

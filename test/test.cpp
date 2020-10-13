@@ -22,7 +22,7 @@ int RunTests() {
             } else {
                 LOG_ERROR("'{}' failed", test.first);
             }
-        } catch (std::exception& e) {
+        } catch (const std::exception& e) {
             LOG_ERROR("'{}' raised an exception: {}", test.first, e.what());
         } catch (...) {
             LOG_ERROR("'{}' raised an unknown exception", test.first);

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "dempsta.h"
 #include "Scripting/API/databuffer.h"
+#include "dempsta.h"
 
 int testClass = -1;
 
@@ -56,6 +56,7 @@ bool test_call_lua_function_from_cpp() {
     std::string s;
     int i;
     std::vector<double> vecRet;
+    lua::LuaFunction fun;
     LE::Init();
     LE::RegisterClass<Script>();
     LE::LoadFile("scripts/luafunctions.lua");
@@ -74,6 +75,13 @@ bool test_call_lua_function_from_cpp() {
     if (!LE::CallFunction(vecRet, "VecTest", 2.2, 3.14, 4.0)) {
         return false;
     }
+    if (!LE::CallFunction(fun, "TestCallback")) {
+        return false;
+    }
+    if (!fun()) {
+        return false;
+    }
+    fun.Unload();
     LE::CloseState();
     return s == "99" && i == 10 && o.GetProp() == 1 && vecRet.size() == 3 && vecRet[1] == 3.14;
 }

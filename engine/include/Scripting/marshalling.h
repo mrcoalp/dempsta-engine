@@ -12,6 +12,80 @@ using LuaMap = std::unordered_map<std::string, T>;
 template <typename T>
 struct Type {};
 
+/**
+ * @brief Stores a Lua function in a table and saves its index. It can then be used to call that function.
+ * When not needed, reference must be manually unloaded.
+ */
+class LuaFunction {
+public:
+    LuaFunction() = default;
+
+    LuaFunction(lua_State* L, int index) : m_state(L) { Load(index); }
+
+    /**
+     * @brief Checks if key is set, and actions are allowed.
+     *
+     * @return true Valid actions, key is set.
+     * @return false Invalid actions, key is not set.
+     */
+    inline bool IsLoaded() const { return m_key != -1; }
+
+    /**
+     * @brief Creates function reference in lua registry and saves its key.
+     *
+     * @param index Index, in stack, of function to load.
+     * @return true Function was successfully loaded.
+     * @return false Function could not be loaded.
+     */
+    bool Load(int index) {
+        lua_pushvalue(m_state, index);
+        if (lua_isfunction(m_state, -1)) {
+            m_key = luaL_ref(m_state, LUA_REGISTRYINDEX);
+        }
+        lua_pop(m_state, 1);
+        return IsLoaded();
+    }
+
+    /**
+     * @brief Unloads reference from lua registry and resets key.
+     */
+    void Unload() {
+        if (IsLoaded()) {
+            luaL_unref(m_state, LUA_REGISTRYINDEX, m_key);
+            m_key = -1;
+        }
+    }
+
+    /**
+     * @brief Calls saved lua function.
+     *
+     * @return true Function called with success.
+     * @return false Function call returned errors or action is not valid.
+     */
+    bool Call() const {
+        if (IsLoaded()) {
+            lua_rawgeti(m_state, LUA_REGISTRYINDEX, m_key);
+            int status = lua_pcall(m_state, 0, 0, 0);
+            lua_pop(m_state, 1);
+            return status == LUA_OK;
+        }
+        return false;
+    }
+
+    bool operator()() { return Call(); }
+
+private:
+    /**
+     * @brief Key to later retrieve lua function.
+     */
+    int m_key{-1};
+
+    /**
+     * @brief Lua state.
+     */
+    lua_State* m_state{nullptr};
+};
+
 class Marshalling {
 public:
     static inline int GetValue(Type<int>, lua_State* L, int index) {
@@ -54,6 +128,11 @@ public:
     static inline void* GetValue(Type<void*>, lua_State* L, int index) {
         ensure_type(lua_isuserdata(L, index));
         return lua_touserdata(L, index);
+    }
+
+    static inline LuaFunction GetValue(Type<LuaFunction>, lua_State* L, int index) {
+        ensure_type(lua_isfunction(L, index));
+        return LuaFunction(L, index);
     }
 
     template <typename R>
