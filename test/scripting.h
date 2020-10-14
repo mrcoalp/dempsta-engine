@@ -50,31 +50,60 @@ bool test_call_cpp_function_from_lua() {
     return testCPPFunction == "passed";
 }
 
-bool test_call_lua_function_from_cpp() {
+bool test_call_lua_function_pass_binding_object_modify_inside_lua() {
     Script o(20);
-    std::vector<std::string> vec;
-    std::string s;
-    int i;
-    std::vector<double> vecRet;
-    lua::LuaFunction fun;
     LE::Init();
     LE::RegisterClass<Script>();
     LE::LoadFile("scripts/luafunctions.lua");
     if (!LE::CallFunction("Object", &o)) {
         return false;
     }
+    LE::CloseState();
+    return o.GetProp() == 1;
+}
+
+bool test_call_lua_function_pass_vector_get_string() {
+    std::vector<std::string> vec;
+    std::string s;
+    LE::Init();
+    LE::LoadFile("scripts/luafunctions.lua");
     for (size_t i = 0; i < 100; ++i) {
         vec.push_back(std::to_string(i));
     }
     if (!LE::CallFunction(s, "OnUpdate", vec, 100)) {
         return false;
     }
+    LE::CloseState();
+    return s == "99";
+}
+
+bool test_call_lua_function_pass_multiple_params_get_int() {
+    int i;
+    LE::Init();
+    LE::LoadFile("scripts/luafunctions.lua");
     if (!LE::CallFunction(i, "Maths", 2, 3, 4)) {
         return false;
     }
+    LE::CloseState();
+    return i == 10;
+}
+
+bool test_call_lua_function_pass_multiple_params_get_vector() {
+    std::vector<double> vecRet;
+    LE::Init();
+    LE::LoadFile("scripts/luafunctions.lua");
     if (!LE::CallFunction(vecRet, "VecTest", 2.2, 3.14, 4.0)) {
         return false;
     }
+    LE::CloseState();
+    return vecRet.size() == 3 && vecRet[1] == 3.14;
+}
+
+bool test_call_lua_function_get_anonymous_function_and_call_it() {
+    lua::LuaFunction fun;
+    LE::Init();
+    LE::RegisterFunction("cppFunction", cppFunction);
+    LE::LoadFile("scripts/luafunctions.lua");
     if (!LE::CallFunction(fun, "TestCallback")) {
         return false;
     }
@@ -83,7 +112,7 @@ bool test_call_lua_function_from_cpp() {
     }
     fun.Unload();
     LE::CloseState();
-    return s == "99" && i == 10 && o.GetProp() == 1 && vecRet.size() == 3 && vecRet[1] == 3.14;
+    return testCPPFunction == "passed_again";
 }
 
 bool test_cpp_class_bind_lua() {

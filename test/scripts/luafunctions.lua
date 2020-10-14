@@ -13,12 +13,12 @@ function Object(object)
 end
 
 function VecTest(a, b, c)
-    local t = {a, b, c}
+    local t = { a, b, c }
     return t
 end
 
 function TestCallback()
     return function()
-        print("Lua function, saved in C land, called!")
+        cppFunction("passed_again")
     end
 end

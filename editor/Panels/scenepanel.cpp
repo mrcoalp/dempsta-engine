@@ -48,23 +48,26 @@ static void drawScriptingNode(Entity entity) {
             scriptEntity->ReloadScript();
         }
 
-        auto [doubles, bools, strings] = scriptEntity->dataBuffer->GetData();
-        for (auto& d : doubles) {
-            auto d1 = static_cast<float>(d.second);
-            if (ImGui::DragFloat(d.first.c_str(), &d1, 0.1f)) {
-                d.second = d1;
+        ImGui::Spacing();
+        if (ImGui::CollapsingHeader("Data")) {
+            auto [doubles, bools, strings] = scriptEntity->dataBuffer->GetData();
+            for (auto& d : doubles) {
+                auto d1 = static_cast<float>(d.second);
+                if (ImGui::DragFloat(d.first.c_str(), &d1, 0.1f)) {
+                    d.second = d1;
+                }
             }
-        }
-        for (auto& b : bools) {
-            ImGui::Checkbox(b.first.c_str(), &b.second);
-        }
-        for (auto& s : strings) {
-            char* cstr = new char[s.second.length() + 1];
-            memcpy(cstr, s.second.c_str(), s.second.length() + 1);
-            if (ImGui::InputText(s.first.c_str(), cstr, 100)) {
-                s.second = cstr;
+            for (auto& b : bools) {
+                ImGui::Checkbox(b.first.c_str(), &b.second);
             }
-            delete[] cstr;
+            for (auto& s : strings) {
+                char* cstr = new char[s.second.length() + 1];
+                memcpy(cstr, s.second.c_str(), s.second.length() + 1);
+                if (ImGui::InputText(s.first.c_str(), cstr, 100)) {
+                    s.second = cstr;
+                }
+                delete[] cstr;
+            }
         }
         ImGui::TreePop();
     }
@@ -157,23 +160,23 @@ static void drawComponents(Entity entity) {
     }
     if (entity.HasComponent<TransformComponent>()) {
         drawTransformNode(entity);
-        ImGui::Spacing();
+        ImGui::NewLine();
     }
     if (entity.HasComponent<ScriptComponent>()) {
         drawScriptingNode(entity);
-        ImGui::Spacing();
+        ImGui::NewLine();
     }
     if (entity.HasComponent<LabelComponent>()) {
         drawLabelNode(entity);
-        ImGui::Spacing();
+        ImGui::NewLine();
     }
     if (entity.HasComponent<SpriteComponent>()) {
         drawSpriteNode(entity);
-        ImGui::Spacing();
+        ImGui::NewLine();
     }
     if (entity.HasComponent<SoundComponent>()) {
         drawSoundNode(entity);
-        ImGui::Spacing();
+        ImGui::NewLine();
     }
 }
 

@@ -1,5 +1,7 @@
 #include "Scripting/luaengine.h"
 
+#include <sstream>
+
 #include "Core/log.h"
 
 namespace lua {
@@ -8,6 +10,7 @@ lua_State* LuaEngine::state = nullptr;
 void LuaEngine::Init() {
     state = luaL_newstate();
     luaL_openlibs(state);
+    LuaFunction::Register(state);
 }
 
 void LuaEngine::CloseState() {
@@ -15,26 +18,28 @@ void LuaEngine::CloseState() {
     state = nullptr;
 }
 
-void LuaEngine::PrintStackDump() {
+std::string LuaEngine::GetStackDump() {
     int top = lua_gettop(state);
+    std::stringstream dump;
+    dump << "***** LUA STACK *****" << std::endl;
     for (int i = 1; i <= top; ++i) {
         int t = lua_type(state, i);
-        LOG_ENGINE_TRACE("LUA STACK");
         switch (t) {
             case LUA_TSTRING:
-                LOG_ENGINE_TRACE("{}", GetValue<const char*>(i));
+                dump << GetValue<const char*>(i) << std::endl;
                 break;
             case LUA_TBOOLEAN:
-                LOG_ENGINE_TRACE("{}", GetValue<bool>(i));
+                dump << std::boolalpha << GetValue<bool>(i) << std::endl;
                 break;
             case LUA_TNUMBER:
-                LOG_ENGINE_TRACE("{}", GetValue<double>(i));
+                dump << GetValue<double>(i) << std::endl;
                 break;
             default:  // NOTE(mpinto): Other values, print type
-                LOG_ENGINE_TRACE("{}", lua_typename(state, t));
+                dump << lua_typename(state, t) << std::endl;
                 break;
         }
     }
+    return dump.str();
 }
 
 bool LuaEngine::LoadFile(const char* filePath) {

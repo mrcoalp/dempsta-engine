@@ -6,20 +6,6 @@
 #include "Scripting/marshalling.h"
 
 namespace lua {
-using LuaCFunction = int (*)(lua_State*);
-
-enum class LuaType {
-    Null = LUA_TNIL,
-    Boolean = LUA_TBOOLEAN,
-    LightUserData = LUA_TLIGHTUSERDATA,
-    Number = LUA_TNUMBER,
-    String = LUA_TSTRING,
-    Table = LUA_TTABLE,
-    Function = LUA_TFUNCTION,
-    UserData = LUA_TUSERDATA,
-    Thread = LUA_TTHREAD
-};
-
 /**
  * @brief Handles all the logic related to "communication" between C++ and Lua, initializing it.
  * Acts as an engine to allow to call C++ functions from Lua and vice-versa, registers
@@ -46,9 +32,16 @@ public:
     [[nodiscard]] static inline lua_State* GetState() { return state; }
 
     /**
-     * @brief Prints all values current in the stack. Useful for debug purposes.
+     * @brief Getter for the current top index.
+     *
+     * @return Current lua stack top index.
      */
-    static void PrintStackDump();
+    [[nodiscard]] static inline int GetTop() { return lua_gettop(state); }
+
+    /**
+     * @brief Returns a string containing all values current in the stack. Useful for debug purposes.
+     */
+    static std::string GetStackDump();
 
     /**
      * @brief Loads Lua file script to stack.
@@ -85,7 +78,7 @@ public:
      */
     template <typename R>
     [[nodiscard]] static inline R GetValue(const int index = 1) {
-        return MS::GetValue(Type<R>{}, state, index);
+        return MS::GetValue(MarshallingType<R>{}, state, index);
     }
 
     /**
