@@ -16,6 +16,6 @@ public:
     void SwapBuffers() final;
 
 private:
-    GLFWwindow* windowHandle;
+    GLFWwindow* m_windowHandle;
 };
 }  // namespace de

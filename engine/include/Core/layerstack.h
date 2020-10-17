@@ -35,26 +35,26 @@ public:
      */
     void PopLayer(Layer* layer);
 
-    [[nodiscard]] std::vector<Layer*>::iterator begin() { return layers.begin(); }
-    [[nodiscard]] std::vector<Layer*>::iterator end() { return layers.end(); }
+    [[nodiscard]] std::vector<Layer*>::iterator begin() { return m_layers.begin(); }
+    [[nodiscard]] std::vector<Layer*>::iterator end() { return m_layers.end(); }
 
-    [[nodiscard]] std::vector<Layer*>::reverse_iterator rbegin() { return layers.rbegin(); }
-    [[nodiscard]] std::vector<Layer*>::reverse_iterator rend() { return layers.rend(); }
+    [[nodiscard]] std::vector<Layer*>::reverse_iterator rbegin() { return m_layers.rbegin(); }
+    [[nodiscard]] std::vector<Layer*>::reverse_iterator rend() { return m_layers.rend(); }
 
-    [[nodiscard]] std::vector<Layer*>::const_iterator begin() const { return layers.begin(); }
-    [[nodiscard]] std::vector<Layer*>::const_iterator end() const { return layers.end(); }
+    [[nodiscard]] std::vector<Layer*>::const_iterator begin() const { return m_layers.begin(); }
+    [[nodiscard]] std::vector<Layer*>::const_iterator end() const { return m_layers.end(); }
 
-    [[nodiscard]] std::vector<Layer*>::const_reverse_iterator rbegin() const { return layers.rbegin(); }
-    [[nodiscard]] std::vector<Layer*>::const_reverse_iterator rend() const { return layers.rend(); }
+    [[nodiscard]] std::vector<Layer*>::const_reverse_iterator rbegin() const { return m_layers.rbegin(); }
+    [[nodiscard]] std::vector<Layer*>::const_reverse_iterator rend() const { return m_layers.rend(); }
 
 private:
     /**
      * @brief Vector containing all layers and overlays.
      */
-    std::vector<Layer*> layers;
+    std::vector<Layer*> m_layers;
     /**
      * @brief Index to keep track of layer/overlay separation.
      */
-    unsigned int lastInsertedLayerIndex = 0;
+    unsigned int m_lastInsertedLayerIndex = 0;
 };
 }  // namespace de

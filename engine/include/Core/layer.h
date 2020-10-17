@@ -6,7 +6,7 @@
 namespace de {
 class Layer {
 public:
-    explicit Layer(std::string name = "Layer") : debugName(std::move(name)) {}
+    explicit Layer(std::string name = "Layer") : m_debugName(std::move(name)) {}
 
     virtual ~Layer() = default;
 
@@ -35,9 +35,9 @@ public:
      * Getter for layer name.
      * @returns std::string with layer name.
      */
-    [[nodiscard]] inline const std::string& GetName() const { return debugName; }
+    [[nodiscard]] inline const std::string& GetName() const { return m_debugName; }
 
 protected:
-    std::string debugName;
+    std::string m_debugName;
 };
 }  // namespace de

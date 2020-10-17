@@ -5,23 +5,23 @@
 namespace de {
 class WindowResizeEvent : public Event {
 public:
-    WindowResizeEvent(unsigned int width, unsigned int height) : width(width), height(height) {}
+    WindowResizeEvent(unsigned int width, unsigned int height) : m_width(width), m_height(height) {}
 
     /**
      * @brief Getter for the window width.
      * @return Width of window.
      */
-    [[nodiscard]] inline unsigned int GetWidth() const { return width; }
+    [[nodiscard]] inline unsigned int GetWidth() const { return m_width; }
 
     /**
      * @brief Getter for the window height.
      * @return Height of window.
      */
-    [[nodiscard]] inline unsigned int GetHeight() const { return height; }
+    [[nodiscard]] inline unsigned int GetHeight() const { return m_height; }
 
     [[nodiscard]] std::string ToString() const override {
         std::stringstream ss;
-        ss << "WindowResizeEvent: " << width << ", " << height;
+        ss << "WindowResizeEvent: " << m_width << ", " << m_height;
         return ss.str();
     }
 
@@ -30,8 +30,8 @@ public:
     EVENT_CLASS_CATEGORY(ApplicationEventCategory)
 
 private:
-    unsigned int width;
-    unsigned int height;
+    unsigned int m_width;
+    unsigned int m_height;
 };
 
 class WindowCloseEvent : public Event {

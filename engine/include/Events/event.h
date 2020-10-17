@@ -89,7 +89,7 @@ public:
  */
 class EventDispatcher {
 public:
-    explicit EventDispatcher(Event& event) : event(event) {}
+    explicit EventDispatcher(Event& event) : m_event(event) {}
 
     /**
      * @brief Dispatcher method.
@@ -100,15 +100,15 @@ public:
      */
     template <typename E, typename F>
     bool Dispatch(const F& func) {
-        if (event.GetEventType() == E::GetStaticEventType()) {
-            event.Handled = func(static_cast<E&>(event));
+        if (m_event.GetEventType() == E::GetStaticEventType()) {
+            m_event.Handled = func(static_cast<E&>(m_event));
             return true;
         }
         return false;
     }
 
 private:
-    Event& event;
+    Event& m_event;
 };
 
 /**

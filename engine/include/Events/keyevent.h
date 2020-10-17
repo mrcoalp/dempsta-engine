@@ -9,36 +9,36 @@ public:
      * @brief Getter for the key code.
      * @return Key code int.
      */
-    [[nodiscard]] inline int GetKeyCode() const { return keyCode; }
+    [[nodiscard]] inline int GetKeyCode() const { return m_keyCode; }
 
     EVENT_CLASS_CATEGORY(KeyboardEventCategory | InputEventCategory)
 
 protected:
-    explicit KeyEvent(int keyCode) : keyCode(keyCode){};
+    explicit KeyEvent(int keyCode) : m_keyCode(keyCode){};
 
-    int keyCode;
+    int m_keyCode;
 };
 
 class KeyPressedEvent : public KeyEvent {
 public:
-    KeyPressedEvent(int keyCode, int repeatCount) : KeyEvent(keyCode), repeatCount(repeatCount) {}
+    KeyPressedEvent(int keyCode, int repeatCount) : KeyEvent(keyCode), m_repeatCount(repeatCount) {}
 
     /**
      * @brief Getter a key pressed repeat count.
      * @return The repeat count of a key pressed event.
      */
-    [[nodiscard]] inline int GetRepeatCount() const { return repeatCount; }
+    [[nodiscard]] inline int GetRepeatCount() const { return m_repeatCount; }
 
     [[nodiscard]] std::string ToString() const override {
         std::stringstream ss;
-        ss << "KeyPressedEvent: " << keyCode << " (" << repeatCount << " repeats)";
+        ss << "KeyPressedEvent: " << m_keyCode << " (" << m_repeatCount << " repeats)";
         return ss.str();
     }
 
     EVENT_CLASS_TYPE(KeyPressed)
 
 private:
-    int repeatCount;
+    int m_repeatCount;
 };
 
 class KeyReleasedEvent : public KeyEvent {
@@ -47,7 +47,7 @@ public:
 
     [[nodiscard]] std::string ToString() const override {
         std::stringstream ss;
-        ss << "KeyReleasedEvent: " << keyCode;
+        ss << "KeyReleasedEvent: " << m_keyCode;
         return ss.str();
     }
 
@@ -60,7 +60,7 @@ public:
 
     [[nodiscard]] std::string ToString() const override {
         std::stringstream ss;
-        ss << "KeyTypedEvent: " << keyCode;
+        ss << "KeyTypedEvent: " << m_keyCode;
         return ss.str();
     }
 

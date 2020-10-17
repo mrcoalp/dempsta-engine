@@ -7,16 +7,16 @@
 #include "Core/core.h"
 
 namespace de {
-OpenGLContext::OpenGLContext(GLFWwindow* windowHandle) : windowHandle(windowHandle) {
+OpenGLContext::OpenGLContext(GLFWwindow* windowHandle) : m_windowHandle(windowHandle) {
     DE_ASSERT(windowHandle != nullptr, "OpenGLContext not initialized!")
 }
 
 void OpenGLContext::Init() {
-    glfwMakeContextCurrent(windowHandle);
+    glfwMakeContextCurrent(m_windowHandle);
     // Initialize GLAD
     int _statusGLAD = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     DE_ASSERT(_statusGLAD, "GLAD not initialized!")
 }
 
-void OpenGLContext::SwapBuffers() { glfwSwapBuffers(windowHandle); }
+void OpenGLContext::SwapBuffers() { glfwSwapBuffers(m_windowHandle); }
 }  // namespace de

@@ -14,31 +14,31 @@ public:
      * @brief Getter for the engine logger.
      * @return A reference to the engine logger
      */
-    inline static auto& GetEngineLogger() { return engineLogger; }
+    inline static auto& GetEngineLogger() { return m_engineLogger; }
 
     /**
      * @brief Getter for the application logger.
      * @return A reference to the application logger
      */
-    inline static auto& GetApplicationLogger() { return applicationLogger; }
+    inline static auto& GetApplicationLogger() { return m_applicationLogger; }
 
     /**
      * @brief Getter for file logger.
      * @return A reference to file logger.
      */
-    inline static auto& GetFileEngineLogger() { return fileEngineLogger; }
+    inline static auto& GetFileEngineLogger() { return m_fileEngineLogger; }
 
     /**
      * @brief Getter for file logger.
      * @return A reference to file logger.
      */
-    inline static auto& GetFileApplicationLogger() { return fileApplicationLogger; }
+    inline static auto& GetFileApplicationLogger() { return m_fileApplicationLogger; }
 
 private:
-    static std::shared_ptr<spdlog::logger> engineLogger;
-    static std::shared_ptr<spdlog::logger> applicationLogger;
-    static std::shared_ptr<spdlog::logger> fileEngineLogger;
-    static std::shared_ptr<spdlog::logger> fileApplicationLogger;
+    static std::shared_ptr<spdlog::logger> m_engineLogger;
+    static std::shared_ptr<spdlog::logger> m_applicationLogger;
+    static std::shared_ptr<spdlog::logger> m_fileEngineLogger;
+    static std::shared_ptr<spdlog::logger> m_fileApplicationLogger;
 };
 }  // namespace de
 

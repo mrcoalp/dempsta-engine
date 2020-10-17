@@ -35,19 +35,19 @@ public:
      * @brief Getter for the window width.
      * @return Window width.
      */
-    [[nodiscard]] inline unsigned int GetWidth() const { return data.width; }
+    [[nodiscard]] inline unsigned int GetWidth() const { return m_data.width; }
 
     /**
      * @brief Getter for the window height.
      * @return Window height.
      */
-    [[nodiscard]] inline unsigned int GetHeight() const { return data.height; }
+    [[nodiscard]] inline unsigned int GetHeight() const { return m_data.height; }
 
     /**
      * @brief Event callback function setter in WindowData.
      * @param callback Function to define callback.
      */
-    inline void SetEventCallback(const EventCallbackFn& callback) { data.EventCallback = callback; }
+    inline void SetEventCallback(const EventCallbackFn& callback) { m_data.EventCallback = callback; }
 
     /**
      * @brief VSync attribute setter
@@ -65,7 +65,7 @@ public:
      * @brief Getter for glfw window pointer.
      * @return
      */
-    [[nodiscard]] inline GLFWwindow* GetNativeWindow() const { return window; }
+    [[nodiscard]] inline GLFWwindow* GetNativeWindow() const { return m_window; }
 
 private:
     /**
@@ -78,7 +78,7 @@ private:
      */
     void setGLFWCallbacks();
 
-    GLFWwindow* window;
+    GLFWwindow* m_window;
 
     struct WindowData {
         std::string title;
@@ -89,8 +89,8 @@ private:
         std::queue<Event*> eventQueue;
     };
 
-    WindowData data;
+    WindowData m_data;
 
-    OpenGLContext* context;
+    OpenGLContext* m_context;
 };
 }  // namespace de
