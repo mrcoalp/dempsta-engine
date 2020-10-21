@@ -4,6 +4,7 @@
 #include <map>
 #include <stdexcept>
 
+#include "Scripting/luadynamicmap.h"
 #include "Scripting/types.h"
 
 namespace lua {
@@ -54,6 +55,39 @@ public:
     static inline LuaFunction GetValue(MarshallingType<LuaFunction>, lua_State* L, int index) {
         ensure_type(lua_isfunction(L, index));
         return LuaFunction(L, index);
+    }
+
+    static inline LuaDynamicMap GetValue(MarshallingType<LuaDynamicMap>, lua_State* L, int index) {
+        LuaDynamicMap map;
+        int depth = 0;
+        static std::function<void(int)> parseMap = [&](int innerIndex) {
+            ensure_type(lua_istable(L, innerIndex));
+            lua_pushnil(L);
+            while (lua_next(L, -2) != 0) {
+                switch (lua_type(L, -1)) {
+                    case LUA_TNUMBER:
+                        map.Add(GetValue(MarshallingType<std::string>{}, L, -2), GetValue(MarshallingType<double>{}, L, -1), depth);
+                        break;
+                    case LUA_TBOOLEAN:
+                        map.Add(GetValue(MarshallingType<std::string>{}, L, -2), GetValue(MarshallingType<bool>{}, L, -1), depth);
+                        break;
+                    case LUA_TSTRING:
+                        map.Add(GetValue(MarshallingType<std::string>{}, L, -2), GetValue(MarshallingType<std::string>{}, L, -1), depth);
+                        break;
+                    case LUA_TTABLE:
+                        map.Add(GetValue(MarshallingType<std::string>{}, L, -2), depth);
+                        ++depth;
+                        parseMap(-1);
+                        --depth;
+                        break;
+                    default:
+                        break;
+                }
+                lua_pop(L, 1);
+            }
+        };
+        parseMap(index);
+        return map;
     }
 
     template <typename R>

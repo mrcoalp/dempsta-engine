@@ -163,3 +163,15 @@ bool test_lua_data_buffer() {
     LE::CloseState();
     return dataStored == "msg_sender";
 }
+
+bool test_get_dynamic_map_from_lua() {
+    LE::Init();
+    LE::LoadFile("scripts/luafunctions.lua");
+    lua::LuaDynamicMap map;
+    if (!LE::CallFunction(map, "Getter")) {
+        return false;
+    }
+    LE::CloseState();
+    // Depth must be 2
+    return map.GetTracker().size() == 2;
+}
