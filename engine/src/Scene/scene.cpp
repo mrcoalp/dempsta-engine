@@ -96,4 +96,6 @@ Entity Scene::CreateEntity(const std::string& name, bool addTransform) {
     }
     return entity;
 }
+
+void Scene::DestroyEntity(Entity entity) { m_registry.destroy((entt::entity)entity); }
 }  // namespace de

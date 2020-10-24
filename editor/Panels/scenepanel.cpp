@@ -235,8 +235,21 @@ void ScenePanel::drawEntityNode(Entity entity) {
     flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
     auto& name = entity.GetComponent<NameComponent>().name;
     bool open = ImGui::TreeNodeEx((void*)(uint64_t)entity, flags, "%s", name.c_str());
+    bool deleteEntity = false;
     if (ImGui::IsItemClicked()) {
         m_selected = entity;
+    }
+    if (ImGui::BeginPopupContextItem()) {
+        if (ImGui::MenuItem("Delete entity")) {
+            deleteEntity = true;
+        }
+        ImGui::EndPopup();
+    }
+    if (deleteEntity) {
+        if (m_selected == entity) {
+            m_selected = {};
+        }
+        m_context->DestroyEntity(entity);
     }
     if (open) {
         ImGui::TreePop();

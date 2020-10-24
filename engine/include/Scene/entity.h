@@ -103,6 +103,8 @@ public:
 
     explicit operator uint64_t() const { return static_cast<uint64_t>(m_handle); }
 
+    explicit operator entt::entity() const { return m_handle; }
+
 private:
     entt::entity m_handle{entt::null};
     Scene* m_scene;

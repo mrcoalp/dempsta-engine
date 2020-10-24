@@ -43,6 +43,13 @@ public:
      */
     Entity CreateEntity(const std::string& name = "New Entity", bool addTransform = true);
 
+    /**
+     * @brief Destroys a given entity
+     *
+     * @param entity Entity to destroy
+     */
+    void DestroyEntity(Entity entity);
+
 private:
     /**
      * @brief Storage for all the entities. Handled by EnTT.
