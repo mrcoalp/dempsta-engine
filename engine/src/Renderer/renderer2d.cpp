@@ -231,7 +231,7 @@ void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Label>& label, c
         const auto& glyph = characters.at(c);
 
         if (glyph.uvOffsetX1 == 0.0f || glyph.uvOffsetY1 == 0.0f) {
-            translation[3].x += glyph.advanceX / (float)font.GetSize();
+            translation[3].x += globalScale.x * glyph.advanceX / (float)font.GetSize();
             continue;
         }
 

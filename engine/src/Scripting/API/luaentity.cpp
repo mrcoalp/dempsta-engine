@@ -100,21 +100,25 @@ int LuaEntity::SetScale(lua_State*) {
 }
 
 int LuaEntity::GetColor(lua_State*) {
+    CHECK_GETTER(de::SpriteComponent)
     LE::PushValue(de::Color::Vec4ToHexString(m_entity.GetComponent<de::SpriteComponent>().color));
     return 1;
 }
 
 int LuaEntity::SetColor(lua_State*) {
+    CHECK_SETTER(de::SpriteComponent)
     m_entity.GetComponent<de::SpriteComponent>().color = de::Color::HexStringToVec4(LE::GetValue<std::string>());
     return 0;
 }
 
 int LuaEntity::GetAlpha(lua_State*) {
+    CHECK_GETTER(de::SpriteComponent)
     LE::PushValue(static_cast<int>(m_entity.GetComponent<de::SpriteComponent>().color.a * 255.f));
     return 1;
 }
 
 int LuaEntity::SetAlpha(lua_State*) {
+    CHECK_SETTER(de::SpriteComponent)
     m_entity.GetComponent<de::SpriteComponent>().color.a = LE::GetValue<float>() / 255.f;
     return 0;
 }
@@ -192,16 +196,19 @@ int LuaEntity::SetLooped(lua_State*) {
 }
 
 int LuaEntity::GetAcquireEvents(lua_State*) {
+    CHECK_GETTER(de::ScriptComponent)
     LE::PushValue(m_entity.GetComponent<de::ScriptComponent>().instance->acquireEvents);
     return 1;
 }
 
 int LuaEntity::SetAcquireEvents(lua_State*) {
+    CHECK_SETTER(de::ScriptComponent)
     m_entity.GetComponent<de::ScriptComponent>().instance->acquireEvents = LE::GetValue<bool>();
     return 0;
 }
 
 int LuaEntity::SendMessage(lua_State*) {
+    CHECK_SETTER(de::NameComponent)
     auto name = LE::GetValue<std::string>();
     auto* data = *LE::GetValue<DataBuffer**>(2);
     auto sender = m_entity.GetComponent<de::NameComponent>().name;
