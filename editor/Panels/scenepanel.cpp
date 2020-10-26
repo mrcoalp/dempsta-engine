@@ -152,27 +152,6 @@ static void drawSoundNode(SoundComponent& component) {
     }
 }
 
-static void drawComponents(Entity entity) {
-    if (entity.HasComponent<NameComponent>()) {
-        auto& name = entity.GetComponent<NameComponent>().name;
-        char buffer[128];
-        memset(buffer, 0, sizeof(buffer));
-        memcpy(buffer, name.c_str(), name.length() + 1);
-        if (ImGui::InputText("Name", buffer, sizeof(buffer))) {
-            name = std::string(buffer);
-        }
-    }
-    DrawComponent<TransformComponent>("Transform", entity, drawTransformNode);
-    DrawComponent<ScriptComponent>("Scripting", entity, drawScriptingNode);
-    DrawComponent<LabelComponent>("Label", entity, drawLabelNode);
-    DrawComponent<SpriteComponent>("Sprite", entity, drawSpriteNode);
-    DrawComponent<SoundComponent>("Sound", entity, drawSoundNode);
-}
-
-ScenePanel::ScenePanel(const Ref<Scene>& context) { SetContext(context); }
-
-void ScenePanel::SetContext(const Ref<Scene>& context) { m_context = context; }
-
 template <typename Component>
 static void AddComponent(
     const std::string& name, Entity entity, const std::function<void(Component&)>& onAdd = [](Component&) {}) {
@@ -184,6 +163,46 @@ static void AddComponent(
         }
     }
 }
+
+static void drawComponents(Entity entity) {
+    if (entity.HasComponent<NameComponent>()) {
+        auto& name = entity.GetComponent<NameComponent>().name;
+        char buffer[128];
+        memset(buffer, 0, sizeof(buffer));
+        memcpy(buffer, name.c_str(), name.length() + 1);
+        if (ImGui::InputText("##Name", buffer, sizeof(buffer))) {
+            name = std::string(buffer);
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Add Component")) {
+            ImGui::OpenPopup("AddComponentPanel");
+        }
+
+        if (ImGui::BeginPopup("AddComponentPanel")) {
+            AddComponent<TransformComponent>("Transform", entity);
+            AddComponent<CameraComponent>("Camera", entity);
+            AddComponent<SpriteComponent>("Sprite", entity);
+            AddComponent<ScriptComponent>("Script", entity);
+            /* AddComponent<LabelComponent>("Label", m_selected, [](LabelComponent& component) {
+                // TODO
+            });
+            AddComponent<SoundComponent>("Sound", m_selected, [](SoundComponent& component) {
+                // TODO
+            }); */
+            ImGui::EndPopup();
+        }
+        ImGui::NewLine();
+    }
+    DrawComponent<TransformComponent>("Transform", entity, drawTransformNode);
+    DrawComponent<ScriptComponent>("Scripting", entity, drawScriptingNode);
+    DrawComponent<LabelComponent>("Label", entity, drawLabelNode);
+    DrawComponent<SpriteComponent>("Sprite", entity, drawSpriteNode);
+    DrawComponent<SoundComponent>("Sound", entity, drawSoundNode);
+}
+
+ScenePanel::ScenePanel(const Ref<Scene>& context) { SetContext(context); }
+
+void ScenePanel::SetContext(const Ref<Scene>& context) { m_context = context; }
 
 void ScenePanel::OnImGuiRender() {
     if (ImGui::Begin("Scene Hierarchy")) {
@@ -205,24 +224,6 @@ void ScenePanel::OnImGuiRender() {
         if (ImGui::Begin("Properties")) {
             if (m_selected) {
                 drawComponents(m_selected);
-
-                if (ImGui::Button("Add Component")) {
-                    ImGui::OpenPopup("AddComponentPanel");
-                }
-
-                if (ImGui::BeginPopup("AddComponentPanel")) {
-                    AddComponent<TransformComponent>("Transform", m_selected);
-                    AddComponent<CameraComponent>("Camera", m_selected);
-                    AddComponent<SpriteComponent>("Sprite", m_selected);
-                    AddComponent<ScriptComponent>("Script", m_selected);
-                    /* AddComponent<LabelComponent>("Label", m_selected, [](LabelComponent& component) {
-                        // TODO
-                    });
-                    AddComponent<SoundComponent>("Sound", m_selected, [](SoundComponent& component) {
-                        // TODO
-                    }); */
-                    ImGui::EndPopup();
-                }
             }
             ImGui::End();
         }
@@ -230,8 +231,9 @@ void ScenePanel::OnImGuiRender() {
 }
 
 void ScenePanel::drawEntityNode(Entity entity) {
-    ImGuiTreeNodeFlags flags =
-        (entity == m_selected ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+    ImGuiTreeNodeFlags flags = (entity == m_selected ? ImGuiTreeNodeFlags_Selected : 0);
+    flags |= ImGuiTreeNodeFlags_OpenOnArrow;
+    flags |= ImGuiTreeNodeFlags_OpenOnDoubleClick;
     flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
     auto& name = entity.GetComponent<NameComponent>().name;
     bool open = ImGui::TreeNodeEx((void*)(uint64_t)entity, flags, "%s", name.c_str());

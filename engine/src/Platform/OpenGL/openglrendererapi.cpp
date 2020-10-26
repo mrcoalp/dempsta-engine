@@ -40,8 +40,7 @@ void OpenGLRendererAPI::Clear(glm::vec4& color) {
 }
 
 void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount) {
-    uint32_t count = indexCount != 0u ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
-    GL_CALL(glDrawElements, GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
+    GL_CALL(glDrawElements, GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
 }
 
 uint32_t OpenGLRendererAPI::GetMaxTextureSize() const {

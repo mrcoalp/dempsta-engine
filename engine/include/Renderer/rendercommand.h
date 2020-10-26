@@ -12,9 +12,7 @@ public:
 
     inline static void Clear(glm::vec4 color) { s_rendererApi->Clear(color); };
 
-    inline static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0) {
-        s_rendererApi->DrawIndexed(vertexArray, indexCount);
-    }
+    inline static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount) { s_rendererApi->DrawIndexed(vertexArray, indexCount); }
 
     inline static uint32_t GetMaxTextureSize() { return s_rendererApi->GetMaxTextureSize(); }
 

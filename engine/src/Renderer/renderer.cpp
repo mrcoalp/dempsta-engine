@@ -22,6 +22,6 @@ void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexA
     std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_viewProjection", s_sceneData->projectionViewMatrix);
     std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_transform", transform);
     vertexArray->Bind();
-    RenderCommand::DrawIndexed(vertexArray);
+    RenderCommand::DrawIndexed(vertexArray, vertexArray->GetIndexBuffer()->GetCount());
 }
 }  // namespace de
