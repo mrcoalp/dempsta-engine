@@ -1,6 +1,7 @@
 #include "dempstaeditor.h"
 
 #include "Core/assetsmanager.h"
+#include "Scene/sceneserializer.h"
 
 namespace de {
 DempstaEditor::DempstaEditor() : Layer("DempstaEditor") {}
@@ -128,6 +129,11 @@ void DempstaEditor::OnImGuiRender() {
             // ImGui::Separator();
             if (ImGui::MenuItem("Quit", nullptr, false, true)) {
                 Application::GetInstance().Close();
+            }
+            ImGui::Separator();
+            if (ImGui::MenuItem("Save scene", nullptr, false, true)) {
+                SceneSerializer serializer(m_activeScene);
+                serializer.Serialize("assets/hue.dempsta");
             }
             ImGui::EndMenu();
         }
