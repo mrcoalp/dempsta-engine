@@ -53,6 +53,11 @@ static void drawTransformNode(TransformComponent& component) {
     }
 }
 
+static void drawCameraNode(CameraComponent& component) {
+    ImGui::Checkbox("Primary", &component.primary);
+    ImGui::Checkbox("Fixed aspect ratio", &component.fixedAspectRatio);
+}
+
 static void drawScriptingNode(ScriptComponent& component) {
     const auto& scriptEntity = component.instance;
     char buffer[128];
@@ -194,6 +199,7 @@ static void drawComponents(Entity entity) {
         ImGui::NewLine();
     }
     DrawComponent<TransformComponent>("Transform", entity, drawTransformNode);
+    DrawComponent<CameraComponent>("Camera", entity, drawCameraNode);
     DrawComponent<ScriptComponent>("Scripting", entity, drawScriptingNode);
     DrawComponent<LabelComponent>("Label", entity, drawLabelNode);
     DrawComponent<SpriteComponent>("Sprite", entity, drawSpriteNode);
