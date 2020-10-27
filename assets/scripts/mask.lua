@@ -25,8 +25,8 @@ end
 
 function OnUpdate(data, delta)
     if data.moving then
-        this.x = this.x + data.dirX * delta
-        this.y = this.y + data.dirY * delta
+        local position = this.position;
+        this.position = { x = this.position.x + data.dirX * delta, y = position.y + data.dirY * delta, z = this.z }
     end
 end
 

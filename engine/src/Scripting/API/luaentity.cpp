@@ -6,25 +6,6 @@
 #include "Scripting/messaging.h"
 
 namespace lua {
-glm::vec3 LuaEntity::getTranslation() {
-    return std::get<0>(de::Math::GetTransformDecomposition(m_entity.GetComponent<de::TransformComponent>().transform));
-}
-
-glm::vec3 LuaEntity::getRotation() {
-    return std::get<1>(de::Math::GetTransformDecomposition(m_entity.GetComponent<de::TransformComponent>().transform));
-}
-
-glm::vec3 LuaEntity::getScale() {
-    return std::get<2>(de::Math::GetTransformDecomposition(m_entity.GetComponent<de::TransformComponent>().transform));
-}
-
-void LuaEntity::setTranslation(size_t index, float value) {
-    auto& transform = m_entity.GetComponent<de::TransformComponent>().transform;
-    auto [translate, rotation, scale] = de::Math::GetTransformDecomposition(transform);
-    translate[index] = value;
-    transform = glm::translate(glm::mat4(1.0f), translate) * glm::toMat4(glm::quat(glm::radians(rotation))) * glm::scale(glm::mat4(1.0f), scale);
-}
-
 int LuaEntity::GetName(lua_State*) {
     CHECK_GETTER(de::NameComponent)
     LE::PushValue(m_entity.GetComponent<de::NameComponent>().name);
@@ -39,43 +20,62 @@ int LuaEntity::SetName(lua_State*) {
 
 int LuaEntity::GetX(lua_State*) {
     CHECK_GETTER(de::TransformComponent)
-    LE::PushValue(getTranslation().x);
+    LE::PushValue(m_entity.GetComponent<de::TransformComponent>().translation.x);
     return 1;
 }
 
 int LuaEntity::SetX(lua_State*) {
     CHECK_SETTER(de::TransformComponent)
-    setTranslation(0, LE::GetValue<float>());
+    m_entity.GetComponent<de::TransformComponent>().translation.x = LE::GetValue<float>();
     return 0;
 }
 
 int LuaEntity::GetY(lua_State*) {
     CHECK_GETTER(de::TransformComponent)
-    LE::PushValue(getTranslation().y);
+    LE::PushValue(m_entity.GetComponent<de::TransformComponent>().translation.y);
     return 1;
 }
 
 int LuaEntity::SetY(lua_State*) {
     CHECK_SETTER(de::TransformComponent)
-    setTranslation(1, LE::GetValue<float>());
+    m_entity.GetComponent<de::TransformComponent>().translation.y = LE::GetValue<float>();
     return 0;
 }
 
 int LuaEntity::GetZ(lua_State*) {
     CHECK_GETTER(de::TransformComponent)
-    LE::PushValue(getTranslation().z);
+    LE::PushValue(m_entity.GetComponent<de::TransformComponent>().translation.z);
     return 1;
 }
 
 int LuaEntity::SetZ(lua_State*) {
     CHECK_SETTER(de::TransformComponent)
-    setTranslation(2, LE::GetValue<float>());
+    m_entity.GetComponent<de::TransformComponent>().translation.z = LE::GetValue<float>();
+    return 0;
+}
+
+int LuaEntity::GetPosition(lua_State*) {
+    CHECK_GETTER(de::TransformComponent)
+    const auto& translation = m_entity.GetComponent<de::TransformComponent>().translation;
+    std::unordered_map<std::string, float> translationMap = {{"x", translation.x}, {"y", translation.y}, {"z", translation.z}};
+    LE::PushValue(translationMap);
+    return 1;
+}
+
+int LuaEntity::SetPosition(lua_State*) {
+    CHECK_SETTER(de::TransformComponent)
+    auto translationMap = LE::GetValue<LuaMap<float>>();
+    if (!LE::EnsureMapKeys({"x", "y", "z"}, translationMap)) {
+        LOG_ENGINE_WARN("Position map must contain: 'x' 'y' 'z' keys!");
+        return 0;
+    }
+    m_entity.GetComponent<de::TransformComponent>().translation = {translationMap.at("x"), translationMap.at("y"), translationMap.at("z")};
     return 0;
 }
 
 int LuaEntity::GetScale(lua_State*) {
     CHECK_GETTER(de::TransformComponent)
-    auto scale = getScale();
+    const auto& scale = m_entity.GetComponent<de::TransformComponent>().scale;
     std::unordered_map<std::string, float> scaleMap = {{"x", scale.x}, {"y", scale.y}, {"z", scale.z}};
     LE::PushValue(scaleMap);
     return 1;
@@ -83,19 +83,12 @@ int LuaEntity::GetScale(lua_State*) {
 
 int LuaEntity::SetScale(lua_State*) {
     CHECK_SETTER(de::TransformComponent)
-    auto& transform = m_entity.GetComponent<de::TransformComponent>().transform;
-    auto [translate, rotation, scale] = de::Math::GetTransformDecomposition(transform);
     auto scaleMap = LE::GetValue<LuaMap<float>>();
     if (!LE::EnsureMapKeys({"x", "y", "z"}, scaleMap)) {
         LOG_ENGINE_WARN("Scale map must contain: 'x' 'y' 'z' keys!");
         return 0;
     }
-    scale = {scaleMap.at("x"), scaleMap.at("y"), scaleMap.at("z")};
-    if (scale.x <= 0.f || scale.y <= 0.f || scale.z <= 0.f) {
-        LOG_ENGINE_WARN("Tried to set invalid scale {}, {}, {} - all values must be greater than zero!", scale.x, scale.y, scale.z);
-        return 0;
-    }
-    transform = glm::translate(glm::mat4(1.0f), translate) * glm::toMat4(glm::quat(glm::radians(rotation))) * glm::scale(glm::mat4(1.0f), scale);
+    m_entity.GetComponent<de::TransformComponent>().scale = {scaleMap.at("x"), scaleMap.at("y"), scaleMap.at("z")};
     return 0;
 }
 
@@ -229,6 +222,9 @@ LUA_ADD_PROPERTY_CUSTOM(y, GetY, SetY)
 LUA_ADD_METHOD(GetZ)
 LUA_ADD_METHOD(SetZ)
 LUA_ADD_PROPERTY_CUSTOM(z, GetZ, SetZ)
+LUA_ADD_METHOD(GetPosition)
+LUA_ADD_METHOD(SetPosition)
+LUA_ADD_PROPERTY_CUSTOM(position, GetPosition, SetPosition)
 LUA_ADD_METHOD(GetScale)
 LUA_ADD_METHOD(SetScale)
 LUA_ADD_PROPERTY_CUSTOM(scale, GetScale, SetScale)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "Core/core.h"
 #include "Renderer/label.h"
@@ -21,13 +22,21 @@ struct NameComponent {
 };
 
 struct TransformComponent {
-    glm::mat4 transform = glm::mat4(1.0f);
+    glm::vec3 translation{0.f, 0.f, 0.f};
+    glm::vec3 rotation{0.f, 0.f, 0.f};
+    glm::vec3 scale{1.f, 1.f, 1.f};
+
+    [[nodiscard]] glm::mat4 GetTransform() const {
+        auto rotationX = glm::rotate(glm::mat4(1.f), rotation.x, {1.f, 0.f, 0.f});
+        auto rotationY = glm::rotate(glm::mat4(1.f), rotation.y, {0.f, 1.f, 0.f});
+        auto rotationZ = glm::rotate(glm::mat4(1.f), rotation.z, {0.f, 0.f, 1.f});
+        return glm::translate(glm::mat4(1.f), translation) * rotationX * rotationY * rotationZ * glm::scale(glm::mat4(1.f), scale);
+    }
+
+    explicit operator glm::mat4() const noexcept { return GetTransform(); }
 
     TransformComponent() = default;
-    explicit TransformComponent(const glm::mat4& transform) : transform(transform) {}
-
-    explicit operator glm::mat4 &() noexcept { return transform; }
-    explicit operator const glm::mat4 &() const noexcept { return transform; }
+    explicit TransformComponent(const glm::vec3& translation) : translation(translation) {}
 };
 
 struct SpriteComponent {

@@ -37,18 +37,18 @@ void Scene::OnUpdate(const TimeStep& ts) {
         // cameraEntity can be avoided to be captured
         [&]([[maybe_unused]] const auto cameraEntity, const auto& transformComp, const auto& cameraComp) {
             const auto& camera = cameraComp.camera;
-            const auto& transform = transformComp.transform;
+            const auto& transform = transformComp.GetTransform();
             if (cameraComp.primary) {
                 Renderer2D::BeginScene(camera.GetProjection(), transform);
                 m_registry.view<TransformComponent, SpriteComponent>().each([](const auto& transformComp, const auto& spriteComp) {
                     if (spriteComp.texture != nullptr) {
-                        Renderer2D::DrawQuad(transformComp.transform, spriteComp.texture, spriteComp.color);
+                        Renderer2D::DrawQuad(transformComp.GetTransform(), spriteComp.texture, spriteComp.color);
                     } else {
-                        Renderer2D::DrawQuad(transformComp.transform, spriteComp.color);
+                        Renderer2D::DrawQuad(transformComp.GetTransform(), spriteComp.color);
                     }
                 });
                 m_registry.view<TransformComponent, LabelComponent>().each([](const auto& transformComp, const auto& labelComp) {
-                    Renderer2D::DrawQuad(transformComp.transform, labelComp.label, labelComp.color);
+                    Renderer2D::DrawQuad(transformComp.GetTransform(), labelComp.label, labelComp.color);
                 });
                 Renderer2D::EndScene();
                 return;

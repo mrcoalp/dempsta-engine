@@ -41,6 +41,8 @@ public:
     LUA_METHOD(SetY);
     LUA_METHOD(GetZ);
     LUA_METHOD(SetZ);
+    LUA_METHOD(GetPosition);
+    LUA_METHOD(SetPosition);
     LUA_METHOD(GetScale);
     LUA_METHOD(SetScale);
     LUA_METHOD(GetColor);
@@ -68,13 +70,5 @@ public:
 private:
     de::Entity m_entity;
     friend class de::Scene;
-
-    glm::vec3 getTranslation();
-
-    glm::vec3 getRotation();
-
-    glm::vec3 getScale();
-
-    void setTranslation(size_t index, float value);
 };
 }  // namespace lua

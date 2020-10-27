@@ -33,11 +33,11 @@ void DempstaEditor::OnAttach() {
     protector.AddComponent<SoundComponent>("assets/sound/iamtheprotectorofthissystem.wav");
     protector.AddComponent<ScriptComponent>("assets/scripts/protector.lua");
 
-    // for (size_t i = 0; i < 100; ++i) {
-    //     auto mask = m_activeScene->CreateEntity("Mask_" + std::to_string(i));
-    //     mask.AddComponent<SpriteComponent>().texture = spriteMask;
-    //     mask.AddComponent<ScriptComponent>("assets/scripts/mask.lua");
-    // }
+    for (size_t i = 0; i < 10; ++i) {
+        auto mask = m_activeScene->CreateEntity("Mask_" + std::to_string(i));
+        mask.AddComponent<SpriteComponent>().texture = spriteMask;
+        mask.AddComponent<ScriptComponent>("assets/scripts/mask.lua");
+    }
 
     // auto& labelTrans = textEnt.GetComponent<TransformComponent>().transform;
     // labelTrans[0].x = 60.f;

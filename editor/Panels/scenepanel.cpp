@@ -1,6 +1,7 @@
 #include "scenepanel.h"
 
 #include <imgui.h>
+#include <imgui_internal.h>
 
 #include "Core/math.h"
 #include "Scene/components.h"
@@ -34,23 +35,66 @@ static void DrawComponent(const std::string& name, Entity entity, const std::fun
     }
 }
 
-static void drawTransformNode(TransformComponent& component) {
-    auto& transform = component.transform;
-    auto [translate, rotation, scale] = Math::GetTransformDecomposition(transform);
-    bool dirty = false;
-    if (ImGui::DragFloat3("Position", glm::value_ptr(translate), 0.1f)) {
-        dirty = true;
-    }
-    if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotation), 0.1f)) {
-        dirty = true;
-    }
-    if (ImGui::DragFloat3("Scale", glm::value_ptr(scale), 0.1f)) {
-        dirty = scale.x > 0.f && scale.y > 0.f && scale.z > 0.f;
-    }
+static bool DrawVec3(const std::string& label, glm::vec3& values, float nameColWidth = 100.f, const glm::vec3& defaultValues = {0.f, 0.f, 0.f}) {
+    ImGui::PushID(label.c_str());
+    ImGui::Columns(2);
+    ImGui::SetColumnWidth(0, nameColWidth);
 
-    if (dirty) {
-        transform = glm::translate(glm::mat4(1.0f), translate) * glm::toMat4(glm::quat(glm::radians(rotation))) * glm::scale(glm::mat4(1.0f), scale);
+    ImGui::Text("%s", label.c_str());
+
+    ImGui::NextColumn();
+
+    ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, {0, 0});
+    float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
+    ImVec2 buttonSize = {lineHeight + 3.f, lineHeight};
+    bool dirty = false;
+
+    if (ImGui::Button("X", buttonSize)) {
+        values.x = defaultValues.x;
+        dirty = true;
     }
+    ImGui::SameLine();
+    if (ImGui::DragFloat("##x", &values.x, 0.1f)) {
+        dirty = true;
+    }
+    ImGui::PopItemWidth();
+    ImGui::SameLine();
+
+    if (ImGui::Button("Y", buttonSize)) {
+        values.y = defaultValues.y;
+        dirty = true;
+    }
+    ImGui::SameLine();
+    if (ImGui::DragFloat("##y", &values.y, 0.1f)) {
+        dirty = true;
+    }
+    ImGui::PopItemWidth();
+    ImGui::SameLine();
+
+    if (ImGui::Button("Z", buttonSize)) {
+        values.z = defaultValues.z;
+        dirty = true;
+    }
+    ImGui::SameLine();
+    if (ImGui::DragFloat("##z", &values.z, 0.1f)) {
+        dirty = true;
+    }
+    ImGui::PopItemWidth();
+
+    ImGui::PopStyleVar();
+    ImGui::Columns();
+    ImGui::PopID();
+    return dirty;
+}
+
+static void drawTransformNode(TransformComponent& component) {
+    auto rotation = glm::degrees(component.rotation);  // For UI purposes, rotation in degrees makes more sense
+    DrawVec3("Position", component.translation, 70.f);
+    if (DrawVec3("Rotation", rotation, 70.f)) {
+        component.rotation = glm::radians(rotation);
+    }
+    DrawVec3("Scale", component.scale, 70.f);
 }
 
 static void drawCameraNode(CameraComponent& component) {
