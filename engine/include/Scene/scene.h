@@ -7,8 +7,6 @@
 
 namespace de {
 class Entity;
-class SceneSerializer;
-class ScenePanel;
 
 /**
  * @brief Handles all scene related stuff.
@@ -51,6 +49,14 @@ public:
      */
     void DestroyEntity(Entity entity);
 
+    using Callback = std::function<void(const entt::entity&)>;
+    /**
+     * @brief Iterates through each entity in the registry and applies callback on it.
+     *
+     * @param callback Callback for each entity.
+     */
+    inline void ForEachEntity(Callback&& callback) { m_registry.each(std::forward<Callback>(callback)); }
+
 private:
     /**
      * @brief Storage for all the entities. Handled by EnTT.
@@ -61,7 +67,5 @@ private:
     uint32_t m_viewportHeight{0};
 
     friend class Entity;
-    friend class SceneSerializer;
-    friend class ScenePanel;
 };
 }  // namespace de

@@ -18,7 +18,7 @@ static void AddComponentToJSON(Entity entity, const std::function<void(Component
 
 void SceneSerializer::Serialize(const std::string& filePath) const {
     json entities;
-    m_scene->m_registry.each([&](auto& entityId) {
+    m_scene->ForEachEntity([&](const auto& entityId) {
         auto entity = Entity(entityId, m_scene.get());
         json jEnt;
         jEnt["ID"] = 123;

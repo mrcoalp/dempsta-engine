@@ -282,7 +282,7 @@ void ScenePanel::SetContext(const Ref<Scene>& context) { m_context = context; }
 
 void ScenePanel::OnImGuiRender() {
     if (ImGui::Begin("Scene Hierarchy")) {
-        m_context->m_registry.each([this](auto entityID) { drawEntityNode(Entity(entityID, m_context.get())); });
+        m_context->ForEachEntity([this](const auto& entityId) { drawEntityNode(Entity(entityId, m_context.get())); });
 
         if (ImGui::IsMouseClicked(0) && ImGui::IsWindowHovered()) {
             m_selected = {};
