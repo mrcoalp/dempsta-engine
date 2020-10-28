@@ -135,6 +135,13 @@ void DempstaEditor::OnImGuiRender() {
                 SceneSerializer serializer(m_activeScene);
                 serializer.Serialize("assets/hue.dempsta");
             }
+            ImGui::Separator();
+            if (ImGui::MenuItem("Load scene", nullptr, false, true)) {
+                SceneSerializer serializer(m_activeScene);
+                if (!serializer.Deserialize("assets/hue.dempsta")) {
+                    LOG_ERROR("Failed to deserialize scene!");
+                }
+            }
             ImGui::EndMenu();
         }
         ImGui::EndMenuBar();

@@ -21,6 +21,17 @@ public:
         return result;
     }
 
+    static void WriteFile(const std::string& filePath, const std::string& data, bool append = false) {
+        std::ofstream out;
+        append ? out.open(filePath, std::ios_base::app) : out.open(filePath);
+        if (out.is_open()) {
+            out << data;
+            out.close();
+        } else {
+            LOG_ENGINE_ERROR("Failed to create/write file: '{0}'", filePath);
+        }
+    }
+
     static std::string GetFileNameWithExtension(std::string filepath) {
         // Remove directory if present.
         const size_t lastSlashIndex = filepath.find_last_of("\\/");
