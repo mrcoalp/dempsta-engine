@@ -28,6 +28,19 @@ void SceneSerializer::Serialize(const std::string& filePath) const {
             jEnt["TransformComponent"]["Rotation"] = {component.rotation.x, component.rotation.y, component.rotation.z};
             jEnt["TransformComponent"]["Scale"] = {component.scale.x, component.scale.y, component.scale.z};
         });
+        AddComponentToJSON<CameraComponent>(entity, [&jEnt](CameraComponent& component) {
+            jEnt["CameraComponent"]["Primary"] = component.primary;
+            jEnt["CameraComponent"]["FixedAspectRatio"] = component.fixedAspectRatio;
+            jEnt["CameraComponent"]["SceneCamera"]["Orthographic"] = {
+                {"Size", component.camera.GetOrthographicSize()},
+                {"NearClip", component.camera.GetOrthographicNearClip()},
+                {"FarClip", component.camera.GetOrthographicFarClip()},
+            };
+        });
+        AddComponentToJSON<SpriteComponent>(entity, [&jEnt](SpriteComponent& component) {
+            const auto& color = component.color;
+            jEnt["SpriteComponent"]["Color"] = {color.r, color.g, color.b, color.a};
+        });
         entities.push_back(jEnt);
     });
     json serialize;
@@ -63,6 +76,19 @@ bool SceneSerializer::Deserialize(const std::string& filePath) const {
                 component.rotation = {node[0].get<float>(), node[1].get<float>(), node[2].get<float>()};
                 node = entity["TransformComponent"]["Scale"];
                 component.scale = {node[0].get<float>(), node[1].get<float>(), node[2].get<float>()};
+            }
+            if (entity.contains("CameraComponent")) {
+                auto& component = deserialized.AddComponent<CameraComponent>();
+                auto node = entity["CameraComponent"];
+                component.primary = node["Primary"].get<bool>();
+                component.fixedAspectRatio = node["FixedAspectRatio"].get<bool>();
+                node = entity["CameraComponent"]["SceneCamera"]["Orthographic"];
+                component.camera.SetOrthographic(node["Size"].get<float>(), node["NearClip"].get<float>(), node["FarClip"].get<float>());
+            }
+            if (entity.contains("SpriteComponent")) {
+                auto& component = deserialized.AddComponent<SpriteComponent>();
+                auto node = entity["SpriteComponent"]["Color"];
+                component.color = {node[0].get<float>(), node[1].get<float>(), node[2].get<float>(), node[3].get<float>()};
             }
             LOG_ENGINE_TRACE("Deserialized entity '{}' - name: {}", uuid, name);
         }

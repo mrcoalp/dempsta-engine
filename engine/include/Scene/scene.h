@@ -49,13 +49,16 @@ public:
      */
     void DestroyEntity(Entity entity);
 
-    using Callback = std::function<void(const entt::entity&)>;
     /**
      * @brief Iterates through each entity in the registry and applies callback on it.
      *
+     * @tparam Callback Type of the callback function to call.
      * @param callback Callback for each entity.
      */
-    inline void ForEachEntity(Callback&& callback) { m_registry.each(std::forward<Callback>(callback)); }
+    template <typename Callback>
+    inline void ForEachEntity(Callback callback) {
+        m_registry.each(std::move(callback));
+    }
 
 private:
     /**
