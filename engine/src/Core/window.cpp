@@ -18,7 +18,7 @@ Window::Window(const WindowProps& windowProps) {
 
     if (!GLFWInitialized) {
         int _statusGLFW = glfwInit();
-        DE_ASSERT(_statusGLFW, "GLFW not initialized!")
+        DE_ASSERT(_statusGLFW != 0, "GLFW not initialized!")
         GLFWInitialized = true;
     }
 
