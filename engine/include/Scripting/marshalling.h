@@ -56,6 +56,11 @@ public:
         return LuaFunction(L, index);
     }
 
+    static inline LuaDynamicMap GetValue(MarshallingType<LuaDynamicMap>, lua_State* L, int index) {
+        ensure_type(lua_istable(L, index));
+        return LuaDynamicMap(L, index);
+    }
+
     template <typename R>
     static inline R GetValue(MarshallingType<R>, lua_State* L, int index) {
         ensure_type(lua_isuserdata(L, index));
@@ -107,6 +112,8 @@ public:
     static void PushValue(lua_State* L, const char* value) { lua_pushstring(L, value); }
 
     static void PushValue(lua_State* L, void* value) { lua_pushlightuserdata(L, value); }
+
+    static void PushValue(lua_State* L, const LuaDynamicMap& value) { value.Push(); }
 
     template <typename T>
     static void PushValue(lua_State* L, const std::vector<T>& value) {

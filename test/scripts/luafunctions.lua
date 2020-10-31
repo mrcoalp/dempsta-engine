@@ -22,3 +22,19 @@ function TestCallback()
         cppFunction("passed_again")
     end
 end
+
+function GetMap()
+    return {
+        x = 2,
+        y = "something",
+        z = false,
+        w = {
+            r = 3.14,
+            g = true
+        }
+    }
+end
+
+function GetMapValue(map)
+    return map.w.g
+end
