@@ -23,7 +23,7 @@ function TestCallback()
     end
 end
 
-function Getter()
+function GetMap()
     return {
         x = 2,
         y = "something",
@@ -33,4 +33,8 @@ function Getter()
             g = true
         }
     }
+end
+
+function GetMapValue(map)
+    return map.w.g
 end

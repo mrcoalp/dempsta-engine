@@ -4,7 +4,7 @@
 #include <unordered_map>
 
 namespace lua {
-constexpr const char* LUA_FUNCTION_META_NAME{"LuaFunction"};
+constexpr const char* LUA_REF_HOLDER_META_NAME{"LuaRefHolder"};
 
 using LuaCFunction = int (*)(lua_State*);
 
@@ -41,7 +41,7 @@ public:
      *
      * @param L Lua state to create metatable on.
      */
-    static void Register(lua_State* L) { luaL_newmetatable(L, LUA_FUNCTION_META_NAME); }
+    static void Register(lua_State* L) { luaL_newmetatable(L, LUA_REF_HOLDER_META_NAME); }
 
     /**
      * @brief Checks if key is set, and actions are allowed.
@@ -60,7 +60,7 @@ public:
      */
     bool Load(int index) {
         lua_pushvalue(m_state, index);
-        luaL_getmetatable(m_state, LUA_FUNCTION_META_NAME);
+        luaL_getmetatable(m_state, LUA_REF_HOLDER_META_NAME);
         lua_pushvalue(m_state, -2);
         if (lua_isfunction(m_state, -1)) {
             m_key = luaL_ref(m_state, -2);
@@ -74,7 +74,7 @@ public:
      */
     void Unload() {
         if (IsLoaded()) {
-            luaL_getmetatable(m_state, LUA_FUNCTION_META_NAME);
+            luaL_getmetatable(m_state, LUA_REF_HOLDER_META_NAME);
             luaL_unref(m_state, -1, m_key);
             lua_pop(m_state, 1);
             m_key = -1;
@@ -89,7 +89,7 @@ public:
      */
     bool Call() {
         if (IsLoaded()) {
-            luaL_getmetatable(m_state, LUA_FUNCTION_META_NAME);
+            luaL_getmetatable(m_state, LUA_REF_HOLDER_META_NAME);
             lua_rawgeti(m_state, -1, m_key);
             int status = lua_pcall(m_state, 0, 0, 0);
             lua_pop(m_state, 2);
@@ -99,6 +99,68 @@ public:
     }
 
     bool operator()() { return Call(); }
+
+private:
+    /**
+     * @brief Key to later retrieve lua function.
+     */
+    int m_key{-1};
+
+    /**
+     * @brief Lua state.
+     */
+    lua_State* m_state{nullptr};
+};
+
+/**
+ * @brief Stores a ref to a lua table.
+ */
+class LuaDynamicMap {
+public:
+    LuaDynamicMap() = default;
+
+    LuaDynamicMap(lua_State* L, int index) : m_state(L) { Load(index); }
+
+    /**
+     * @brief Creates table reference in lua metatable and saves its key.
+     *
+     * @param index Index, in stack, of table to load.
+     * @return true Table was successfully loaded.
+     * @return false Table could not be loaded.
+     */
+    bool Load(int index) {
+        lua_pushvalue(m_state, index);
+        luaL_getmetatable(m_state, LUA_REF_HOLDER_META_NAME);
+        lua_pushvalue(m_state, -2);
+        if (lua_istable(m_state, -1)) {
+            m_key = luaL_ref(m_state, -2);
+        }
+        lua_pop(m_state, 2);
+        return m_key != -1;
+    }
+
+    /**
+     * @brief Unloads reference from lua metatable and resets key.
+     */
+    void Unload() {
+        if (m_key != -1) {
+            luaL_getmetatable(m_state, LUA_REF_HOLDER_META_NAME);
+            luaL_unref(m_state, -1, m_key);
+            lua_pop(m_state, 1);
+            m_key = -1;
+        }
+    }
+
+    /**
+     * @brief Push value to stack.
+     */
+    void Push() const {
+        if (m_key != -1) {
+            luaL_getmetatable(m_state, LUA_REF_HOLDER_META_NAME);
+            lua_rawgeti(m_state, -1, m_key);
+            lua_remove(m_state, -2);
+        }
+    }
 
 private:
     /**

@@ -4,6 +4,9 @@
 #include "dempsta.h"
 
 int testClass = -1;
+#ifdef RegisterClass
+#undef RegisterClass
+#endif
 
 class Script {
 public:
@@ -36,7 +39,7 @@ LUA_ADD_PROPERTY(m_prop)
 LUA_ADD_METHOD(Getter)
 LUA_ADD_METHOD(Setter);
 
-std::string testCPPFunction = "";
+std::string testCPPFunction;
 LUA_METHOD(cppFunction) {
     testCPPFunction = LE::GetValue<std::string>();
     return 0;
@@ -168,10 +171,15 @@ bool test_get_dynamic_map_from_lua() {
     LE::Init();
     LE::LoadFile("scripts/luafunctions.lua");
     lua::LuaDynamicMap map;
-    if (!LE::CallFunction(map, "Getter")) {
+    if (!LE::CallFunction(map, "GetMap")) {
         return false;
     }
+    bool value = false;
+    if (!LE::CallFunction(value, "GetMapValue", map)) {
+        return false;
+    }
+    map.Unload();
     LE::CloseState();
     // Depth must be 2
-    return map.GetTracker().size() == 2;
+    return value;
 }
