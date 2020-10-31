@@ -202,10 +202,14 @@ int LuaEntity::SetAcquireEvents(lua_State*) {
 
 int LuaEntity::SendMessage(lua_State*) {
     CHECK_SETTER(de::NameComponent)
-    auto name = LE::GetValue<std::string>();
-    auto* data = *LE::GetValue<DataBuffer**>(2);
+    auto id = LE::GetValue<std::string>();
     auto sender = m_entity.GetComponent<de::NameComponent>().name;
-    MessageHandler::AddMessage({name, data, sender});
+    if (LE::GetTop() == 1) {  // In case no data was sent, only one argument (id)
+        MessageHandler::AddMessage({id, sender});
+        return 0;
+    }
+    auto data = LE::GetValue<LuaDynamicMap>(2);
+    MessageHandler::AddMessage({id, sender, data});
     return 0;
 }
 

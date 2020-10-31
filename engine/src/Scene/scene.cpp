@@ -27,7 +27,7 @@ void Scene::OnUpdate(const TimeStep& ts) {
         }
         sc.instance->OnUpdate(ts);
         // messaging
-        lua::MessageHandler::HandleMessages([&sc](const lua::Message& msg) { sc.instance->OnMessage(msg.id, msg.data, msg.sender); });
+        lua::MessageHandler::HandleMessages([&sc](const lua::Message& msg) { sc.instance->OnMessage(msg.id, msg.sender, msg.data); });
     });
     lua::MessageHandler::ClearMessages();
     // sound

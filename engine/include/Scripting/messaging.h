@@ -8,10 +8,11 @@
 namespace lua {
 struct Message {
     std::string id;
-    lua::DataBuffer* data;
     std::string sender;
+    lua::LuaDynamicMap data;
 
-    Message(std::string id, lua::DataBuffer* data, std::string sender) : id(std::move(id)), data(data), sender(std::move(sender)) {}
+    Message(std::string id, std::string sender) : id(std::move(id)), sender(std::move(sender)) {}
+    Message(std::string id, std::string sender, const lua::LuaDynamicMap& data) : id(std::move(id)), sender(std::move(sender)), data(data) {}
 };
 
 using MessageCallback = std::function<void(const Message&)>;

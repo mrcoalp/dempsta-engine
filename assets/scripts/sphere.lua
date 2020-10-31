@@ -88,9 +88,7 @@ function OnEvent(data, event, action)
         if action == KEY_SPACE then
             data.moving = not data.moving
             data.changeColor = true
-            local buffer = DataBuffer()
-            buffer.moving = data.moving
-            this.SendMessage("moving", buffer)
+            this.SendMessage("moving", { moving = data.moving })
         end
         if action == KEY_P then
             data.moving = false
@@ -101,10 +99,10 @@ function OnEvent(data, event, action)
                 y = 5,
                 z = 0
             }
-            this.SendMessage("protect", DataBuffer())
+            this.SendMessage("protect")
         end
     end
 end
 
-function OnMessage(data, msg_id, message, sender)
+function OnMessage(data, msg_id, sender, message)
 end

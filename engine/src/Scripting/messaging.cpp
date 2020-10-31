@@ -12,8 +12,8 @@ void MessageHandler::HandleMessages(MessageCallback&& callback) {
 }
 
 void MessageHandler::ClearMessages() {
-    for (const auto& msg : s_messages) {
-        delete msg.data;
+    for (auto& msg : s_messages) {  // Unload table refs
+        msg.data.Unload();
     }
     s_messages.clear();
 }

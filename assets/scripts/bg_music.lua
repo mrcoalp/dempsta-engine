@@ -20,5 +20,5 @@ function OnEvent(data, event, action)
     end
 end
 
-function OnMessage(data, msgId, message, sender)
+function OnMessage(data, msg_id, sender, message)
 end

@@ -35,9 +35,9 @@ void ScriptEntity::OnUpdate(const de::TimeStep& ts) const {
     LE::CallFunction("OnUpdate", dataBuffer.get(), (float)ts);
 }
 
-void ScriptEntity::OnMessage(const std::string& id, DataBuffer* dataToSend, const std::string& sender) const {
+void ScriptEntity::OnMessage(const std::string& id, const std::string& sender, const LuaDynamicMap& dataToSend) const {
     LoadCodeAndContext();
-    LE::CallFunction("OnMessage", dataBuffer.get(), id, dataToSend, sender);
+    LE::CallFunction("OnMessage", dataBuffer.get(), id, sender, dataToSend);
 }
 
 void ScriptEntity::OnDestroy() {

@@ -58,7 +58,7 @@ public:
         LE::CallFunction("OnEvent", dataBuffer.get(), eventType, action);
     }
 
-    void OnMessage(const std::string& id, DataBuffer* data, const std::string& sender) const;
+    void OnMessage(const std::string& id, const std::string& sender, const LuaDynamicMap& data) const;
 
     void OnDestroy();
 

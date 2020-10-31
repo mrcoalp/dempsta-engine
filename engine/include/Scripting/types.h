@@ -119,16 +119,7 @@ class LuaDynamicMap {
 public:
     LuaDynamicMap() = default;
 
-    LuaDynamicMap(lua_State* L, int index) : m_state(L) { Load(index); }
-
-    /**
-     * @brief Creates table reference in lua metatable and saves its key.
-     *
-     * @param index Index, in stack, of table to load.
-     * @return true Table was successfully loaded.
-     * @return false Table could not be loaded.
-     */
-    bool Load(int index) {
+    LuaDynamicMap(lua_State* L, int index) : m_state(L) {
         lua_pushvalue(m_state, index);
         luaL_getmetatable(m_state, LUA_REF_HOLDER_META_NAME);
         lua_pushvalue(m_state, -2);
@@ -136,14 +127,21 @@ public:
             m_key = luaL_ref(m_state, -2);
         }
         lua_pop(m_state, 2);
-        return m_key != -1;
     }
+
+    /**
+     * @brief Checks if key is set, and actions are allowed.
+     *
+     * @return true Valid actions, key is set.
+     * @return false Invalid actions, key is not set.
+     */
+    [[nodiscard]] inline bool IsLoaded() const { return m_key != -1; }
 
     /**
      * @brief Unloads reference from lua metatable and resets key.
      */
     void Unload() {
-        if (m_key != -1) {
+        if (IsLoaded()) {
             luaL_getmetatable(m_state, LUA_REF_HOLDER_META_NAME);
             luaL_unref(m_state, -1, m_key);
             lua_pop(m_state, 1);
@@ -155,11 +153,13 @@ public:
      * @brief Push value to stack.
      */
     void Push() const {
-        if (m_key != -1) {
-            luaL_getmetatable(m_state, LUA_REF_HOLDER_META_NAME);
-            lua_rawgeti(m_state, -1, m_key);
-            lua_remove(m_state, -2);
+        if (!IsLoaded()) {
+            lua_pushnil(m_state);
+            return;
         }
+        luaL_getmetatable(m_state, LUA_REF_HOLDER_META_NAME);
+        lua_rawgeti(m_state, -1, m_key);
+        lua_remove(m_state, -2);
     }
 
 private:

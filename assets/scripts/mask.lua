@@ -33,8 +33,8 @@ end
 function OnEvent(data, event, action)
 end
 
-function OnMessage(data, msgId, message, sender)
-    if msgId == "moving" then
+function OnMessage(data, msg_id, sender, message)
+    if msg_id == "moving" then
         data.moving = message.moving
     end
 end
