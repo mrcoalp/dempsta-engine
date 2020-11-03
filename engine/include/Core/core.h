@@ -4,7 +4,7 @@
 
 /** Runtime Dempsta assert. */
 #define DE_ASSERT(status, ...)            \
-    if (!(status)) {                        \
+    if (!(status)) {                      \
         LOG_ENGINE_CRITICAL(__VA_ARGS__); \
         throw;                            \
     }

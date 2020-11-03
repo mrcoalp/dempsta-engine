@@ -1,12 +1,9 @@
 #include "Scene/sceneserializer.h"
 
-#include <nlohmann/json.hpp>
-
+#include "JSON/json.h"
 #include "Scene/components.h"
 #include "Scene/entity.h"
 #include "Utils/fileutils.h"
-
-using json = nlohmann::json;
 
 namespace de {
 template <typename Component>
@@ -17,38 +14,44 @@ static void AddComponentToJSON(Entity entity, const std::function<void(Component
 }
 
 void SceneSerializer::Serialize(const std::string& filePath) const {
-    json entities;
+    JSON::Scene jScene;
+    jScene.id = "todo_scene_name";
     m_scene->ForEachEntity([&](const auto& entityId) {
         auto entity = Entity(entityId, m_scene.get());
-        json jEnt;
-        jEnt["ID"] = 123;
-        AddComponentToJSON<NameComponent>(entity, [&jEnt](NameComponent& component) { jEnt["NameComponent"]["Name"] = component.name; });
-        AddComponentToJSON<TransformComponent>(entity, [&jEnt](TransformComponent& component) {
-            jEnt["TransformComponent"]["Translation"] = {component.translation.x, component.translation.y, component.translation.z};
-            jEnt["TransformComponent"]["Rotation"] = {component.rotation.x, component.rotation.y, component.rotation.z};
-            jEnt["TransformComponent"]["Scale"] = {component.scale.x, component.scale.y, component.scale.z};
+        JSON::Entity jEntity;
+        jEntity.id = 123;
+        AddComponentToJSON<NameComponent>(entity, [&jEntity](NameComponent& component) {
+            JSON::NameComponent nc{{}, component.name};
+            jEntity.nameComponent = nc;
         });
-        AddComponentToJSON<CameraComponent>(entity, [&jEnt](CameraComponent& component) {
-            jEnt["CameraComponent"]["Primary"] = component.primary;
-            jEnt["CameraComponent"]["FixedAspectRatio"] = component.fixedAspectRatio;
-            jEnt["CameraComponent"]["SceneCamera"]["Orthographic"] = {
-                {"Size", component.camera.GetOrthographicSize()},
-                {"NearClip", component.camera.GetOrthographicNearClip()},
-                {"FarClip", component.camera.GetOrthographicFarClip()},
-            };
+        AddComponentToJSON<TransformComponent>(entity, [&jEntity](TransformComponent& component) {
+            JSON::Vec3 translation{component.translation};
+            JSON::Vec3 rotation{component.rotation};
+            JSON::Vec3 scale{component.scale};
+            JSON::TransformComponent tc{{}, translation, rotation, scale};
+            jEntity.transformComponent = tc;
         });
-        AddComponentToJSON<SpriteComponent>(entity, [&jEnt](SpriteComponent& component) {
+        AddComponentToJSON<CameraComponent>(entity, [&jEntity](CameraComponent& component) {
+            //            jEnt["CameraComponent"]["Primary"] = component.primary;
+            //            jEnt["CameraComponent"]["FixedAspectRatio"] = component.fixedAspectRatio;
+            //            jEnt["CameraComponent"]["SceneCamera"]["Orthographic"] = {
+            //                {"Size", component.camera.GetOrthographicSize()},
+            //                {"NearClip", component.camera.GetOrthographicNearClip()},
+            //                {"FarClip", component.camera.GetOrthographicFarClip()},
+            //            };
+        });
+        AddComponentToJSON<SpriteComponent>(entity, [&jEntity](SpriteComponent& component) {
             const auto& color = component.color;
-            jEnt["SpriteComponent"]["Color"] = {color.r, color.g, color.b, color.a};
+            //            jEnt["SpriteComponent"]["Color"] = {color.r, color.g, color.b, color.a};
         });
-        entities.push_back(jEnt);
+        jScene.entities.push_back(jEntity);
     });
-    json serialize;
-    serialize["Scene"] = {{"ID", "todo_scene_name"}, {"Entities", entities}};
-    FileUtils::WriteFile(filePath, serialize.dump(4));
+    JSON::WriteFile(jScene, filePath);
 }
 
 bool SceneSerializer::Deserialize(const std::string& filePath) const {
+    JSON::Scene jScene;
+    JSON::ReadFile(filePath, jScene);
     const auto jData = json::parse(FileUtils::ReadFile(filePath), nullptr, false);
     if (jData.is_discarded()) {
         LOG_ENGINE_ERROR("Ill formed JSON '{}'. Couldn't deserialize!", filePath);
