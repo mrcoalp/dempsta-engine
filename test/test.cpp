@@ -1,6 +1,7 @@
 #include <map>
 
 #include "scripting.h"
+#include "json_test.h"
 
 #define ANSI_COLOR_RED "\x1b[31m"
 #define ANSI_COLOR_GREEN "\x1b[32m"
@@ -22,7 +23,8 @@ static std::map<const char*, Test> tests = {
     {"test_get_global_lua_var_from_cpp", test_get_global_lua_var_from_cpp},
     {"test_lua_run_code", test_lua_run_code},
     {"test_lua_data_buffer", test_lua_data_buffer},
-    {"test_get_dynamic_map_from_lua", test_get_dynamic_map_from_lua}};
+    {"test_get_dynamic_map_from_lua", test_get_dynamic_map_from_lua},
+    {"test_json_parse_simple_string", test_json_parse_simple_string}};
 
 int RunTests() {
     const int nrOfTests = (int)tests.size();
