@@ -20,10 +20,7 @@ void SceneSerializer::Serialize(const std::string& filePath) const {
         auto entity = Entity(entityId, m_scene.get());
         JSON::Entity jEntity;
         jEntity.id = 123;
-        AddComponentToJSON<NameComponent>(entity, [&jEntity](NameComponent& component) {
-            JSON::NameComponent nc{{}, component.name};
-            jEntity.nameComponent = nc;
-        });
+        AddComponentToJSON<NameComponent>(entity, [&jEntity](NameComponent& component) { jEntity.nameComponent = {{}, component.name}; });
         AddComponentToJSON<TransformComponent>(entity, [&jEntity](TransformComponent& component) {
             JSON::Vec3 translation{component.translation};
             JSON::Vec3 rotation{component.rotation};

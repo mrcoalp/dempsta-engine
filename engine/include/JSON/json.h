@@ -9,48 +9,52 @@ using json = nlohmann::json;
 
 namespace de::JSON {
 template <typename T>
-struct Primitive : public std::false_type {};
+struct Trivial : std::false_type {};
 template <>
-struct Primitive<int> : public std::true_type {};
+struct Trivial<int> : std::true_type {};
 template <>
-struct Primitive<unsigned> : public std::true_type {};
+struct Trivial<unsigned> : std::true_type {};
 template <>
-struct Primitive<float> : public std::true_type {};
+struct Trivial<float> : std::true_type {};
 template <>
-struct Primitive<std::string> : public std::true_type {};
+struct Trivial<std::string> : std::true_type {};
 template <>
-struct Primitive<bool> : public std::true_type {};
+struct Trivial<bool> : std::true_type {};
+template <typename T>
+using IsTrivial = std::enable_if_t<Trivial<T>::value, int>;
 
 template <typename T>
-using IsPrimitive = std::enable_if_t<Primitive<T>::value, int>;
-
+struct Array : std::false_type {};
 template <typename T>
-struct Array : public std::false_type {};
-template <typename T>
-struct Array<std::vector<T>> : public std::true_type {};
-
+struct Array<std::vector<T>> : std::true_type {};
 template <typename T>
 using IsArray = std::enable_if_t<Array<T>::value, int>;
 
 template <typename T>
-using IsEmptyCall = decltype(std::declval<T>().is_empty());
+struct Map : std::false_type {};
+template <typename T>
+struct Map<std::unordered_map<std::string, T>> : std::true_type {};
+template <typename T>
+struct Map<std::map<std::string, T>> : std::true_type {};
+template <typename T>
+using IsMap = std::enable_if_t<Map<T>::value, int>;
 
+template <typename T>
+using IsEmptyCall = decltype(std::declval<T>().is_empty());
 template <typename T, typename = void>
 struct IsEmpty {
     inline static bool Value(T& field) { return false; }
 };
-
 template <typename T>
 struct IsEmpty<T, IsEmptyCall<T>> {
     inline static bool Value(T& field) { return field.is_empty(); }
 };
 
-struct DummyVisitor {};
-
+struct Visitable {};
 template <class T>
-using IsVisitor = std::enable_if_t<std::is_base_of_v<DummyVisitor, T>, int>;
+using IsVisitable = std::enable_if_t<std::is_base_of_v<Visitable, T>, int>;
 
-struct Vec2 : public DummyVisitor {
+struct Vec2 : public Visitable {
     float x;
     float y;
 
@@ -63,7 +67,7 @@ struct Vec2 : public DummyVisitor {
     explicit Vec2(const glm::vec2& vec) : x(vec.x), y(vec.y) {}
 };
 
-struct Vec3 : public DummyVisitor {
+struct Vec3 : public Visitable {
     float x;
     float y;
     float z;
@@ -77,7 +81,7 @@ struct Vec3 : public DummyVisitor {
     explicit Vec3(const glm::vec3& vec) : x(vec.x), y(vec.y), z(vec.z) {}
 };
 
-struct Vec4 : public DummyVisitor {
+struct Vec4 : public Visitable {
     float x;
     float y;
     float z;
@@ -119,25 +123,35 @@ public:
 private:
     json& object;
 
-    template <typename Field>
-    inline void visit(json& json, Field& field, IsVisitor<Field> = {}) {
+    template <typename Field, IsVisitable<Field> = 0>
+    inline void visit(json& json, Field& field) {
         WriteVisitor<Field> visitor{json};
         field.Visit(visitor);
     }
 
-    template <typename Field>
-    inline void visit(json& json, Field& field, IsPrimitive<Field> = {}) {
+    template <typename Field, IsTrivial<Field> = 0>
+    inline void visit(json& json, Field& field) {
         json = field;
     }
 
-    template <typename Field>
-    inline void visit(json& json, Field& field, IsArray<Field> = {}) {
+    template <typename Field, IsArray<Field> = 0>
+    inline void visit(json& json, Field& field) {
         json = json::array();
-        using VectorTpe = std::decay_t<decltype(*field.begin())>;
+        using VectorType = std::decay_t<decltype(*field.begin())>;
         for (auto& element : field) {
             json.emplace_back();
-            WriteVisitor<VectorTpe> visitor{json.back()};
+            WriteVisitor<VectorType> visitor{json.back()};
             visitor.Visit(element);
+        }
+    }
+
+    template <typename Field, IsMap<Field> = 0>
+    inline void visit(json& json, Field& field) {
+        using MapType = std::decay_t<decltype(*field.begin().second)>;
+        for (auto& pair : field) {
+            auto& member = json[pair.first];
+            WriteVisitor<MapType> visitor{member};
+            visitor.Visit(pair.second);
         }
     }
 };
@@ -178,27 +192,36 @@ public:
 private:
     json& object;
 
-    template <typename Field>
-    inline void visit(json& json, Field& field, IsVisitor<Field> = {}) {
+    template <typename Field, IsVisitable<Field> = 0>
+    inline void visit(json& json, Field& field) {
         ReadVisitor<Field> visitor{json};
         field.Visit(visitor);
     }
 
-    template <typename Field>
-    inline void visit(json& json, Field& field, IsPrimitive<Field> = {}) {
+    template <typename Field, IsTrivial<Field> = 0>
+    inline void visit(json& json, Field& field) {
         try {
             field = json.get<Field>();
         } catch (const std::exception& e) {
         }
     }
 
-    template <typename Field>
-    inline void visit(json& json, Field& field, IsArray<Field> = {}) {
-        using VectorTpe = std::decay_t<decltype(*field.begin())>;
+    template <typename Field, IsArray<Field> = 0>
+    inline void visit(json& json, Field& field) {
+        using VectorType = std::decay_t<decltype(*field.begin())>;
         for (auto& element : json) {
             field.emplace_back();
-            ReadVisitor<VectorTpe> visitor{element};
+            ReadVisitor<VectorType> visitor{element};
             visitor.Visit(field.back());
+        }
+    }
+
+    template <typename Field, IsMap<Field> = 0>
+    inline void visit(json& json, Field& field) {
+        using MapType = std::decay_t<decltype(*field.begin().second)>;
+        for (auto it = json.begin(); it != json.end(); ++it) {
+            ReadVisitor<MapType> visitor{it.value()};
+            visitor.Visit(field.at(it.key()));
         }
     }
 };

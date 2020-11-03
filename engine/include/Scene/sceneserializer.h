@@ -8,7 +8,7 @@
 
 namespace de {
 namespace JSON {
-struct NameComponent : public DummyVisitor {
+struct NameComponent : public Visitable {
     std::string name;
 
     template <template <typename> class Visitor>
@@ -17,7 +17,7 @@ struct NameComponent : public DummyVisitor {
     }
 };
 
-struct TransformComponent : public DummyVisitor {
+struct TransformComponent : public Visitable {
     Vec3 translation;
     Vec3 rotation;
     Vec3 scale;
@@ -28,7 +28,7 @@ struct TransformComponent : public DummyVisitor {
     }
 };
 
-struct Entity : public DummyVisitor {
+struct Entity : public Visitable {
     unsigned id;
     NameComponent nameComponent;
     TransformComponent transformComponent;
@@ -39,7 +39,7 @@ struct Entity : public DummyVisitor {
     }
 };
 
-struct Scene : public DummyVisitor {
+struct Scene : public Visitable {
     std::string id;
     std::vector<Entity> entities;
 
