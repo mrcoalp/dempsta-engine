@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Scripting/API/databuffer.h"
-#include "dempsta.h"
 
 int testClass = -1;
 #ifdef RegisterClass
@@ -48,7 +47,7 @@ LUA_METHOD(cppFunction) {
 bool test_call_cpp_function_from_lua() {
     LE::Init();
     LE::RegisterFunction("cppFunction", cppFunction);
-    LE::LoadFile("scripts/cppfunctions.lua");
+    LE::LoadFile("assets/scripts/cppfunctions.lua");
     LE::CloseState();
     return testCPPFunction == "passed";
 }
@@ -57,7 +56,7 @@ bool test_call_lua_function_pass_binding_object_modify_inside_lua() {
     Script o(20);
     LE::Init();
     LE::RegisterClass<Script>();
-    LE::LoadFile("scripts/luafunctions.lua");
+    LE::LoadFile("assets/scripts/luafunctions.lua");
     if (!LE::CallFunction("Object", &o)) {
         return false;
     }
@@ -69,7 +68,7 @@ bool test_call_lua_function_pass_vector_get_string() {
     std::vector<std::string> vec;
     std::string s;
     LE::Init();
-    LE::LoadFile("scripts/luafunctions.lua");
+    LE::LoadFile("assets/scripts/luafunctions.lua");
     for (size_t i = 0; i < 100; ++i) {
         vec.push_back(std::to_string(i));
     }
@@ -83,7 +82,7 @@ bool test_call_lua_function_pass_vector_get_string() {
 bool test_call_lua_function_pass_multiple_params_get_int() {
     int i;
     LE::Init();
-    LE::LoadFile("scripts/luafunctions.lua");
+    LE::LoadFile("assets/scripts/luafunctions.lua");
     if (!LE::CallFunction(i, "Maths", 2, 3, 4)) {
         return false;
     }
@@ -94,7 +93,7 @@ bool test_call_lua_function_pass_multiple_params_get_int() {
 bool test_call_lua_function_pass_multiple_params_get_vector() {
     std::vector<double> vecRet;
     LE::Init();
-    LE::LoadFile("scripts/luafunctions.lua");
+    LE::LoadFile("assets/scripts/luafunctions.lua");
     if (!LE::CallFunction(vecRet, "VecTest", 2.2, 3.14, 4.0)) {
         return false;
     }
@@ -106,7 +105,7 @@ bool test_call_lua_function_get_anonymous_function_and_call_it() {
     lua::LuaFunction fun;
     LE::Init();
     LE::RegisterFunction("cppFunction", cppFunction);
-    LE::LoadFile("scripts/luafunctions.lua");
+    LE::LoadFile("assets/scripts/luafunctions.lua");
     if (!LE::CallFunction(fun, "TestCallback")) {
         return false;
     }
@@ -121,14 +120,14 @@ bool test_call_lua_function_get_anonymous_function_and_call_it() {
 bool test_cpp_class_bind_lua() {
     LE::Init();
     LE::RegisterClass<Script>();
-    LE::LoadFile("scripts/cppclass.lua");
+    LE::LoadFile("assets/scripts/cppclass.lua");
     LE::CloseState();
     return testClass == 40;
 }
 
 bool test_get_global_lua_var_from_cpp() {
     LE::Init();
-    LE::LoadFile("scripts/luavariables.lua");
+    LE::LoadFile("assets/scripts/luavariables.lua");
     const std::string s = LE::GetGlobalVariable<std::string>("string");
     const bool b = LE::GetGlobalVariable<bool>("bool");
     const int i = LE::GetGlobalVariable<int>("int");
@@ -161,7 +160,7 @@ bool test_lua_data_buffer() {
     LE::Init();
     lua::DataBuffer::Register();
     LE::RegisterFunction("NewMessage", NewMessage);
-    LE::LoadFile("scripts/databuffer.lua");
+    LE::LoadFile("assets/scripts/databuffer.lua");
     LE::CallFunction("Broadcast");
     LE::CloseState();
     return dataStored == "msg_sender";
@@ -169,7 +168,7 @@ bool test_lua_data_buffer() {
 
 bool test_get_dynamic_map_from_lua() {
     LE::Init();
-    LE::LoadFile("scripts/luafunctions.lua");
+    LE::LoadFile("assets/scripts/luafunctions.lua");
     lua::LuaDynamicMap map;
     if (!LE::CallFunction(map, "GetMap")) {
         return false;

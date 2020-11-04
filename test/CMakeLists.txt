@@ -9,10 +9,9 @@ add_test(NAME ${BINARY} COMMAND ${BINARY})
 target_link_libraries(${BINARY} PUBLIC dempsta)
 
 # Copy scripts folder to binary destination
-file(COPY scripts DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 # Install custom instructions
-install(TARGETS ${BINARY}
-        RUNTIME DESTINATION ./test)
+install(TARGETS ${BINARY} RUNTIME DESTINATION ./test)
 # Copy scripts folder to installation dir root
-install(DIRECTORY scripts DESTINATION ./test)
+install(DIRECTORY assets DESTINATION ./test)
