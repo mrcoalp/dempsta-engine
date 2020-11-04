@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <iomanip>
 #include <nlohmann/json.hpp>
+#include <sstream>
 
 using json = nlohmann::json;
 
