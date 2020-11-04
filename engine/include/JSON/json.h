@@ -97,6 +97,23 @@ struct Vec4 : public Visitable {
     explicit Vec4(const glm::vec4& vec) : x(vec.x), y(vec.y), z(vec.z), w(vec.w) {}
 };
 
+class ErrorStream {
+public:
+    explicit ErrorStream(std::vector<std::string>& destination) : m_destination(destination) {}
+
+    ~ErrorStream() { m_destination.push_back(m_stream.str()); }
+
+    template <typename Value>
+    ErrorStream& operator<<(Value&& value) {
+        m_stream << std::forward<Value>(value);
+        return *this;
+    }
+
+private:
+    std::stringstream m_stream;
+    std::vector<std::string>& m_destination;
+};
+
 class ErrorTracking {
 public:
     struct Node {
@@ -116,20 +133,18 @@ public:
 
     inline void PopNode() { m_path.pop_back(); }
 
-    inline void AddError(std::string&& error) { m_errors.emplace_back(std::forward<std::string>(error)); }
+    inline ErrorStream Error() { return ErrorStream(m_errors); }
 
     [[nodiscard]] std::string GetPath() const {
         std::stringstream path;
+        path << "ROOT";
         for (size_t i = 0; i < m_path.size(); ++i) {
             const auto& node = m_path[i];
             if (node.isArray) {
                 path << "[" << node.name << "]";
                 continue;
             }
-            if (i > 0) {
-                path << ".";
-            }
-            path << node.name;
+            path << "." << node.name;
         }
         return path.str();
     }
@@ -225,9 +240,7 @@ public:
                 visit(*it, field);
             }
         } else {
-            std::stringstream error;
-            error << "Missing mandatory field '" << name << "' from '" << m_errors.GetPath() << "'";
-            m_errors.AddError(error.str());
+            m_errors.Error() << "Missing mandatory field '" << name << "' from '" << m_errors.GetPath() << "'";
         }
         return *this;
     }
@@ -260,9 +273,7 @@ private:
         try {
             field = json.get<Field>();
         } catch (const std::exception& e) {
-            std::stringstream error;
-            error << "Failed parsing json field '" << m_errors.GetPath() << "' with exception: " << e.what();
-            m_errors.AddError(error.str());
+            m_errors.Error() << "Failed parsing json field '" << m_errors.GetPath() << "' with exception: " << e.what();
         }
     }
 
@@ -306,7 +317,7 @@ ErrorTracking ReadSilent(std::ifstream& stream, Destination& dest) {
     try {
         stream >> content;
     } catch (const std::exception& e) {
-        errors.AddError(e.what());
+        errors.Error() << e.what();
         return errors;
     }
     ReadVisitor<Destination> visitor{content, errors};
