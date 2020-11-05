@@ -40,15 +40,21 @@ struct Map<std::map<std::string, T>> : std::true_type {};
 template <typename T>
 using IsMap = std::enable_if_t<Map<T>::value, int>;
 
-template <typename T>
-using IsEmptyCall = decltype(std::declval<T>().is_empty());
+/**
+ * @brief Checks if visitable custom struct is empty or not (when using optional node).
+ * Please define a bool is_empty member if you wish to use proper optional nodes when writing JSON.
+ * By default none are empty.
+ * @tparam T Type to check.
+ */
 template <typename T, typename = void>
 struct IsEmpty {
     inline static bool Value(T& field) { return false; }
 };
 template <typename T>
+using IsEmptyCall = std::enable_if_t<&T::is_empty>;
+template <typename T>
 struct IsEmpty<T, IsEmptyCall<T>> {
-    inline static bool Value(T& field) { return field.is_empty(); }
+    inline static bool Value(T& field) { return field.is_empty; }
 };
 
 struct Visitable {};
@@ -77,6 +83,8 @@ struct Vec3 : public Visitable {
     inline void Visit(Visitor<Vec3>& visitor) {
         visitor.Node(x, "x").Node(y, "y").Node(z, "z");
     }
+
+    [[nodiscard]] inline glm::vec3 ToGLM() const { return {x, y, z}; }
 
     Vec3() = default;
     explicit Vec3(const glm::vec3& vec) : x(vec.x), y(vec.y), z(vec.z) {}
@@ -138,8 +146,7 @@ public:
     [[nodiscard]] std::string GetPath() const {
         std::stringstream path;
         path << "ROOT";
-        for (size_t i = 0; i < m_path.size(); ++i) {
-            const auto& node = m_path[i];
+        for (const auto& node : m_path) {
             if (node.isArray) {
                 path << "[" << node.name << "]";
                 continue;

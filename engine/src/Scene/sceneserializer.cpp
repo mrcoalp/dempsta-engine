@@ -20,15 +20,17 @@ void SceneSerializer::Serialize(const std::string& filePath) const {
         auto entity = Entity(entityId, m_scene.get());
         JSON::Entity jEntity;
         jEntity.id = 123;
-        AddComponentToJSON<NameComponent>(entity, [&jEntity](NameComponent& component) { jEntity.nameComponent = {{}, component.name}; });
+        AddComponentToJSON<NameComponent>(entity, [&jEntity](NameComponent& component) { jEntity.nameComponent = {{}, true, component.name}; });
         AddComponentToJSON<TransformComponent>(entity, [&jEntity](TransformComponent& component) {
             JSON::Vec3 translation{component.translation};
             JSON::Vec3 rotation{component.rotation};
             JSON::Vec3 scale{component.scale};
-            JSON::TransformComponent tc{{}, translation, rotation, scale};
+            JSON::TransformComponent tc{{}, true, translation, rotation, scale};
             jEntity.transformComponent = tc;
         });
         AddComponentToJSON<CameraComponent>(entity, [&jEntity](CameraComponent& component) {
+            JSON::CameraComponent cc{{}, true, component.primary, component.fixedAspectRatio};
+            jEntity.cameraComponent = cc;
             //            jEnt["CameraComponent"]["Primary"] = component.primary;
             //            jEnt["CameraComponent"]["FixedAspectRatio"] = component.fixedAspectRatio;
             //            jEnt["CameraComponent"]["SceneCamera"]["Orthographic"] = {
@@ -48,50 +50,31 @@ void SceneSerializer::Serialize(const std::string& filePath) const {
 
 bool SceneSerializer::Deserialize(const std::string& filePath) const {
     JSON::Scene jScene;
-    JSON::ReadFile(filePath, jScene);
-    const auto jData = json::parse(FileUtils::ReadFile(filePath), nullptr, false);
-    if (jData.is_discarded()) {
-        LOG_ENGINE_ERROR("Ill formed JSON '{}'. Couldn't deserialize!", filePath);
+    if (!JSON::ReadFile(filePath, jScene)) {
         return false;
     }
-    if (!jData.contains("Scene")) {
-        LOG_ENGINE_ERROR("Provided JSON '{}' does not contain a required 'Scene' node! Couldn't deserialize!", filePath);
-        return false;
-    }
-    auto sceneId = jData["Scene"]["ID"].get<std::string>();
-    LOG_ENGINE_TRACE("Deserializing scene '{}'...", sceneId);
-    if (jData["Scene"].contains("Entities")) {
-        for (const auto& entity : jData["Scene"]["Entities"]) {
-            const auto uuid = entity["ID"].get<uint32_t>();
-            std::string name;
-            if (entity.contains("NameComponent")) {
-                name = entity["NameComponent"]["Name"].get<std::string>();
-            }
-            auto deserialized = m_scene->CreateEntity(name, false);
-            if (entity.contains("TransformComponent")) {
-                auto& component = deserialized.AddComponent<TransformComponent>();
-                auto node = entity["TransformComponent"]["Translation"];
-                component.translation = {node[0].get<float>(), node[1].get<float>(), node[2].get<float>()};
-                node = entity["TransformComponent"]["Rotation"];
-                component.rotation = {node[0].get<float>(), node[1].get<float>(), node[2].get<float>()};
-                node = entity["TransformComponent"]["Scale"];
-                component.scale = {node[0].get<float>(), node[1].get<float>(), node[2].get<float>()};
-            }
-            if (entity.contains("CameraComponent")) {
-                auto& component = deserialized.AddComponent<CameraComponent>();
-                auto node = entity["CameraComponent"];
-                component.primary = node["Primary"].get<bool>();
-                component.fixedAspectRatio = node["FixedAspectRatio"].get<bool>();
-                node = entity["CameraComponent"]["SceneCamera"]["Orthographic"];
-                component.camera.SetOrthographic(node["Size"].get<float>(), node["NearClip"].get<float>(), node["FarClip"].get<float>());
-            }
-            if (entity.contains("SpriteComponent")) {
-                auto& component = deserialized.AddComponent<SpriteComponent>();
-                auto node = entity["SpriteComponent"]["Color"];
-                component.color = {node[0].get<float>(), node[1].get<float>(), node[2].get<float>(), node[3].get<float>()};
-            }
-            LOG_ENGINE_TRACE("Deserialized entity '{}' - name: {}", uuid, name);
+    LOG_ENGINE_TRACE("Deserializing scene '{}'...", jScene.id);
+    for (const auto& entity : jScene.entities) {
+        auto uuid = entity.id;  // todo(mpinto): UUID
+        std::string name;
+        if (entity.nameComponent.added) {
+            name = entity.nameComponent.name;
         }
+        auto deserialized = m_scene->CreateEntity(name, false);
+        if (entity.transformComponent.added) {
+            const auto& saved = entity.transformComponent;
+            auto& tc = deserialized.AddComponent<TransformComponent>();
+            tc.translation = saved.translation.ToGLM();
+            tc.rotation = saved.rotation.ToGLM();
+            tc.scale = saved.scale.ToGLM();
+        }
+        if (entity.cameraComponent.added) {
+            const auto& saved = entity.cameraComponent;
+            auto& cc = deserialized.AddComponent<CameraComponent>();
+            cc.primary = saved.primary;
+            cc.fixedAspectRatio = saved.fixedAspectRatio;
+        }
+        LOG_ENGINE_TRACE("Deserialized entity '{}' - name: {}", uuid, name);
     }
     return true;
 }

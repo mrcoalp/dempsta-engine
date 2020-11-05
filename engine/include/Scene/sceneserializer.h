@@ -9,22 +9,35 @@
 namespace de {
 namespace JSON {
 struct NameComponent : public Visitable {
+    bool added = false;
     std::string name;
 
     template <template <typename> class Visitor>
     inline void Visit(Visitor<NameComponent>& visitor) {
-        visitor.Node(name, "name");
+        visitor.Node(added, "added").Node(name, "name");
     }
 };
 
 struct TransformComponent : public Visitable {
+    bool added = false;
     Vec3 translation;
     Vec3 rotation;
     Vec3 scale;
 
     template <template <typename> class Visitor>
     inline void Visit(Visitor<TransformComponent>& visitor) {
-        visitor.Node(translation, "translation").Node(rotation, "rotation").Node(scale, "scale");
+        visitor.Node(added, "added").Node(translation, "translation").Node(rotation, "rotation").Node(scale, "scale");
+    }
+};
+
+struct CameraComponent : public Visitable {
+    bool added = false;
+    bool primary;
+    bool fixedAspectRatio;
+
+    template <template <typename> class Visitor>
+    inline void Visit(Visitor<CameraComponent>& visitor) {
+        visitor.Node(added, "added").Node(primary, "primary").Node(fixedAspectRatio, "fixed_aspect_ratio");
     }
 };
 
@@ -32,10 +45,14 @@ struct Entity : public Visitable {
     unsigned id;
     NameComponent nameComponent;
     TransformComponent transformComponent;
+    CameraComponent cameraComponent;
 
     template <template <typename> class Visitor>
     inline void Visit(Visitor<Entity>& visitor) {
-        visitor.Node(id, "id").OptionalNode(nameComponent, "name_component").OptionalNode(transformComponent, "transform_component");
+        visitor.Node(id, "id")
+            .OptionalNode(nameComponent, "name_component")
+            .OptionalNode(transformComponent, "transform_component")
+            .OptionalNode(cameraComponent, "camera_component");
     }
 };
 
