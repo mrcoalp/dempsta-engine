@@ -154,9 +154,7 @@ static void drawLabelNode(LabelComponent& component) {
 
 static void drawSpriteNode(SpriteComponent& component) {
     ImGui::ColorEdit4("Color", glm::value_ptr(component.color));
-    if (component.texture != nullptr) {
-        ImGui::DragFloat2("Anchor", glm::value_ptr(component.anchor), 0.1f);
-    }
+    ImGui::DragFloat2("Anchor", glm::value_ptr(component.anchor), 0.1f);
 }
 
 static void drawSoundNode(SoundComponent& component) {

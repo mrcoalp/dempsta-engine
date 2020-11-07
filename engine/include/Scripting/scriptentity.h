@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/assetsmanager.h"
 #include "Core/core.h"
 #include "Scene/entity.h"
 #include "Scripting/API/databuffer.h"
@@ -34,7 +35,7 @@ private:
 namespace lua {
 class ScriptEntity {
 public:
-    explicit ScriptEntity(std::string scriptPath);
+    explicit ScriptEntity(std::string asset);
 
     de::Scope<DataBuffer> dataBuffer;
     de::Scope<LuaEntity> entityRef;
@@ -42,7 +43,7 @@ public:
 
     void ReloadScript();
 
-    [[nodiscard]] inline const std::string& GetPath() const { return m_scriptPath; }
+    [[nodiscard]] inline const std::string& GetPath() const { return de::AssetsManager::GetInstance().GetScript(m_asset)->GetFilePath(); }
 
     void SetPath(const std::string& newPath);
 
@@ -63,8 +64,7 @@ public:
     void OnDestroy();
 
 private:
-    std::string m_scriptPath;
-    std::string m_scriptCode;
+    std::string m_asset;
 
     static std::string s_previousLoadedScript;
 };

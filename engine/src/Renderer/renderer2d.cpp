@@ -3,6 +3,7 @@
 #include <array>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "Core/assetsmanager.h"
 #include "Renderer/rendercommand.h"
 #include "Renderer/shader.h"
 #include "Renderer/vertexarray.h"
@@ -24,7 +25,6 @@ struct Renderer2DData {
 
     Ref<VertexBuffer> vertexBuffer;
     Ref<VertexArray> vertexArray;
-    ShaderLibrary shaderLibrary;
     Ref<Texture2D> whiteTextureRef;  // Used to render "no" textured quads
 
     uint32_t quadIndexCount = 0;
@@ -88,9 +88,10 @@ void Renderer2D::Init() {
         samplers[i] = i;
     }
 
-    data.shaderLibrary.Load("quad", "assets/shaders/quad.glsl");
-    data.shaderLibrary.Get("quad")->Bind();
-    data.shaderLibrary.Get("quad")->SetIntArray("u_textures", samplers, Renderer2DData::maxTextureSlots);
+    auto& assets = AssetsManager::GetInstance();
+    assets.AddShader("quad", "assets/shaders/quad.glsl");
+    assets.GetShader("quad")->Bind();
+    assets.GetShader("quad")->SetIntArray("u_textures", samplers, Renderer2DData::maxTextureSlots);
 
     data.textures[0] = data.whiteTextureRef;
 
@@ -129,14 +130,14 @@ void Renderer2D::flush() {
 
 void Renderer2D::BeginScene(const glm::mat4& projection, const glm::mat4& transform) {
     glm::mat4 viewProj = projection * glm::inverse(transform);
-    const auto& shader = data.shaderLibrary.Get("quad");
+    const auto& shader = AssetsManager::GetInstance().GetShader("quad");
     shader->Bind();
     shader->SetMat4("u_viewProjection", viewProj);
     resetBuffer();
 }
 
 void Renderer2D::BeginScene(const OrthographicCamera& camera) {
-    const auto& shader = data.shaderLibrary.Get("quad");
+    const auto& shader = AssetsManager::GetInstance().GetShader("quad");
     shader->Bind();
     shader->SetMat4("u_viewProjection", camera.GetProjectionViewMatrix());
     resetBuffer();

@@ -11,47 +11,44 @@ void DempstaEditor::OnAttach() {
     m_activeScene = CreateRef<Scene>();
     m_sceneHierarchyPanel.SetContext(m_activeScene);
 
-    auto spriteSheet = CreateRef<Atlas2D>("assets/textures/RPGpack_sheet_2X.png", glm::vec2(128.0f));
-    auto spriteBarrel = SubTexture2D::CreateSprite(spriteSheet, glm::vec2({8.f, 12.f}));
-    auto spriteDog = SubTexture2D::CreateSprite("assets/textures/dog.jpg");
-    auto spriteMask = SubTexture2D::CreateSprite("assets/textures/mask.png");
-    auto spriteSphere = SubTexture2D::CreateSprite("assets/textures/sphere.png");
-    AssetsManager::GetInstance().AddFont("arial", "assets/fonts/arial.ttf", 60);
-    auto label = CreateRef<Label>("arial", "Marco Pinto");
+    /*auto spriteSheet = CreateRef<Atlas2D>("assets/textures/RPGpack_sheet_2X.png", glm::vec2(128.0f));
+    auto spriteBarrel = SubTexture2D::CreateSprite(spriteSheet, glm::vec2({8.f, 12.f}));*/
+
+    AssetsManager::GetInstance()
+        .AddFont("arial_fnt", "assets/fonts/arial.ttf", 60)
+        .AddSprite("sphere_tex", "assets/textures/sphere.png")
+        .AddSprite("mask_tex", "assets/textures/mask.png")
+        .AddScript("sphere_script", "assets/scripts/sphere.lua")
+        .AddScript("bg_music_script", "assets/scripts/bg_music.lua")
+        .AddScript("protector_script", "assets/scripts/protector.lua")
+        .AddScript("mask_script", "assets/scripts/mask.lua")
+        .AddScript("camera_script", "assets/scripts/camera.lua");
+
+    auto label = CreateRef<Label>("arial_fnt", "Marco Pinto");
     auto textEnt = m_activeScene->CreateEntity("Test Text");
     textEnt.AddComponent<LabelComponent>().label = label;
 
     auto sphere = m_activeScene->CreateEntity("Sphere");
-    AssetsManager::GetInstance().AddSprite("sphere", "assets/textures/sphere.png");
-    auto& sphereSpriteComp = sphere.AddComponent<SpriteComponent>();
-    sphereSpriteComp.texture = AssetsManager::GetInstance().GetSprite("sphere");
-    sphereSpriteComp.anchor = {0.5f, 0.5f};
-    sphere.AddComponent<ScriptComponent>("assets/scripts/sphere.lua");
+    sphere.AddComponent<SpriteComponent>("sphere_tex").anchor = {0.5f, 0.5f};
+    sphere.AddComponent<ScriptComponent>("sphere_script");
 
     auto bgMusic = m_activeScene->CreateEntity("Background Music", false);
     bgMusic.AddComponent<SoundComponent>("assets/sound/bg_music.wav");
-    bgMusic.AddComponent<ScriptComponent>("assets/scripts/bg_music.lua");
+    bgMusic.AddComponent<ScriptComponent>("bg_music_script");
 
     auto protector = m_activeScene->CreateEntity("PROTECTOR!", false);
     protector.AddComponent<SoundComponent>("assets/sound/iamtheprotectorofthissystem.wav");
-    protector.AddComponent<ScriptComponent>("assets/scripts/protector.lua");
+    protector.AddComponent<ScriptComponent>("protector_script");
 
     for (size_t i = 0; i < 10; ++i) {
         auto mask = m_activeScene->CreateEntity("Mask_" + std::to_string(i));
-        mask.AddComponent<SpriteComponent>().texture = spriteMask;
-        mask.AddComponent<ScriptComponent>("assets/scripts/mask.lua");
+        mask.AddComponent<SpriteComponent>("mask_tex");
+        mask.AddComponent<ScriptComponent>("mask_script");
     }
-
-    // auto& labelTrans = textEnt.GetComponent<TransformComponent>().transform;
-    // labelTrans[0].x = 60.f;
-    // labelTrans[1].y = 3.f;
-
-    // auto barrel = m_activeScene->CreateEntity("Barrel");
-    // barrel.AddComponent<SpriteComponent>().texture = spriteBarrel;
 
     auto camEntity = m_activeScene->CreateEntity("Primary Camera");
     camEntity.AddComponent<CameraComponent>().primary = true;
-    camEntity.AddComponent<ScriptComponent>("assets/scripts/camera.lua");
+    camEntity.AddComponent<ScriptComponent>("camera_script");
 }
 
 void DempstaEditor::OnDetach() {}

@@ -17,7 +17,7 @@ struct NameComponent {
     NameComponent() = default;
     explicit NameComponent(std::string name) : name(std::move(name)) {}
 
-    explicit operator const std::string &() const noexcept { return name; }
+    explicit operator const std::string&() const noexcept { return name; }
     explicit operator const char*() const noexcept { return name.c_str(); }
 };
 
@@ -42,16 +42,17 @@ struct TransformComponent {
 struct SpriteComponent {
     glm::vec4 color{glm::vec4(1.0f)};
     glm::vec2 anchor{glm::vec2(0.f)};
-    Ref<SubTexture2D> texture;
+    std::string asset;
 
     SpriteComponent() = default;
+    explicit SpriteComponent(std::string asset) : asset(std::move(asset)) {}
 };
 
 struct ScriptComponent {
-    std::string path;
+    std::string asset;
     Scope<lua::ScriptEntity> instance;
 
-    void Create() { instance = CreateScope<lua::ScriptEntity>(path); }
+    void Create() { instance = CreateScope<lua::ScriptEntity>(asset); }
 
     void Destroy() {
         instance->OnDestroy();
@@ -59,7 +60,7 @@ struct ScriptComponent {
     }
 
     ScriptComponent() = default;
-    explicit ScriptComponent(std::string path) : path(std::move(path)) {}
+    explicit ScriptComponent(std::string asset) : asset(std::move(asset)) {}
 };
 
 struct NativeScriptComponent {

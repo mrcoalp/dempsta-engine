@@ -8,40 +8,65 @@ AssetsManager& AssetsManager::GetInstance() {
     return instance;
 }
 
+AssetsManager::~AssetsManager() {
+    for (const auto& asset : m_assets) {
+        switch (asset->GetType()) {  // todo(mpinto)
+            case AssetType::Sprite:
+            case AssetType::Font:
+            case AssetType::Sound:
+            case AssetType::Script:
+            case AssetType::Undefined:
+            default:
+                break;
+        }
+    }
+}
+
 void AssetsManager::InitFreeType() {
     if (FT_Init_FreeType(&m_fontLibrary) > FT_Err_Ok) {
         LOG_ENGINE_ERROR("An error occurred during FreeType library initialization!");
     }
 }
 
-void AssetsManager::AddSprite(const std::string& name, const std::string& filepath) {
-    if (Exists(name)) {
-        LOG_ENGINE_WARN("Tried to add an already loaded sprite: '{}'", name);
-        return;
-    }
-    size_t index;
-    if (!sourceLoaded(filepath, index)) {
-        m_assets.emplace_back(CreateRef<SpriteAsset>(filepath));
-    }
-    m_tracker.emplace(name, index);
+AssetsManager& AssetsManager::AddSprite(const std::string& name, const std::string& filepath) {
+    return add(name, filepath, [&filepath]() -> Ref<Asset> { return CreateRef<SpriteAsset>(filepath); });
 }
 
-void AssetsManager::AddFont(const std::string& name, const std::string& filepath, unsigned size) {
-    if (Exists(name)) {
-        LOG_ENGINE_WARN("Tried to add an already loaded font: {}", name);
-        return;
-    }
-    size_t index;
-    if (!sourceLoaded(filepath, index)) {
+AssetsManager& AssetsManager::AddFont(const std::string& name, const std::string& filepath, unsigned size) {
+    return add(name, filepath, [this, &filepath, &size]() -> Ref<Asset> {
         auto font = CreateRef<Font>(m_fontLibrary, filepath, m_fontIndex++, size);
-        m_assets.emplace_back(CreateRef<FontAsset>(filepath, font));
-    }
-    m_tracker.emplace(name, index);
+        return CreateRef<FontAsset>(filepath, font);
+    });
+}
+
+AssetsManager& AssetsManager::AddScript(const std::string& name, const std::string& filepath) {
+    return add(name, filepath, [&filepath]() -> Ref<Asset> { return CreateRef<ScriptAsset>(filepath); });
+}
+
+AssetsManager& AssetsManager::AddShader(const std::string& name, const std::string& filepath) {
+    return add(name, filepath, [&filepath]() -> Ref<Asset> { return CreateRef<ShaderAsset>(filepath, Shader::Create(filepath)); });
 }
 
 const Ref<SubTexture2D>& AssetsManager::GetSprite(const std::string& name) const { return get<SpriteAsset>(name)->GetSprite(); }
 
 const Ref<Font>& AssetsManager::GetFont(const std::string& name) const { return get<FontAsset>(name)->GetFont(); }
+
+const Ref<ScriptAsset>& AssetsManager::GetScript(const std::string& name) const { return get<ScriptAsset>(name); }
+
+const Ref<Shader>& AssetsManager::GetShader(const std::string& name) const { return get<ShaderAsset>(name)->GetShader(); }
+
+AssetsManager& AssetsManager::add(const std::string& name, const std::string& filepath, const std::function<Ref<Asset>()>& assetGetter) {
+    if (Exists(name)) {
+        LOG_ENGINE_WARN("Tried to add an already loaded asset: {}", name);
+        return AssetsManager::GetInstance();
+    }
+    size_t index;
+    if (!sourceLoaded(filepath, index)) {
+        m_assets.emplace_back(assetGetter());
+    }
+    m_tracker.emplace(name, index);
+    return AssetsManager::GetInstance();
+}
 
 bool AssetsManager::sourceLoaded(const std::string& filepath, size_t& index) {
     index = 0;

@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 
+#include "Core/assetsmanager.h"
 #include "Events/keyevent.h"
 #include "Renderer/renderer2d.h"
 #include "Scene/components.h"
@@ -41,8 +42,10 @@ void Scene::OnUpdate(const TimeStep& ts) {
             if (cameraComp.primary) {
                 Renderer2D::BeginScene(camera.GetProjection(), transform);
                 m_registry.view<TransformComponent, SpriteComponent>().each([](const auto& transformComp, const auto& spriteComp) {
-                    if (spriteComp.texture != nullptr) {
-                        Renderer2D::DrawQuad(transformComp.GetTransform(), spriteComp.texture, spriteComp.color, spriteComp.anchor);
+                    const auto& assets = AssetsManager::GetInstance();
+                    if (assets.Exists(spriteComp.asset) && assets.IsSprite(spriteComp.asset)) {
+                        const auto& sprite = assets.GetSprite(spriteComp.asset);
+                        Renderer2D::DrawQuad(transformComp.GetTransform(), sprite, spriteComp.color, spriteComp.anchor);
                     } else {
                         Renderer2D::DrawQuad(transformComp.GetTransform(), spriteComp.color);
                     }
