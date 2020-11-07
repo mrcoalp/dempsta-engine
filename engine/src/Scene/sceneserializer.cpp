@@ -36,6 +36,7 @@ void SceneSerializer::Serialize(const std::string& filePath) const {
         AddComponentToJSON<SpriteComponent>(entity, [&jEntity](SpriteComponent& component) {
             jEntity.spriteComponent = {false, JSON::Vec4(component.color)};
         });
+        AddComponentToJSON<ScriptComponent>(entity, [&jEntity](ScriptComponent& component) { jEntity.scriptComponent = {false, component.path}; });
         jScene.entities.push_back(jEntity);
     });
     JSON::WriteFile(jScene, filePath);
@@ -75,6 +76,9 @@ bool SceneSerializer::Deserialize(const std::string& filePath) const {
             const auto& saved = entity.spriteComponent;
             auto& sc = deserialized.AddComponent<SpriteComponent>();
             sc.color = saved.color.ToGLM();
+        }
+        if (!entity.scriptComponent.is_empty) {
+            deserialized.AddComponent<ScriptComponent>().path = entity.scriptComponent.path;
         }
         LOG_ENGINE_TRACE("Deserialized entity '{}' - name: {}", uuid, name);
     }

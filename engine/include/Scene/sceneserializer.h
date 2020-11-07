@@ -68,6 +68,15 @@ struct SpriteComponent : public Visitable {
     }
 };
 
+struct ScriptComponent : public Visitable {
+    std::string path;
+
+    template <template <typename> class Visitor>
+    inline void Visit(Visitor<ScriptComponent>& visitor) {
+        visitor.Node(path, "file_path");
+    }
+};
+
 struct Entity : public Visitable {
     unsigned id;
     // All visitable components are empty by default to ensure they're not added to json
@@ -75,6 +84,7 @@ struct Entity : public Visitable {
     TransformComponent transformComponent{true};
     CameraComponent cameraComponent{true};
     SpriteComponent spriteComponent{true};
+    ScriptComponent scriptComponent{true};
 
     template <template <typename> class Visitor>
     inline void Visit(Visitor<Entity>& visitor) {
@@ -82,7 +92,8 @@ struct Entity : public Visitable {
             .OptionalNode(nameComponent, "name_component", {true})
             .OptionalNode(transformComponent, "transform_component", {true})
             .OptionalNode(cameraComponent, "camera_component", {true})
-            .OptionalNode(spriteComponent, "sprite_component", {true});
+            .OptionalNode(spriteComponent, "sprite_component", {true})
+            .OptionalNode(scriptComponent, "script_component", {true});
     }
 };
 
