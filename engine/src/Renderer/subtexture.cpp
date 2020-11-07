@@ -21,8 +21,6 @@ SubTexture2D::SubTexture2D(const std::string& texturePath) : m_atlas(CreateRef<A
     m_textureCoords[3] = {0.f, 1.f};
 }
 
-void SubTexture2D::SetAnchor(const glm::vec2& anchor) { m_anchor = anchor; }
-
 Ref<SubTexture2D> SubTexture2D::CreateSprite(const Ref<Atlas2D>& spriteSheet, const glm::vec2& coords) {
     return CreateSprite(spriteSheet, coords, {1.0f, 1.0f});
 }

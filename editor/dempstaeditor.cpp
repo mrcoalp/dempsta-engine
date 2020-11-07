@@ -1,5 +1,7 @@
 #include "dempstaeditor.h"
 
+#include "Core/assetsmanager.h"
+
 namespace de {
 DempstaEditor::DempstaEditor() : Layer("DempstaEditor") {}
 
@@ -13,16 +15,17 @@ void DempstaEditor::OnAttach() {
     auto spriteBarrel = SubTexture2D::CreateSprite(spriteSheet, glm::vec2({8.f, 12.f}));
     auto spriteDog = SubTexture2D::CreateSprite("assets/textures/dog.jpg");
     auto spriteMask = SubTexture2D::CreateSprite("assets/textures/mask.png");
-    spriteMask->SetAnchor({0.5f, 0.5f});
     auto spriteSphere = SubTexture2D::CreateSprite("assets/textures/sphere.png");
-    spriteSphere->SetAnchor({0.5f, 0.5f});
     FontManager::GetInstance().AddFont("Arial", "assets/fonts/arial.ttf", 60);
     auto label = CreateRef<Label>("Arial", "Marco Pinto");
     auto textEnt = m_activeScene->CreateEntity("Test Text");
     textEnt.AddComponent<LabelComponent>().label = label;
 
     auto sphere = m_activeScene->CreateEntity("Sphere");
-    sphere.AddComponent<SpriteComponent>().texture = spriteSphere;
+    AssetsManager::GetInstance().AddSprite("sphere", "assets/textures/sphere.png");
+    auto& sphereSpriteComp = sphere.AddComponent<SpriteComponent>();
+    sphereSpriteComp.texture = AssetsManager::GetInstance().GetSprite("sphere");
+    sphereSpriteComp.anchor = {0.5f, 0.5f};
     sphere.AddComponent<ScriptComponent>("assets/scripts/sphere.lua");
 
     auto bgMusic = m_activeScene->CreateEntity("Background Music", false);

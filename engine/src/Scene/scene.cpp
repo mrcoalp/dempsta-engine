@@ -42,7 +42,7 @@ void Scene::OnUpdate(const TimeStep& ts) {
                 Renderer2D::BeginScene(camera.GetProjection(), transform);
                 m_registry.view<TransformComponent, SpriteComponent>().each([](const auto& transformComp, const auto& spriteComp) {
                     if (spriteComp.texture != nullptr) {
-                        Renderer2D::DrawQuad(transformComp.GetTransform(), spriteComp.texture, spriteComp.color);
+                        Renderer2D::DrawQuad(transformComp.GetTransform(), spriteComp.texture, spriteComp.color, spriteComp.anchor);
                     } else {
                         Renderer2D::DrawQuad(transformComp.GetTransform(), spriteComp.color);
                     }

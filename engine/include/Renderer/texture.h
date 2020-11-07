@@ -28,12 +28,5 @@ class Texture2D : public Texture {
 public:
     static Ref<Texture2D> Create(uint32_t width, uint32_t height);
     static Ref<Texture2D> Create(const std::string& filePath);
-
-    [[nodiscard]] inline const glm::vec2& GetAnchor() const { return m_anchor; }
-
-    void SetAnchor(const glm::vec2& anchor) { m_anchor = anchor; }
-
-private:
-    glm::vec2 m_anchor{0.f, 0.f};
 };
 }  // namespace de
