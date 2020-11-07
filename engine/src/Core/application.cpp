@@ -2,7 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include "Renderer/font.h"
+#include "Core/assetsmanager.h"
 #include "Renderer/renderer.h"
 #include "Scripting/API/databuffer.h"
 #include "Scripting/API/helpers.h"
@@ -31,7 +31,7 @@ Application::Application(const WindowProps& windowProps) {
 
     Renderer::Init();
     SoundProvider::Init();
-    FontManager::GetInstance().InitFreeType();
+    AssetsManager::GetInstance().InitFreeType();
     LE::Init();
     RegisterScriptingAPI();
 

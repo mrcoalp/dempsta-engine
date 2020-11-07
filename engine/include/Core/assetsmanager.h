@@ -5,6 +5,7 @@
 #include <utility>
 
 #include "Core/core.h"
+#include "Renderer/font.h"
 #include "Renderer/subtexture.h"
 
 namespace de {
@@ -35,12 +36,21 @@ public:
 private:
     Ref<SubTexture2D> m_sprite;
 };
-struct FontAsset : public Asset {
-    explicit FontAsset(const std::string& filepath) : Asset(filepath) { m_type = AssetType::Font; }
+
+class FontAsset : public Asset {
+public:
+    explicit FontAsset(const std::string& filepath, const Ref<Font>& font) : m_font(font), Asset(filepath) { m_type = AssetType::Font; }
+
+    [[nodiscard]] const Ref<Font>& GetFont() const { return m_font; }
+
+private:
+    Ref<Font> m_font;
 };
+
 struct SoundAsset : public Asset {
     explicit SoundAsset(const std::string& filepath) : Asset(filepath) { m_type = AssetType::Sound; }
 };
+
 struct ScriptAsset : public Asset {
     explicit ScriptAsset(const std::string& filepath) : Asset(filepath) { m_type = AssetType::Script; }
 };
@@ -49,14 +59,26 @@ class AssetsManager {
 public:
     static AssetsManager& GetInstance();
 
+    AssetsManager(const AssetsManager&) = delete;
+
+    void operator=(const AssetsManager&) = delete;
+
+    void InitFreeType();
+
     [[nodiscard]] inline bool Exists(const std::string& name) const { return m_tracker.find(name) != m_tracker.end(); }
 
     void AddSprite(const std::string& name, const std::string& filepath);
 
+    void AddFont(const std::string& name, const std::string& filepath, unsigned size);
+
     [[nodiscard]] const Ref<SubTexture2D>& GetSprite(const std::string& name) const;
+
+    [[nodiscard]] const Ref<Font>& GetFont(const std::string& name) const;
 
 private:
     AssetsManager() = default;
+
+    [[nodiscard]] bool sourceLoaded(const std::string& filepath, size_t& index);
 
     template <class T>
     const Ref<T>& get(const std::string& name) const {
@@ -68,6 +90,8 @@ private:
         return asset;
     }
 
+    FT_Library m_fontLibrary;
+    FT_Long m_fontIndex{0};
     std::vector<Ref<Asset>> m_assets;
     std::unordered_map<std::string, size_t> m_tracker;
 };

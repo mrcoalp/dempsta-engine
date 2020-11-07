@@ -16,8 +16,8 @@ void DempstaEditor::OnAttach() {
     auto spriteDog = SubTexture2D::CreateSprite("assets/textures/dog.jpg");
     auto spriteMask = SubTexture2D::CreateSprite("assets/textures/mask.png");
     auto spriteSphere = SubTexture2D::CreateSprite("assets/textures/sphere.png");
-    FontManager::GetInstance().AddFont("Arial", "assets/fonts/arial.ttf", 60);
-    auto label = CreateRef<Label>("Arial", "Marco Pinto");
+    AssetsManager::GetInstance().AddFont("arial", "assets/fonts/arial.ttf", 60);
+    auto label = CreateRef<Label>("arial", "Marco Pinto");
     auto textEnt = m_activeScene->CreateEntity("Test Text");
     textEnt.AddComponent<LabelComponent>().label = label;
 

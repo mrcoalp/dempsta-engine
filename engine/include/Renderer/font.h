@@ -52,29 +52,4 @@ private:
     FT_Face m_face;
     unsigned m_size{20};
 };
-
-class FontManager {
-public:
-    static FontManager& GetInstance();
-
-    FontManager(const FontManager&) = delete;
-
-    void operator=(const FontManager&) = delete;
-
-    void InitFreeType();
-
-    void AddFont(const std::string& name, const std::string& source, unsigned size);
-
-    [[nodiscard]] inline const Font& GetFont(const std::string& fontName) const { return m_fonts.at(fontName); }
-
-    [[nodiscard]] inline bool IsFontLoaded(const std::string& fontName) const { return m_fonts.find(fontName) != m_fonts.end(); }
-
-private:
-    FontManager() = default;
-
-    FT_Library m_library;
-    FT_Long m_index{0};
-
-    std::unordered_map<std::string, Font> m_fonts;
-};
 }  // namespace de

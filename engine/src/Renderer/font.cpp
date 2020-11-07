@@ -102,24 +102,4 @@ Font::Font(const FT_Library& library, const std::string& source, FT_Long faceInd
     FT_Set_Pixel_Sizes(m_face, 0, size);
     m_atlas = CreateRef<FontTextureAtlas>(m_face);
 }
-
-FontManager& FontManager::GetInstance() {
-    static auto* instance = new FontManager();
-    return *instance;
-}
-
-void FontManager::InitFreeType() {
-    if (FT_Init_FreeType(&m_library) > FT_Err_Ok) {
-        LOG_ENGINE_ERROR("An error occurred during FreeType library initialization!");
-    }
-}
-
-void FontManager::AddFont(const std::string& name, const std::string& source, unsigned size) {
-    if (IsFontLoaded(name)) {
-        LOG_ENGINE_WARN("Tried to add an already loaded font: {}", name);
-        return;
-    }
-    Font font(m_library, source, m_index++, size);
-    m_fonts.emplace(name, font);
-}
 }  // namespace de
