@@ -16,11 +16,15 @@ struct Trivial<int> : std::true_type {};
 template <>
 struct Trivial<unsigned> : std::true_type {};
 template <>
+struct Trivial<bool> : std::true_type {};
+template <>
 struct Trivial<float> : std::true_type {};
 template <>
-struct Trivial<std::string> : std::true_type {};
+struct Trivial<double> : std::true_type {};
 template <>
-struct Trivial<bool> : std::true_type {};
+struct Trivial<const char*> : std::true_type {};
+template <>
+struct Trivial<std::string> : std::true_type {};
 template <typename T>
 using IsTrivial = std::enable_if_t<Trivial<T>::value, int>;
 
@@ -41,25 +45,30 @@ template <typename T>
 using IsMap = std::enable_if_t<Map<T>::value, int>;
 
 /**
- * @brief Checks if visitable custom struct is empty or not (when using optional node).
- * Please define a bool is_empty member if you wish to use proper optional nodes when writing JSON.
- * By default none are empty.
- * @tparam T Type to check.
+ * @brief Base struct to use custom visitable types.
  */
-template <typename T, typename = void>
-struct IsEmpty {
-    inline static bool Value(T& field) { return false; }
+struct Visitable {
+    /**
+     * @brief Whether or not the visitable field is empty. Defaults to false, not empty. Useful to use with optional nodes.
+     */
+    bool is_empty{false};
 };
-template <typename T>
-using IsEmptyCall = std::enable_if_t<&T::is_empty>;
-template <typename T>
-struct IsEmpty<T, IsEmptyCall<T>> {
-    inline static bool Value(T& field) { return field.is_empty; }
-};
-
-struct Visitable {};
 template <class T>
 using IsVisitable = std::enable_if_t<std::is_base_of_v<Visitable, T>, int>;
+
+/**
+ * @brief Check for emptiness of Visitable struct.
+ *
+ * @tparam Field Visitable to check.
+ */
+template <typename Field>
+struct IsEmpty {
+    inline static bool Value(Field& field) { return valueImpl(field, std::is_base_of<Visitable, Field>()); }
+
+private:
+    inline static bool valueImpl(Field& field, std::true_type) { return field.is_empty; }
+    inline static bool valueImpl(Field& field, std::false_type) { return false; }
+};
 
 struct Vec2 : public Visitable {
     float x;
@@ -69,6 +78,8 @@ struct Vec2 : public Visitable {
     inline void Visit(Visitor<Vec2>& visitor) {
         visitor.Node(x, "x").Node(y, "y");
     }
+
+    [[nodiscard]] inline glm::vec2 ToGLM() const { return {x, y}; }
 
     Vec2() = default;
     explicit Vec2(const glm::vec2& vec) : x(vec.x), y(vec.y) {}
@@ -100,6 +111,8 @@ struct Vec4 : public Visitable {
     inline void Visit(Visitor<Vec4>& visitor) {
         visitor.Node(x, "x").Node(y, "y").Node(z, "z").Node(w, "w");
     }
+
+    [[nodiscard]] inline glm::vec4 ToGLM() const { return {x, y, z, w}; }
 
     Vec4() = default;
     explicit Vec4(const glm::vec4& vec) : x(vec.x), y(vec.y), z(vec.z), w(vec.w) {}
@@ -186,7 +199,7 @@ public:
 
     template <typename Field>
     WriteVisitor& OptionalNode(Field& field, const std::string& name, Field = {}) {
-        if (!IsEmpty<Field>::Value(field)) {  // todo(mpinto): fix this
+        if (!IsEmpty<Field>::Value(field)) {
             return Node(field, name);
         }
         return *this;
@@ -255,12 +268,16 @@ public:
     template <typename Field>
     ReadVisitor& OptionalNode(Field& field, const std::string& name, const Field& defaultValue = {}) {
         auto it = m_object.find(name);
-        field = defaultValue;
         if (it != m_object.end()) {
             if (!it->is_null()) {
+                if (IsEmpty<Field>::Value(field)) {
+                    field.is_empty = false;
+                }
                 auto guard = m_errors.PushNode(name);
                 visit(*it, field);
             }
+        } else {
+            field = defaultValue;
         }
         return *this;
     }

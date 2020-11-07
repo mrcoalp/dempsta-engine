@@ -20,28 +20,21 @@ void SceneSerializer::Serialize(const std::string& filePath) const {
         auto entity = Entity(entityId, m_scene.get());
         JSON::Entity jEntity;
         jEntity.id = 123;
-        AddComponentToJSON<NameComponent>(entity, [&jEntity](NameComponent& component) { jEntity.nameComponent = {{}, true, component.name}; });
+        AddComponentToJSON<NameComponent>(entity, [&jEntity](NameComponent& component) { jEntity.nameComponent = {false, component.name}; });
         AddComponentToJSON<TransformComponent>(entity, [&jEntity](TransformComponent& component) {
             JSON::Vec3 translation{component.translation};
             JSON::Vec3 rotation{component.rotation};
             JSON::Vec3 scale{component.scale};
-            JSON::TransformComponent tc{{}, true, translation, rotation, scale};
-            jEntity.transformComponent = tc;
+            jEntity.transformComponent = {false, translation, rotation, scale};
         });
         AddComponentToJSON<CameraComponent>(entity, [&jEntity](CameraComponent& component) {
-            JSON::CameraComponent cc{{}, true, component.primary, component.fixedAspectRatio};
-            jEntity.cameraComponent = cc;
-            //            jEnt["CameraComponent"]["Primary"] = component.primary;
-            //            jEnt["CameraComponent"]["FixedAspectRatio"] = component.fixedAspectRatio;
-            //            jEnt["CameraComponent"]["SceneCamera"]["Orthographic"] = {
-            //                {"Size", component.camera.GetOrthographicSize()},
-            //                {"NearClip", component.camera.GetOrthographicNearClip()},
-            //                {"FarClip", component.camera.GetOrthographicFarClip()},
-            //            };
+            const auto& camera = component.camera;
+            JSON::SceneCamera jSceneCamera;
+            jSceneCamera.ortho = {false, camera.GetOrthographicSize(), camera.GetOrthographicNearClip(), camera.GetOrthographicFarClip()};
+            jEntity.cameraComponent = {false, component.primary, component.fixedAspectRatio, jSceneCamera};
         });
         AddComponentToJSON<SpriteComponent>(entity, [&jEntity](SpriteComponent& component) {
-            const auto& color = component.color;
-            //            jEnt["SpriteComponent"]["Color"] = {color.r, color.g, color.b, color.a};
+            jEntity.spriteComponent = {false, JSON::Vec4(component.color)};
         });
         jScene.entities.push_back(jEntity);
     });
@@ -57,22 +50,31 @@ bool SceneSerializer::Deserialize(const std::string& filePath) const {
     for (const auto& entity : jScene.entities) {
         auto uuid = entity.id;  // todo(mpinto): UUID
         std::string name;
-        if (entity.nameComponent.added) {
+        if (!entity.nameComponent.is_empty) {
             name = entity.nameComponent.name;
         }
         auto deserialized = m_scene->CreateEntity(name, false);
-        if (entity.transformComponent.added) {
+        if (!entity.transformComponent.is_empty) {
             const auto& saved = entity.transformComponent;
             auto& tc = deserialized.AddComponent<TransformComponent>();
             tc.translation = saved.translation.ToGLM();
             tc.rotation = saved.rotation.ToGLM();
             tc.scale = saved.scale.ToGLM();
         }
-        if (entity.cameraComponent.added) {
+        if (!entity.cameraComponent.is_empty) {
             const auto& saved = entity.cameraComponent;
             auto& cc = deserialized.AddComponent<CameraComponent>();
             cc.primary = saved.primary;
             cc.fixedAspectRatio = saved.fixedAspectRatio;
+            if (!saved.sceneCamera.ortho.is_empty) {
+                const auto& ortho = saved.sceneCamera.ortho;
+                cc.camera.SetOrthographic(ortho.size, ortho.nearClip, ortho.farClip);
+            }
+        }
+        if (!entity.spriteComponent.is_empty) {
+            const auto& saved = entity.spriteComponent;
+            auto& sc = deserialized.AddComponent<SpriteComponent>();
+            sc.color = saved.color.ToGLM();
         }
         LOG_ENGINE_TRACE("Deserialized entity '{}' - name: {}", uuid, name);
     }

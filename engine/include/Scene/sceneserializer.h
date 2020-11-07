@@ -9,50 +9,80 @@
 namespace de {
 namespace JSON {
 struct NameComponent : public Visitable {
-    bool added = false;
     std::string name;
 
     template <template <typename> class Visitor>
     inline void Visit(Visitor<NameComponent>& visitor) {
-        visitor.Node(added, "added").Node(name, "name");
+        visitor.Node(name, "name");
     }
 };
 
 struct TransformComponent : public Visitable {
-    bool added = false;
     Vec3 translation;
     Vec3 rotation;
     Vec3 scale;
 
     template <template <typename> class Visitor>
     inline void Visit(Visitor<TransformComponent>& visitor) {
-        visitor.Node(added, "added").Node(translation, "translation").Node(rotation, "rotation").Node(scale, "scale");
+        visitor.Node(translation, "translation").Node(rotation, "rotation").Node(scale, "scale");
+    }
+};
+
+struct OrthographicCamera : public Visitable {
+    float size;
+    float nearClip;
+    float farClip;
+
+    template <template <typename> class Visitor>
+    inline void Visit(Visitor<OrthographicCamera>& visitor) {
+        visitor.Node(size, "size").Node(nearClip, "near_clip").Node(farClip, "far_clip");
+    }
+};
+
+struct SceneCamera : public Visitable {
+    OrthographicCamera ortho{true};
+
+    template <template <typename> class Visitor>
+    inline void Visit(Visitor<SceneCamera>& visitor) {
+        visitor.OptionalNode(ortho, "orthographic", {true});
     }
 };
 
 struct CameraComponent : public Visitable {
-    bool added = false;
     bool primary;
     bool fixedAspectRatio;
+    SceneCamera sceneCamera;
 
     template <template <typename> class Visitor>
     inline void Visit(Visitor<CameraComponent>& visitor) {
-        visitor.Node(added, "added").Node(primary, "primary").Node(fixedAspectRatio, "fixed_aspect_ratio");
+        visitor.Node(primary, "primary").Node(fixedAspectRatio, "fixed_aspect_ratio").Node(sceneCamera, "scene_camera");
+    }
+};
+
+struct SpriteComponent : public Visitable {
+    Vec4 color;
+
+    template <template <typename> class Visitor>
+    inline void Visit(Visitor<SpriteComponent>& visitor) {
+        visitor.Node(color, "color");
     }
 };
 
 struct Entity : public Visitable {
     unsigned id;
-    NameComponent nameComponent;
-    TransformComponent transformComponent;
-    CameraComponent cameraComponent;
+    // All visitable components are empty by default to ensure they're not added to json
+    NameComponent nameComponent{true};
+    TransformComponent transformComponent{true};
+    CameraComponent cameraComponent{true};
+    SpriteComponent spriteComponent{true};
 
     template <template <typename> class Visitor>
     inline void Visit(Visitor<Entity>& visitor) {
         visitor.Node(id, "id")
-            .OptionalNode(nameComponent, "name_component")
-            .OptionalNode(transformComponent, "transform_component")
-            .OptionalNode(cameraComponent, "camera_component");
+            .OptionalNode(nameComponent, "name_component", {true})
+            .OptionalNode(transformComponent, "transform_component", {true})
+            .OptionalNode(cameraComponent, "camera_component", {true})
+            .OptionalNode(spriteComponent, "sprite_component", {true});
     }
 };
 
