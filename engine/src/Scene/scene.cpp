@@ -71,11 +71,14 @@ void Scene::OnUpdate(const TimeStep& ts) {
 
 void Scene::OnEvent(Event& event) {
     // native scripting update
-    m_registry.view<NativeScriptComponent>().each([&](const auto entity, auto& nsc) { nsc.instance->OnEvent(event); });
+    m_registry.view<NativeScriptComponent>().each([&](const auto entity, NativeScriptComponent& nsc) { nsc.instance->OnEvent(event); });
     // scripting update
     EventDispatcher dispatcher(event);
     const int eventType = static_cast<int>(event.GetEventType());
-    m_registry.view<ScriptComponent>().each([&](const auto entity, auto& sc) {
+    m_registry.view<ScriptComponent>().each([&](const auto entity, ScriptComponent& sc) {
+        if (sc.instance == nullptr) {
+            return;
+        }
         if (!sc.instance->acquireEvents) {
             return;
         }
@@ -94,12 +97,43 @@ void Scene::OnViewportResize(uint32_t width, uint32_t height) {
     m_viewportWidth = width;
     m_viewportHeight = height;
 
-    m_registry.view<CameraComponent>().each([&]([[maybe_unused]] const auto entity, auto& cameraComp) {
+    m_registry.view<CameraComponent>().each([&]([[maybe_unused]] const auto entity, CameraComponent& cameraComp) {
         if (!cameraComp.fixedAspectRatio) {
             cameraComp.camera.SetViewportSize(width, height);
         }
     });
 }
+
+template <typename Component>
+void Scene::OnAddComponent([[maybe_unused]] Entity entity, Component& component) {
+    DE_THROW("Invalid component")
+}
+
+template <>
+void Scene::OnAddComponent<NameComponent>([[maybe_unused]] Entity entity, NameComponent& component) {}
+
+template <>
+void Scene::OnAddComponent<TransformComponent>([[maybe_unused]] Entity entity, TransformComponent& component) {}
+
+template <>
+void Scene::OnAddComponent<SpriteComponent>([[maybe_unused]] Entity entity, SpriteComponent& component) {}
+
+template <>
+void Scene::OnAddComponent<ScriptComponent>([[maybe_unused]] Entity entity, ScriptComponent& component) {}
+
+template <>
+void Scene::OnAddComponent<NativeScriptComponent>([[maybe_unused]] Entity entity, NativeScriptComponent& component) {}
+
+template <>
+void Scene::OnAddComponent<CameraComponent>([[maybe_unused]] Entity entity, CameraComponent& component) {
+    component.camera.SetViewportSize(m_viewportWidth, m_viewportHeight);
+}
+
+template <>
+void Scene::OnAddComponent<LabelComponent>([[maybe_unused]] Entity entity, LabelComponent& component) {}
+
+template <>
+void Scene::OnAddComponent<SoundComponent>([[maybe_unused]] Entity entity, SoundComponent& component) {}
 
 Entity Scene::CreateEntity(const std::string& name, bool addTransform) {
     Entity entity(m_registry.create(), this);

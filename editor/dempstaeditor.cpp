@@ -88,21 +88,36 @@ void DempstaEditor::OnImGuiRender() {
 
     if (ImGui::BeginMenuBar()) {
         if (ImGui::BeginMenu("File")) {
-            // ImGui::Separator();
+            if (ImGui::MenuItem("New Scene", nullptr, false, true)) {
+                m_sceneHierarchyPanel.UnSelectEntity();
+                m_activeScene = CreateRef<Scene>();
+                m_activeScene->OnViewportResize((uint32_t)m_viewportSize.x, (uint32_t)m_viewportSize.y);
+                m_sceneHierarchyPanel.SetContext(m_activeScene);
+            }
+            ImGui::Separator();
+            if (ImGui::MenuItem("Save scene as...", nullptr, false, true)) {
+                auto filepath = FileUtils::SaveFile("Dempsta Scene (*.dempsta)\0*.dempsta\0");
+                if (filepath) {
+                    SceneSerializer serializer(m_activeScene);
+                    serializer.Serialize(*filepath);
+                }
+            }
+            ImGui::Separator();
+            if (ImGui::MenuItem("Load scene as...", nullptr, false, true)) {
+                std::optional<std::string> filepath = FileUtils::OpenFile("Dempsta Scene (*.dempsta)\0*.dempsta\0");
+                if (filepath) {
+                    m_activeScene = CreateRef<Scene>();
+                    SceneSerializer serializer(m_activeScene);
+                    if (!serializer.Deserialize(*filepath)) {
+                        LOG_ERROR("Failed to deserialize scene!");
+                    }
+                    m_activeScene->OnViewportResize((uint32_t)m_viewportSize.x, (uint32_t)m_viewportSize.y);
+                    m_sceneHierarchyPanel.SetContext(m_activeScene);
+                }
+            }
+            ImGui::Separator();
             if (ImGui::MenuItem("Quit", nullptr, false, true)) {
                 Application::GetInstance().Close();
-            }
-            ImGui::Separator();
-            if (ImGui::MenuItem("Save scene", nullptr, false, true)) {
-                SceneSerializer serializer(m_activeScene);
-                serializer.Serialize("assets/ExampleScene.dempsta");
-            }
-            ImGui::Separator();
-            if (ImGui::MenuItem("Load scene", nullptr, false, true)) {
-                SceneSerializer serializer(m_activeScene);
-                if (!serializer.Deserialize("assets/ExampleScene.dempsta")) {
-                    LOG_ERROR("Failed to deserialize scene!");
-                }
             }
             ImGui::EndMenu();
         }

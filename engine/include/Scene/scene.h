@@ -34,6 +34,9 @@ public:
      */
     void OnViewportResize(uint32_t width, uint32_t height);
 
+    template <typename Component>
+    void OnAddComponent(Entity entity, Component& component);
+
     /**
      * @brief Creates a Entity object
      *

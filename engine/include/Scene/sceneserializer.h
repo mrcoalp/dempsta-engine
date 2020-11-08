@@ -3,7 +3,7 @@
 #include <utility>
 
 #include "Core/core.h"
-#include "JSON/json.h"
+#include "JSON/visitables.h"
 #include "Scene/scene.h"
 
 namespace de {
@@ -130,7 +130,7 @@ struct Asset : public Visitable {
 
     template <template <typename> class Visitor>
     inline void Visit(Visitor<Asset>& visitor) {
-        visitor.Node(type, "type").Node(path, "path").Node(name, "name").Node(fontSize, "font_size");
+        visitor.Node(type, "type").Node(path, "path").Node(name, "name").OptionalNode(fontSize, "font_size");
     }
 };
 
