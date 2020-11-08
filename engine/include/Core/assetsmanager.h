@@ -56,19 +56,8 @@ struct SoundAsset : public Asset {
     explicit SoundAsset(const std::string& filepath) : Asset(filepath) { m_type = AssetType::Sound; }
 };
 
-class ScriptAsset : public Asset {
-public:
-    explicit ScriptAsset(const std::string& filepath) : Asset(filepath) {
-        m_type = AssetType::Script;
-        Reload();
-    }
-
-    [[nodiscard]] inline const std::string& GetCode() const { return m_code; }
-
-    inline void Reload() { m_code = FileUtils::ReadFile(GetFilePath()); }
-
-private:
-    std::string m_code;
+struct ScriptAsset : public Asset {
+    explicit ScriptAsset(const std::string& filepath) : Asset(filepath) { m_type = AssetType::Script; }
 };
 
 class ShaderAsset : public Asset {
@@ -142,7 +131,7 @@ public:
 
     [[nodiscard]] Ref<SoundInstance> GetSoundInstance(const std::string& name) const;
 
-    [[nodiscard]] const Ref<ScriptAsset>& GetScript(const std::string& name) const;
+    [[nodiscard]] const std::string& GetScript(const std::string& name) const;
 
     [[nodiscard]] const Ref<Shader>& GetShader(const std::string& name) const;
 

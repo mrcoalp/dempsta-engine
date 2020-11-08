@@ -25,9 +25,9 @@ void Scene::OnUpdate(const TimeStep& ts) {
             return;
         }
         if (sc.instance == nullptr) {
-            sc.Create();
+            sc.instance = CreateScope<lua::ScriptEntity>(AssetsManager::GetInstance().GetScript(sc.asset));
             sc.instance->entityRef->m_entity = Entity(entity, this);
-            sc.instance->ReloadScript();
+            sc.instance->OnInit();
         }
         sc.instance->OnUpdate(ts);
         // messaging
@@ -58,6 +58,9 @@ void Scene::OnUpdate(const TimeStep& ts) {
                     }
                 });
                 m_registry.view<TransformComponent, LabelComponent>().each([](const auto& transformComp, const auto& labelComp) {
+                    if (labelComp.label == nullptr) {
+                        return;
+                    }
                     Renderer2D::DrawQuad(transformComp.GetTransform(), labelComp.label, labelComp.color);
                 });
                 Renderer2D::EndScene();

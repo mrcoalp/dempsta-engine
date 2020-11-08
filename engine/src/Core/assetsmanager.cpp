@@ -59,7 +59,7 @@ Ref<SoundInstance> AssetsManager::GetSoundInstance(const std::string& name) cons
     return SoundInstance::CreateSound(get<SoundAsset>(name)->GetFilePath());
 }
 
-const Ref<ScriptAsset>& AssetsManager::GetScript(const std::string& name) const { return get<ScriptAsset>(name); }
+const std::string& AssetsManager::GetScript(const std::string& name) const { return get<ScriptAsset>(name)->GetFilePath(); }
 
 const Ref<Shader>& AssetsManager::GetShader(const std::string& name) const { return get<ShaderAsset>(name)->GetShader(); }
 

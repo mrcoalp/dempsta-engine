@@ -51,13 +51,6 @@ struct ScriptComponent {
     std::string asset;
     Scope<lua::ScriptEntity> instance;
 
-    void Create() { instance = CreateScope<lua::ScriptEntity>(asset); }
-
-    void Destroy() {
-        instance->OnDestroy();
-        instance.reset(nullptr);
-    }
-
     ScriptComponent() = default;
     explicit ScriptComponent(std::string asset) : asset(std::move(asset)) {}
 };

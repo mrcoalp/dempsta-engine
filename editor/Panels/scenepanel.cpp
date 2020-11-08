@@ -103,8 +103,8 @@ static void drawCameraNode(CameraComponent& component) {
     ImGui::Checkbox("Fixed aspect ratio", &component.fixedAspectRatio);
 }
 
-static void drawScriptingNode(ScriptComponent& component) {
-    const auto& scriptEntity = component.instance;
+template <class Component>
+static void HandleAsset(Component& component, std::function<void(Component&, const char*)> reload) {
     char buffer[128];
     memset(buffer, 0, sizeof(buffer));
     memcpy(buffer, component.asset.c_str(), component.asset.length() + 1);
@@ -112,14 +112,25 @@ static void drawScriptingNode(ScriptComponent& component) {
         ImGui::SameLine();
         ImGui::SmallButton("Reload");
         if (ImGui::IsItemClicked() && strlen(buffer) > 0) {
-            component.asset = buffer;
-            scriptEntity->SetAsset(buffer);
+            reload(component, buffer);
         }
     }
+}
 
-    ImGui::Spacing();
+static void drawScriptingNode(ScriptComponent& component) {
+    HandleAsset<ScriptComponent>(component, [](ScriptComponent& component, const char* asset) {
+        if (!AssetsManager::GetInstance().IsScript(asset)) {
+            return;
+        }
+        component.asset = asset;
+        component.instance->OnDestroy();
+        component.instance.release();
+    });
+    if (component.instance == nullptr) {
+        return;
+    }
     if (ImGui::CollapsingHeader("Data")) {
-        auto [doubles, bools, strings] = scriptEntity->dataBuffer->GetData();
+        auto [doubles, bools, strings] = component.instance->dataBuffer->GetData();
         for (auto& d : doubles) {
             auto d1 = static_cast<float>(d.second);
             if (ImGui::DragFloat(d.first.c_str(), &d1, 0.1f)) {
@@ -141,6 +152,16 @@ static void drawScriptingNode(ScriptComponent& component) {
 }
 
 static void drawLabelNode(LabelComponent& component) {
+    HandleAsset<LabelComponent>(component, [](LabelComponent& component, const char* asset) {
+        if (!AssetsManager::GetInstance().IsFont(asset)) {
+            return;
+        }
+        component.asset = asset;
+        component.label = CreateRef<Label>(AssetsManager::GetInstance().GetFont(asset), "");
+    });
+    if (component.label == nullptr) {
+        return;
+    }
     char buffer[128];
     memset(buffer, 0, sizeof(buffer));
     memcpy(buffer, component.label->GetContent().c_str(), component.label->GetContent().length() + 1);
@@ -153,36 +174,20 @@ static void drawLabelNode(LabelComponent& component) {
 }
 
 static void drawSpriteNode(SpriteComponent& component) {
+    HandleAsset<SpriteComponent>(component, [](SpriteComponent& component, const char* asset) { component.asset = asset; });
     ImGui::ColorEdit4("Color", glm::value_ptr(component.color));
     ImGui::DragFloat2("Anchor", glm::value_ptr(component.anchor), 0.1f);
-    char buffer[128];
-    memset(buffer, 0, sizeof(buffer));
-    memcpy(buffer, component.asset.c_str(), component.asset.length() + 1);
-    if (ImGui::InputText("Asset", buffer, sizeof(buffer))) {
-        ImGui::SameLine();
-        ImGui::SmallButton("Reload");
-        if (ImGui::IsItemClicked() && strlen(buffer) > 0) {
-            component.asset = buffer;
-        }
-    }
 }
 
 static void drawSoundNode(SoundComponent& component) {
-    const auto& assets = AssetsManager::GetInstance();
-    char buffer[128];
-    memset(buffer, 0, sizeof(buffer));
-    memcpy(buffer, component.asset.c_str(), component.asset.length() + 1);
-    if (ImGui::InputText("Asset", buffer, sizeof(buffer))) {
-        ImGui::SameLine();
-        ImGui::SmallButton("Reload");
-        if (ImGui::IsItemClicked() && strlen(buffer) > 0) {
-            if (assets.IsSound(buffer)) {
-                component.asset = buffer;
-                component.sound = assets.GetSoundInstance(buffer);
-            }
+    HandleAsset<SoundComponent>(component, [](SoundComponent& component, const char* asset) {
+        if (!AssetsManager::GetInstance().IsSound(asset)) {
+            return;
         }
-    }
-    if (!assets.IsSound(component.asset) || component.sound == nullptr) {
+        component.asset = asset;
+        component.sound = AssetsManager::GetInstance().GetSoundInstance(asset);
+    });
+    if (component.sound == nullptr) {
         return;
     }
     const auto& sound = component.sound;
@@ -257,9 +262,7 @@ static void drawComponents(Entity entity) {
             AddComponent<CameraComponent>("Camera", entity);
             AddComponent<SpriteComponent>("Sprite", entity);
             AddComponent<ScriptComponent>("Script", entity);
-            /* AddComponent<LabelComponent>("Label", m_selected, [](LabelComponent& component) {
-                // TODO
-            });*/
+            AddComponent<LabelComponent>("Label", entity);
             AddComponent<SoundComponent>("Sound", entity);
             ImGui::EndPopup();
         }

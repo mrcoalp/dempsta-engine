@@ -34,13 +34,13 @@ private:
 namespace lua {
 class ScriptEntity {
 public:
-    explicit ScriptEntity(std::string asset);
+    explicit ScriptEntity(std::string filepath);
 
     de::Scope<DataBuffer> dataBuffer;
     de::Scope<LuaEntity> entityRef;
     bool acquireEvents = false;
 
-    void SetAsset(const std::string& asset);
+    inline void SetPath(const std::string& filepath) { m_path = filepath; }
 
     void ReloadScript();
 
@@ -61,7 +61,8 @@ public:
     void OnDestroy();
 
 private:
-    std::string m_asset;
+    std::string m_path;
+    std::string m_code;
 
     static std::string s_previousLoadedScript;
 };
