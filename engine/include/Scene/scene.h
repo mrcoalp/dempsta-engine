@@ -59,8 +59,8 @@ public:
      * @param callback Callback for each entity.
      */
     template <typename Callback>
-    inline void ForEachEntity(Callback callback) {
-        m_registry.each(std::move(callback));
+    inline void ForEachEntity(Callback&& callback) {
+        m_registry.each(std::forward<Callback>(callback));
     }
 
 private:

@@ -119,7 +119,7 @@ class LuaDynamicMap {
 public:
     LuaDynamicMap() = default;
 
-    LuaDynamicMap(lua_State* L) : m_state(L) {}
+    explicit LuaDynamicMap(lua_State* L) : m_state(L) {}
 
     LuaDynamicMap(lua_State* L, int index) : m_state(L) {
         lua_pushvalue(m_state, index);

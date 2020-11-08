@@ -15,13 +15,15 @@ Using Lua as scripting language.
 
 Make sure to clone the repository with `--recursive` to fetch all the submodules.
 
+<center><img src="media/screen.png" width="800"></center>
+
 ### Compiling
 
 #### Linux
 
 Simply run:
 
-- `$ ./build.py` <br>
+* `$ ./build.py` <br>
 
 **Note** : Using by default Ninja as the build system, can be changed to Make with `--make` option. Run `$ ./build.py -h` to see all the available options.
 
@@ -29,7 +31,7 @@ Simply run:
 
 Simply run:
 
-- `> build.py` in a command prompt for Visual Studio. Refer to [this](https://docs.microsoft.com/en-us/dotnet/framework/tools/developer-command-prompt-for-vs)
+* `> build.py` in a command prompt for Visual Studio. Refer to [this](https://docs.microsoft.com/en-us/dotnet/framework/tools/developer-command-prompt-for-vs)
 
 **Note** : You can also open the project in Visual Studio, build and run dempsta_editor exe.
 
@@ -37,17 +39,17 @@ Simply run:
 
 To compile and run the tests:
 
-- `$ ./build.py -i -t`
-- `$ ./test.py`
+* `$ ./build.py -i -t`
+* `$ ./test.py`
 
 ### Features
 
-- [x] 2D renderer capable of render quads;
-- [x] Basic capability to expose C++ to Lua and vice-versa;
-- [x] Pseudo editor using ImGui;
+* [x] 2D renderer capable of render quads; 
+* [x] Basic capability to expose C++ to Lua and vice-versa; 
+* [x] Pseudo editor using ImGui; 
 
 ### In Progress
 
-- [ ] Entity component system;
-- [ ] Entity edition in editor;
-- [ ] Text rendering;
+* [ ] Entity component system; 
+* [ ] Entity edition in editor; 
+* [ ] Text rendering; 

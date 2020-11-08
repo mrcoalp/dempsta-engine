@@ -3,6 +3,14 @@
 #include "Core/assetsmanager.h"
 #include "Scene/sceneserializer.h"
 
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
+constexpr const char* SCENE_FILES_FILTER{"Dempsta Scene (*.dempsta)\0*.dempsta\0"};
+#elif defined(__linux) || defined(__linux__) || defined(linux)
+constexpr const char* SCENE_FILES_FILTER{"Dempsta Scene (*.dempsta) | *.dempsta"};
+#else
+constexpr const char* SCENE_FILES_FILTER{""};
+#endif
+
 namespace de {
 DempstaEditor::DempstaEditor() : Layer("DempstaEditor") {}
 
@@ -96,7 +104,7 @@ void DempstaEditor::OnImGuiRender() {
             }
             ImGui::Separator();
             if (ImGui::MenuItem("Save scene as...", nullptr, false, true)) {
-                auto filepath = FileUtils::SaveFile("Dempsta Scene (*.dempsta)\0*.dempsta\0");
+                auto filepath = FileUtils::SaveFile(SCENE_FILES_FILTER);
                 if (filepath) {
                     SceneSerializer serializer(m_activeScene);
                     serializer.Serialize(*filepath);
@@ -104,7 +112,7 @@ void DempstaEditor::OnImGuiRender() {
             }
             ImGui::Separator();
             if (ImGui::MenuItem("Load scene as...", nullptr, false, true)) {
-                std::optional<std::string> filepath = FileUtils::OpenFile("Dempsta Scene (*.dempsta)\0*.dempsta\0");
+                std::optional<std::string> filepath = FileUtils::OpenFile(SCENE_FILES_FILTER);
                 if (filepath) {
                     m_activeScene = CreateRef<Scene>();
                     SceneSerializer serializer(m_activeScene);

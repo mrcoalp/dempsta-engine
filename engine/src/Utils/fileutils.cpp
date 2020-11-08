@@ -89,6 +89,17 @@ std::optional<std::string> FileUtils::OpenFile(const char* filter) {
 
 #elif defined(__linux) || defined(__linux__) || defined(linux)
 
+    char filepath[1024];
+    char command[1024];
+    sprintf(command, "zenity --file-selection --file-filter='%s' --modal --title=\"%s\" ", filter, "Select file to open");
+    FILE* file = popen(command, "r");
+    memset(filepath, 0, 1024);
+    fgets(filepath, 1024, file);
+    if (strlen(filepath) > 0) {
+        auto path = std::string(filepath);
+        path.erase(path.length() - 1);
+        return path;
+    }
     return std::nullopt;
 
 #else
@@ -122,6 +133,17 @@ std::optional<std::string> FileUtils::SaveFile(const char* filter) {
 
 #elif defined(__linux) || defined(__linux__) || defined(linux)
 
+    char filepath[1024];
+    char command[1024];
+    sprintf(command, "zenity --file-selection --save --file-filter='%s' --modal --title=\"%s\" ", filter, "Select file to save");
+    FILE* file = popen(command, "r");
+    memset(filepath, 0, 1024);
+    fgets(filepath, 1024, file);
+    if (strlen(filepath) > 0) {
+        auto path = std::string(filepath);
+        path.erase(path.length() - 1);
+        return path;
+    }
     return std::nullopt;
 
 #else

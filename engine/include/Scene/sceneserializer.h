@@ -40,11 +40,11 @@ struct OrthographicCamera : public Visitable {
 };
 
 struct SceneCamera : public Visitable {
-    OrthographicCamera ortho{true};
+    OrthographicCamera ortho{{true}};
 
     template <template <typename> class Visitor>
     inline void Visit(Visitor<SceneCamera>& visitor) {
-        visitor.OptionalNode(ortho, "orthographic", {true});
+        visitor.OptionalNode(ortho, "orthographic", {{true}});
     }
 };
 
@@ -101,24 +101,24 @@ struct LabelComponent : public Visitable {
 struct Entity : public Visitable {
     unsigned id;
     // All visitable components are empty by default to ensure they're not added to json
-    NameComponent nameComponent{true};
-    TransformComponent transformComponent{true};
-    CameraComponent cameraComponent{true};
-    SpriteComponent spriteComponent{true};
-    ScriptComponent scriptComponent{true};
-    SoundComponent soundComponent{true};
-    LabelComponent labelComponent{true};
+    NameComponent nameComponent{{true}};
+    TransformComponent transformComponent{{true}};
+    CameraComponent cameraComponent{{true}};
+    SpriteComponent spriteComponent{{true}};
+    ScriptComponent scriptComponent{{true}};
+    SoundComponent soundComponent{{true}};
+    LabelComponent labelComponent{{true}};
 
     template <template <typename> class Visitor>
     inline void Visit(Visitor<Entity>& visitor) {
         visitor.Node(id, "id")
-            .OptionalNode(nameComponent, "name_component", {true})
-            .OptionalNode(transformComponent, "transform_component", {true})
-            .OptionalNode(cameraComponent, "camera_component", {true})
-            .OptionalNode(spriteComponent, "sprite_component", {true})
-            .OptionalNode(scriptComponent, "script_component", {true})
-            .OptionalNode(soundComponent, "sound_component", {true})
-            .OptionalNode(labelComponent, "label_component", {true});
+            .OptionalNode(nameComponent, "name_component", {{true}})
+            .OptionalNode(transformComponent, "transform_component", {{true}})
+            .OptionalNode(cameraComponent, "camera_component", {{true}})
+            .OptionalNode(spriteComponent, "sprite_component", {{true}})
+            .OptionalNode(scriptComponent, "script_component", {{true}})
+            .OptionalNode(soundComponent, "sound_component", {{true}})
+            .OptionalNode(labelComponent, "label_component", {{true}});
     }
 };
 
@@ -148,7 +148,7 @@ struct Scene : public Visitable {
 
 class SceneSerializer {
 public:
-    explicit SceneSerializer(const Ref<Scene>& scene) : m_scene(scene) {}
+    explicit SceneSerializer(Ref<Scene> scene) : m_scene(std::move(scene)) {}
 
     void Serialize(const std::string& filePath) const;
 

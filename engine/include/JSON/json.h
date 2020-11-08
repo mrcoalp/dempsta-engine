@@ -29,11 +29,18 @@ template <typename T>
 using IsTrivial = std::enable_if_t<Trivial<T>::value, int>;
 
 template <typename T>
+struct CheckBool : std::false_type {};
+template <>
+struct CheckBool<std::vector<bool>> : std::true_type {};
+
+template <typename T>
 struct Array : std::false_type {};
 template <typename T>
 struct Array<std::vector<T>> : std::true_type {};
 template <typename T>
-using IsArray = std::enable_if_t<Array<T>::value, int>;
+using IsArray = std::enable_if_t<Array<T>::value && !CheckBool<T>::value, int>;
+template <typename T>
+using IsBoolArray = std::enable_if_t<Array<T>::value && CheckBool<T>::value, int>;
 
 template <typename T>
 struct Map : std::false_type {};
@@ -182,9 +189,18 @@ private:
         }
     }
 
+    template <typename Field, IsBoolArray<Field> = 0>
+    inline void visit(json& json, Field& field) {
+        json = json::array();
+        for (size_t i = 0; i < field.size(); ++i) {
+            bool b = field[i];
+            json.emplace_back(b);
+        }
+    }
+
     template <typename Field, IsMap<Field> = 0>
     inline void visit(json& json, Field& field) {
-        using MapType = std::decay_t<decltype(*field.begin().second)>;
+        using MapType = typename Field::mapped_type;
         for (auto& pair : field) {
             auto& member = json[pair.first];
             WriteVisitor<MapType> visitor{member};
@@ -265,13 +281,26 @@ private:
         }
     }
 
+    template <typename Field, IsBoolArray<Field> = 0>
+    inline void visit(json& json, Field& field) {
+        for (size_t i = 0; i < json.size(); ++i) {
+            auto guard = m_errors.PushNode(std::to_string(i), true);
+            try {
+                auto element = json.at(i).get<bool>();
+                field.push_back(element);
+            } catch (const std::exception& e) {
+                m_errors.Error() << "Failed parsing json field '" << m_errors.GetPath() << "' with exception: " << e.what();
+            }
+        }
+    }
+
     template <typename Field, IsMap<Field> = 0>
     inline void visit(json& json, Field& field) {
-        using MapType = std::decay_t<decltype(*field.begin().second)>;
+        using MapType = typename Field::mapped_type;
         for (auto it = json.begin(); it != json.end(); ++it) {
             auto guard = m_errors.PushNode(it.key());
             ReadVisitor<MapType> visitor{it.value(), m_errors};
-            visitor.Visit(field.at(it.key()));
+            visitor.Visit(field[it.key()]);
         }
     }
 };

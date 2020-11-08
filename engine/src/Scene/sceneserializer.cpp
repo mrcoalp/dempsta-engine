@@ -18,7 +18,7 @@ void SceneSerializer::Serialize(const std::string& filePath) const {
     jScene.id = "todo_scene_name";
     const auto& assets = AssetsManager::GetInstance().GetAssets();
     for (const auto& asset : AssetsManager::GetInstance().GetTracker()) {
-        JSON::Asset jAsset{false, (int)assets[asset.second]->GetType(), assets[asset.second]->GetFilePath(), asset.first};
+        JSON::Asset jAsset{{false}, (int)assets[asset.second]->GetType(), assets[asset.second]->GetFilePath(), asset.first};
         if (assets[asset.second]->GetType() == AssetType::Font) {
             jAsset.fontSize = AssetsManager::GetInstance().GetFont(asset.first)->GetSize();
         }
@@ -28,26 +28,26 @@ void SceneSerializer::Serialize(const std::string& filePath) const {
         auto entity = Entity(entityId, m_scene.get());
         JSON::Entity jEntity;
         jEntity.id = 123;
-        AddComponentToJSON<NameComponent>(entity, [&jEntity](NameComponent& component) { jEntity.nameComponent = {false, component.name}; });
+        AddComponentToJSON<NameComponent>(entity, [&jEntity](NameComponent& component) { jEntity.nameComponent = {{false}, component.name}; });
         AddComponentToJSON<TransformComponent>(entity, [&jEntity](TransformComponent& component) {
             JSON::Vec3 translation{component.translation};
             JSON::Vec3 rotation{component.rotation};
             JSON::Vec3 scale{component.scale};
-            jEntity.transformComponent = {false, translation, rotation, scale};
+            jEntity.transformComponent = {{false}, translation, rotation, scale};
         });
         AddComponentToJSON<CameraComponent>(entity, [&jEntity](CameraComponent& component) {
             const auto& camera = component.camera;
             JSON::SceneCamera jSceneCamera;
-            jSceneCamera.ortho = {false, camera.GetOrthographicSize(), camera.GetOrthographicNearClip(), camera.GetOrthographicFarClip()};
-            jEntity.cameraComponent = {false, component.primary, component.fixedAspectRatio, jSceneCamera};
+            jSceneCamera.ortho = {{false}, camera.GetOrthographicSize(), camera.GetOrthographicNearClip(), camera.GetOrthographicFarClip()};
+            jEntity.cameraComponent = {{false}, component.primary, component.fixedAspectRatio, jSceneCamera};
         });
         AddComponentToJSON<SpriteComponent>(entity, [&jEntity](SpriteComponent& component) {
-            jEntity.spriteComponent = {false, JSON::Vec4(component.color), JSON::Vec2(component.anchor), component.asset};
+            jEntity.spriteComponent = {{false}, JSON::Vec4(component.color), JSON::Vec2(component.anchor), component.asset};
         });
-        AddComponentToJSON<ScriptComponent>(entity, [&jEntity](ScriptComponent& component) { jEntity.scriptComponent = {false, component.asset}; });
-        AddComponentToJSON<SoundComponent>(entity, [&jEntity](SoundComponent& component) { jEntity.soundComponent = {false, component.asset}; });
+        AddComponentToJSON<ScriptComponent>(entity, [&jEntity](ScriptComponent& component) { jEntity.scriptComponent = {{false}, component.asset}; });
+        AddComponentToJSON<SoundComponent>(entity, [&jEntity](SoundComponent& component) { jEntity.soundComponent = {{false}, component.asset}; });
         AddComponentToJSON<LabelComponent>(entity, [&jEntity](LabelComponent& component) {
-            jEntity.labelComponent = {false, component.asset};
+            jEntity.labelComponent = {{false}, component.asset};
             if (component.label != nullptr) {
                 jEntity.labelComponent.content = component.label->GetContent();
             }

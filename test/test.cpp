@@ -26,8 +26,11 @@ static std::map<const char*, Test> tests = {
     {"test_lua_run_code", test_lua_run_code},
     {"test_lua_data_buffer", test_lua_data_buffer},
     {"test_get_dynamic_map_from_lua", test_get_dynamic_map_from_lua},
-    {"test_json_parse_simple_string", test_json_parse_simple_string},
-    {"test_json_parse_errors", test_json_parse_errors}};
+    {"test_json_parse_simple_string_struct", test_json_parse_simple_string_struct},
+    {"test_json_parse_errors", test_json_parse_errors},
+    {"test_json_parse_array", test_json_parse_array},
+    {"test_json_parse_map", test_json_parse_map},
+    {"test_json_parse_complex_struct", test_json_parse_complex_struct}};
 
 int RunTests() {
     const int nrOfTests = (int)tests.size();
