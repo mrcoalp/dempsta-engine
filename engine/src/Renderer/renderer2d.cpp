@@ -158,14 +158,14 @@ float Renderer2D::getOrAddUniqueTextureIndex(const Ref<Texture2D>& texture) {
     return (float)data.textureSlotIndex++;
 }
 
-void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color) {
+void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color, const glm::vec2& anchor) {
     checkDrawCall();
 
     constexpr const float x[4] = {0.0f, 1.0f, 1.0f, 0.0f};
     constexpr const float y[4] = {0.0f, 0.0f, 1.0f, 1.0f};
 
     for (uint8_t i = 0; i < 4; ++i) {
-        data.quadVertexBufferPtr->position = transform * data.quadVerticesPosition[i];
+        data.quadVertexBufferPtr->position = transform * (data.quadVerticesPosition[i] - glm::vec4{anchor.x, anchor.y, 0.f, 0.f});
         data.quadVertexBufferPtr->color = color;
         data.quadVertexBufferPtr->texture = {x[i], y[i]};
         data.quadVertexBufferPtr->textureIndex = 0.0f;

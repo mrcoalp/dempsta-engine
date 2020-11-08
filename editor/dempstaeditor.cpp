@@ -32,9 +32,9 @@ void DempstaEditor::OnAttach() {
     sphere.AddComponent<SpriteComponent>("sphere_tex").anchor = {0.5f, 0.5f};
     sphere.AddComponent<ScriptComponent>("sphere_script");
 
-    auto bgMusic = m_activeScene->CreateEntity("Background Music", false);
-    bgMusic.AddComponent<SoundComponent>("assets/sound/bg_music.wav");
-    bgMusic.AddComponent<ScriptComponent>("bg_music_script");
+//    auto bgMusic = m_activeScene->CreateEntity("Background Music", false);
+//    bgMusic.AddComponent<SoundComponent>("assets/sound/bg_music.wav");
+//    bgMusic.AddComponent<ScriptComponent>("bg_music_script");
 
     auto protector = m_activeScene->CreateEntity("PROTECTOR!", false);
     protector.AddComponent<SoundComponent>("assets/sound/iamtheprotectorofthissystem.wav");

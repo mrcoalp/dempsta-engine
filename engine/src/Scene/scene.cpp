@@ -11,7 +11,7 @@
 namespace de {
 void Scene::OnUpdate(const TimeStep& ts) {
     // native scripting update
-    m_registry.view<NativeScriptComponent>().each([&](const auto entity, auto& nsc) {
+    m_registry.view<NativeScriptComponent>().each([&](const auto entity, NativeScriptComponent& nsc) {
         if (nsc.instance == nullptr) {
             nsc.instance = nsc.Create();
             nsc.instance->m_entity = Entity(entity, this);
@@ -20,7 +20,10 @@ void Scene::OnUpdate(const TimeStep& ts) {
         nsc.instance->OnUpdate(ts);
     });
     // scripting update
-    m_registry.view<ScriptComponent>().each([&](const auto entity, auto& sc) {
+    m_registry.view<ScriptComponent>().each([&](const auto entity, ScriptComponent& sc) {
+        if (!de::AssetsManager::GetInstance().IsScript(sc.asset)) {
+            return;
+        }
         if (sc.instance == nullptr) {
             sc.Create();
             sc.instance->entityRef->m_entity = Entity(entity, this);
@@ -43,11 +46,11 @@ void Scene::OnUpdate(const TimeStep& ts) {
                 Renderer2D::BeginScene(camera.GetProjection(), transform);
                 m_registry.view<TransformComponent, SpriteComponent>().each([](const auto& transformComp, const auto& spriteComp) {
                     const auto& assets = AssetsManager::GetInstance();
-                    if (assets.Exists(spriteComp.asset) && assets.IsSprite(spriteComp.asset)) {
+                    if (assets.IsSprite(spriteComp.asset)) {
                         const auto& sprite = assets.GetSprite(spriteComp.asset);
                         Renderer2D::DrawQuad(transformComp.GetTransform(), sprite, spriteComp.color, spriteComp.anchor);
                     } else {
-                        Renderer2D::DrawQuad(transformComp.GetTransform(), spriteComp.color);
+                        Renderer2D::DrawQuad(transformComp.GetTransform(), spriteComp.color, spriteComp.anchor);
                     }
                 });
                 m_registry.view<TransformComponent, LabelComponent>().each([](const auto& transformComp, const auto& labelComp) {

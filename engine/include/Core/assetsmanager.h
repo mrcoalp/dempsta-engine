@@ -106,13 +106,33 @@ public:
         m_assets[m_tracker.at(name)]->SetFilePath(filepath);
     }
 
-    [[nodiscard]] inline bool IsSprite(const std::string& name) const { return m_assets[m_tracker.at(name)]->GetType() == AssetType::Sprite; }
+    [[nodiscard]] inline bool IsSprite(const std::string& name) const {
+        if (!Exists(name)) {
+            return false;
+        }
+        return m_assets[m_tracker.at(name)]->GetType() == AssetType::Sprite;
+    }
 
-    [[nodiscard]] inline bool IsFont(const std::string& name) const { return m_assets[m_tracker.at(name)]->GetType() == AssetType::Font; }
+    [[nodiscard]] inline bool IsFont(const std::string& name) const {
+        if (!Exists(name)) {
+            return false;
+        }
+        return m_assets[m_tracker.at(name)]->GetType() == AssetType::Font;
+    }
 
-    [[nodiscard]] inline bool IsSound(const std::string& name) const { return m_assets[m_tracker.at(name)]->GetType() == AssetType::Sound; }
+    [[nodiscard]] inline bool IsSound(const std::string& name) const {
+        if (!Exists(name)) {
+            return false;
+        }
+        return m_assets[m_tracker.at(name)]->GetType() == AssetType::Sound;
+    }
 
-    [[nodiscard]] inline bool IsScript(const std::string& name) const { return m_assets[m_tracker.at(name)]->GetType() == AssetType::Script; }
+    [[nodiscard]] inline bool IsScript(const std::string& name) const {
+        if (!Exists(name)) {
+            return false;
+        }
+        return m_assets[m_tracker.at(name)]->GetType() == AssetType::Script;
+    }
 
     AssetsManager& AddSprite(const std::string& name, const std::string& filepath);
 

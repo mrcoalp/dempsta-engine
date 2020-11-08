@@ -119,6 +119,8 @@ class LuaDynamicMap {
 public:
     LuaDynamicMap() = default;
 
+    LuaDynamicMap(lua_State* L) : m_state(L) {}
+
     LuaDynamicMap(lua_State* L, int index) : m_state(L) {
         lua_pushvalue(m_state, index);
         luaL_getmetatable(m_state, LUA_REF_HOLDER_META_NAME);
@@ -154,7 +156,9 @@ public:
      */
     void Push() const {
         if (!IsLoaded()) {
-            lua_pushnil(m_state);
+            if (m_state != nullptr) {
+                lua_pushnil(m_state);
+            }
             return;
         }
         luaL_getmetatable(m_state, LUA_REF_HOLDER_META_NAME);

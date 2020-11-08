@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/assetsmanager.h"
 #include "Core/core.h"
 #include "Scene/entity.h"
 #include "Scripting/API/databuffer.h"
@@ -41,11 +40,9 @@ public:
     de::Scope<LuaEntity> entityRef;
     bool acquireEvents = false;
 
+    void SetAsset(const std::string& asset);
+
     void ReloadScript();
-
-    [[nodiscard]] inline const std::string& GetPath() const { return de::AssetsManager::GetInstance().GetScript(m_asset)->GetFilePath(); }
-
-    void SetPath(const std::string& newPath);
 
     void LoadCodeAndContext() const;
 

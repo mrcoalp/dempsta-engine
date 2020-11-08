@@ -18,7 +18,7 @@ public:
 
     static void EndScene();
 
-    static void DrawQuad(const glm::mat4& transform, const glm::vec4& color);
+    static void DrawQuad(const glm::mat4& transform, const glm::vec4& color, const glm::vec2& anchor = {0.f, 0.f});
     static void DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const glm::vec4& tint = glm::vec4(1.0f),
                          const glm::vec2& anchor = {0.f, 0.f});
     static void DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& subTexture, const glm::vec4& tint = glm::vec4(1.0f),

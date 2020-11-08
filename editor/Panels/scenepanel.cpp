@@ -3,6 +3,7 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
+#include "Core/assetsmanager.h"
 #include "Core/math.h"
 #include "Scene/components.h"
 
@@ -106,15 +107,14 @@ static void drawScriptingNode(ScriptComponent& component) {
     const auto& scriptEntity = component.instance;
     char buffer[128];
     memset(buffer, 0, sizeof(buffer));
-    memcpy(buffer, scriptEntity->GetPath().c_str(), scriptEntity->GetPath().length() + 1);
-    if (ImGui::InputText("Script path", buffer, sizeof(buffer))) {
-        scriptEntity->SetPath(std::string(buffer));
-    }
-
-    ImGui::Spacing();
-    ImGui::SmallButton("Reload Script");
-    if (ImGui::IsItemClicked()) {
-        scriptEntity->ReloadScript();
+    memcpy(buffer, component.asset.c_str(), component.asset.length() + 1);
+    if (ImGui::InputText("Asset", buffer, sizeof(buffer))) {
+        ImGui::SameLine();
+        ImGui::SmallButton("Reload");
+        if (ImGui::IsItemClicked() && strlen(buffer) > 0) {
+            component.asset = buffer;
+            scriptEntity->SetAsset(buffer);
+        }
     }
 
     ImGui::Spacing();
@@ -155,6 +155,16 @@ static void drawLabelNode(LabelComponent& component) {
 static void drawSpriteNode(SpriteComponent& component) {
     ImGui::ColorEdit4("Color", glm::value_ptr(component.color));
     ImGui::DragFloat2("Anchor", glm::value_ptr(component.anchor), 0.1f);
+    char buffer[128];
+    memset(buffer, 0, sizeof(buffer));
+    memcpy(buffer, component.asset.c_str(), component.asset.length() + 1);
+    if (ImGui::InputText("Asset", buffer, sizeof(buffer))) {
+        ImGui::SameLine();
+        ImGui::SmallButton("Reload");
+        if (ImGui::IsItemClicked() && strlen(buffer) > 0) {
+            component.asset = buffer;
+        }
+    }
 }
 
 static void drawSoundNode(SoundComponent& component) {
@@ -204,9 +214,9 @@ static void AddComponent(
     const std::string& name, Entity entity, const std::function<void(Component&)>& onAdd = [](Component&) {}) {
     if (!entity.HasComponent<Component>()) {
         if (ImGui::Button(name.c_str())) {
+            ImGui::CloseCurrentPopup();
             auto& component = entity.AddComponent<Component>();
             onAdd(component);
-            ImGui::CloseCurrentPopup();
         }
     }
 }

@@ -1,6 +1,6 @@
 #include "Scripting/scriptentity.h"
 
-#include "Utils/fileutils.h"
+#include "Core/assetsmanager.h"
 
 namespace lua {
 std::string ScriptEntity::s_previousLoadedScript;
@@ -15,7 +15,13 @@ void ScriptEntity::ReloadScript() {
     OnInit();
 }
 
-void ScriptEntity::SetPath(const std::string& newPath) { de::AssetsManager::GetInstance().GetScript(m_asset)->SetFilePath(newPath); }
+void ScriptEntity::SetAsset(const std::string& asset) {
+    if (!de::AssetsManager::GetInstance().IsScript(asset)) {
+        return;
+    }
+    m_asset = asset;
+    ReloadScript();
+}
 
 void ScriptEntity::LoadCodeAndContext() const {
     LE::PushGlobalVariable("this", entityRef.get());

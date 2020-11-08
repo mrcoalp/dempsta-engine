@@ -205,7 +205,7 @@ int LuaEntity::SendMessage(lua_State*) {
     auto id = LE::GetValue<std::string>();
     auto sender = m_entity.GetComponent<de::NameComponent>().name;
     if (LE::GetTop() == 1) {  // In case no data was sent, only one argument (id)
-        MessageHandler::AddMessage({id, sender});
+        MessageHandler::AddMessage({id, sender, LuaDynamicMap(LE::GetState())});
         return 0;
     }
     auto data = LE::GetValue<LuaDynamicMap>(2);
