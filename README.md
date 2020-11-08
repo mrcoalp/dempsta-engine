@@ -33,7 +33,11 @@ Simply run:
 
 * `> build.py` in a command prompt for Visual Studio. Refer to [this](https://docs.microsoft.com/en-us/dotnet/framework/tools/developer-command-prompt-for-vs)
 
-**Note** : You can also open the project in Visual Studio, build and run dempsta_editor exe.
+**Note** : You can also open the project in Visual Studio, build and run dempsta_editor exe, generate the solution with cmake or use CLion.
+
+### Examples
+
+Inside examples folder, lies an example scene parsed as json. Just use the editor `File` menu to load it.
 
 ### Tests
 
