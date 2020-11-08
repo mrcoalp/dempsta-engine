@@ -61,19 +61,40 @@ struct CameraComponent : public Visitable {
 
 struct SpriteComponent : public Visitable {
     Vec4 color;
+    Vec2 anchor;
+    std::string asset;
 
     template <template <typename> class Visitor>
     inline void Visit(Visitor<SpriteComponent>& visitor) {
-        visitor.Node(color, "color");
+        visitor.Node(color, "color").Node(anchor, "anchor").Node(asset, "asset");
     }
 };
 
 struct ScriptComponent : public Visitable {
-    std::string path;
+    std::string asset;
 
     template <template <typename> class Visitor>
     inline void Visit(Visitor<ScriptComponent>& visitor) {
-        visitor.Node(path, "file_path");
+        visitor.Node(asset, "asset");
+    }
+};
+
+struct SoundComponent : public Visitable {
+    std::string asset;
+
+    template <template <typename> class Visitor>
+    inline void Visit(Visitor<SoundComponent>& visitor) {
+        visitor.Node(asset, "asset");
+    }
+};
+
+struct LabelComponent : public Visitable {
+    std::string asset;
+    std::string content;
+
+    template <template <typename> class Visitor>
+    inline void Visit(Visitor<LabelComponent>& visitor) {
+        visitor.Node(asset, "asset").Node(content, "content");
     }
 };
 
@@ -85,6 +106,8 @@ struct Entity : public Visitable {
     CameraComponent cameraComponent{true};
     SpriteComponent spriteComponent{true};
     ScriptComponent scriptComponent{true};
+    SoundComponent soundComponent{true};
+    LabelComponent labelComponent{true};
 
     template <template <typename> class Visitor>
     inline void Visit(Visitor<Entity>& visitor) {
@@ -93,17 +116,32 @@ struct Entity : public Visitable {
             .OptionalNode(transformComponent, "transform_component", {true})
             .OptionalNode(cameraComponent, "camera_component", {true})
             .OptionalNode(spriteComponent, "sprite_component", {true})
-            .OptionalNode(scriptComponent, "script_component", {true});
+            .OptionalNode(scriptComponent, "script_component", {true})
+            .OptionalNode(soundComponent, "sound_component", {true})
+            .OptionalNode(labelComponent, "label_component", {true});
+    }
+};
+
+struct Asset : public Visitable {
+    int type;
+    std::string path;
+    std::string name;
+    unsigned fontSize;
+
+    template <template <typename> class Visitor>
+    inline void Visit(Visitor<Asset>& visitor) {
+        visitor.Node(type, "type").Node(path, "path").Node(name, "name").Node(fontSize, "font_size");
     }
 };
 
 struct Scene : public Visitable {
     std::string id;
+    std::vector<Asset> assets;
     std::vector<Entity> entities;
 
     template <template <typename> class Visitor>
     inline void Visit(Visitor<Scene>& visitor) {
-        visitor.Node(id, "id").Node(entities, "entities");
+        visitor.Node(id, "id").Node(assets, "assets").Node(entities, "entities");
     }
 };
 }  // namespace JSON

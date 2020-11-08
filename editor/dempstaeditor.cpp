@@ -14,44 +14,6 @@ void DempstaEditor::OnAttach() {
 
     /*auto spriteSheet = CreateRef<Atlas2D>("assets/textures/RPGpack_sheet_2X.png", glm::vec2(128.0f));
     auto spriteBarrel = SubTexture2D::CreateSprite(spriteSheet, glm::vec2({8.f, 12.f}));*/
-
-    AssetsManager::GetInstance()
-        .AddFont("arial_fnt", "assets/fonts/arial.ttf", 60)
-        .AddSprite("sphere_tex", "assets/textures/sphere.png")
-        .AddSprite("mask_tex", "assets/textures/mask.png")
-        .AddScript("sphere_script", "assets/scripts/sphere.lua")
-        .AddScript("bg_music_script", "assets/scripts/bg_music.lua")
-        .AddScript("protector_script", "assets/scripts/protector.lua")
-        .AddScript("mask_script", "assets/scripts/mask.lua")
-        .AddScript("camera_script", "assets/scripts/camera.lua")
-        .AddSound("protector_sound", "assets/sound/iamtheprotectorofthissystem.wav")
-        .AddSound("bg_music_sound", "assets/sound/bg_music.wav");
-
-    auto label = CreateRef<Label>(AssetsManager::GetInstance().GetFont("arial_fnt"), "Marco Pinto");
-    auto textEnt = m_activeScene->CreateEntity("Test Text");
-    textEnt.AddComponent<LabelComponent>("arial_fnt").label = label;
-
-    auto sphere = m_activeScene->CreateEntity("Sphere");
-    sphere.AddComponent<SpriteComponent>("sphere_tex").anchor = {0.5f, 0.5f};
-    sphere.AddComponent<ScriptComponent>("sphere_script");
-
-    auto bgMusic = m_activeScene->CreateEntity("Background Music", false);
-    bgMusic.AddComponent<SoundComponent>("bg_music_sound").sound = AssetsManager::GetInstance().GetSoundInstance("bg_music_sound");
-    bgMusic.AddComponent<ScriptComponent>("bg_music_script");
-
-    auto protector = m_activeScene->CreateEntity("PROTECTOR!", false);
-    protector.AddComponent<SoundComponent>("protector_sound").sound = AssetsManager::GetInstance().GetSoundInstance("protector_sound");
-    protector.AddComponent<ScriptComponent>("protector_script");
-
-    for (size_t i = 0; i < 10; ++i) {
-        auto mask = m_activeScene->CreateEntity("Mask_" + std::to_string(i));
-        mask.AddComponent<SpriteComponent>("mask_tex");
-        mask.AddComponent<ScriptComponent>("mask_script");
-    }
-
-    auto camEntity = m_activeScene->CreateEntity("Primary Camera");
-    camEntity.AddComponent<CameraComponent>().primary = true;
-    camEntity.AddComponent<ScriptComponent>("camera_script");
 }
 
 void DempstaEditor::OnDetach() {}
@@ -133,12 +95,12 @@ void DempstaEditor::OnImGuiRender() {
             ImGui::Separator();
             if (ImGui::MenuItem("Save scene", nullptr, false, true)) {
                 SceneSerializer serializer(m_activeScene);
-                serializer.Serialize("assets/hue.dempsta");
+                serializer.Serialize("assets/ExampleScene.dempsta");
             }
             ImGui::Separator();
             if (ImGui::MenuItem("Load scene", nullptr, false, true)) {
                 SceneSerializer serializer(m_activeScene);
-                if (!serializer.Deserialize("assets/hue.dempsta")) {
+                if (!serializer.Deserialize("assets/ExampleScene.dempsta")) {
                     LOG_ERROR("Failed to deserialize scene!");
                 }
             }

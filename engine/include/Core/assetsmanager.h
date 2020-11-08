@@ -85,6 +85,10 @@ public:
 
     void InitFreeType();
 
+    [[nodiscard]] inline const std::vector<Ref<Asset>>& GetAssets() const { return m_assets; }
+
+    [[nodiscard]] inline const auto& GetTracker() const { return m_tracker; }
+
     [[nodiscard]] inline bool Exists(const std::string& name) const { return m_tracker.find(name) != m_tracker.end(); }
 
     [[nodiscard]] inline bool IsSprite(const std::string& name) const {
