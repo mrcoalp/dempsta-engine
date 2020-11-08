@@ -5,7 +5,6 @@
 
 #include "Core/core.h"
 #include "Renderer/label.h"
-#include "Renderer/subtexture.h"
 #include "Scene/scenecamera.h"
 #include "Scripting/scriptentity.h"
 #include "Sound/sound.h"
@@ -90,16 +89,19 @@ struct CameraComponent {
 };
 
 struct LabelComponent {
+    std::string asset;
     Ref<Label> label;
     glm::vec4 color = glm::vec4(1.0f);
 
     LabelComponent() = default;
+    explicit LabelComponent(const std::string& asset) : asset(asset) {}
 };
 
 struct SoundComponent {
+    std::string asset;
     Ref<SoundInstance> sound;
 
     SoundComponent() = default;
-    explicit SoundComponent(const std::string& filePath) : sound(SoundInstance::CreateSound(filePath)) {}
+    explicit SoundComponent(const std::string& asset) : asset(asset) {}
 };
 }  // namespace de

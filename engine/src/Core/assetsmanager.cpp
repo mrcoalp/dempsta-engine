@@ -39,17 +39,25 @@ AssetsManager& AssetsManager::AddFont(const std::string& name, const std::string
     });
 }
 
+AssetsManager& AssetsManager::AddSound(const std::string& name, const std::string& filepath) {
+    return add(name, filepath, [&filepath]() -> Ref<Asset> { return CreateRef<SoundAsset>(filepath); });
+}
+
 AssetsManager& AssetsManager::AddScript(const std::string& name, const std::string& filepath) {
     return add(name, filepath, [&filepath]() -> Ref<Asset> { return CreateRef<ScriptAsset>(filepath); });
 }
 
 AssetsManager& AssetsManager::AddShader(const std::string& name, const std::string& filepath) {
-    return add(name, filepath, [&filepath]() -> Ref<Asset> { return CreateRef<ShaderAsset>(filepath, Shader::Create(filepath)); });
+    return add(name, filepath, [&filepath]() -> Ref<Asset> { return CreateRef<ShaderAsset>(filepath); });
 }
 
 const Ref<SubTexture2D>& AssetsManager::GetSprite(const std::string& name) const { return get<SpriteAsset>(name)->GetSprite(); }
 
 const Ref<Font>& AssetsManager::GetFont(const std::string& name) const { return get<FontAsset>(name)->GetFont(); }
+
+Ref<SoundInstance> AssetsManager::GetSoundInstance(const std::string& name) const {
+    return SoundInstance::CreateSound(get<SoundAsset>(name)->GetFilePath());
+}
 
 const Ref<ScriptAsset>& AssetsManager::GetScript(const std::string& name) const { return get<ScriptAsset>(name); }
 

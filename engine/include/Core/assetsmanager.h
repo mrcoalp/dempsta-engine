@@ -8,6 +8,7 @@
 #include "Renderer/font.h"
 #include "Renderer/shader.h"
 #include "Renderer/subtexture.h"
+#include "Sound/sound.h"
 #include "Utils/fileutils.h"
 
 namespace de {
@@ -21,8 +22,6 @@ public:
     [[nodiscard]] inline const AssetType& GetType() const { return m_type; }
 
     [[nodiscard]] inline const std::string& GetFilePath() const { return m_filepath; }
-
-    inline void SetFilePath(const std::string& filepath) { m_filepath = filepath; }
 
 protected:
     AssetType m_type{AssetType::Undefined};
@@ -74,7 +73,10 @@ private:
 
 class ShaderAsset : public Asset {
 public:
-    explicit ShaderAsset(const std::string& filepath, const Ref<Shader>& shader) : m_shader(shader), Asset(filepath) { m_type = AssetType::Shader; }
+    explicit ShaderAsset(const std::string& filepath) : Asset(filepath) {
+        m_type = AssetType::Shader;
+        m_shader = Shader::Create(filepath);
+    }
 
     [[nodiscard]] const Ref<Shader>& GetShader() const { return m_shader; }
 
@@ -95,16 +97,6 @@ public:
     void InitFreeType();
 
     [[nodiscard]] inline bool Exists(const std::string& name) const { return m_tracker.find(name) != m_tracker.end(); }
-
-    [[nodiscard]] inline const std::string& GetFilePath(const std::string& name) const {
-        DE_ASSERT(Exists(name), "Asset '{}' does not exist", name)
-        return m_assets[m_tracker.at(name)]->GetFilePath();
-    }
-
-    inline void SetFilePath(const std::string& name, const std::string& filepath) {
-        DE_ASSERT(Exists(name), "Asset '{}' does not exist", name)
-        m_assets[m_tracker.at(name)]->SetFilePath(filepath);
-    }
 
     [[nodiscard]] inline bool IsSprite(const std::string& name) const {
         if (!Exists(name)) {
@@ -138,6 +130,8 @@ public:
 
     AssetsManager& AddFont(const std::string& name, const std::string& filepath, unsigned size);
 
+    AssetsManager& AddSound(const std::string& name, const std::string& filepath);
+
     AssetsManager& AddScript(const std::string& name, const std::string& filepath);
 
     AssetsManager& AddShader(const std::string& name, const std::string& filepath);
@@ -145,6 +139,8 @@ public:
     [[nodiscard]] const Ref<SubTexture2D>& GetSprite(const std::string& name) const;
 
     [[nodiscard]] const Ref<Font>& GetFont(const std::string& name) const;
+
+    [[nodiscard]] Ref<SoundInstance> GetSoundInstance(const std::string& name) const;
 
     [[nodiscard]] const Ref<ScriptAsset>& GetScript(const std::string& name) const;
 

@@ -51,7 +51,6 @@ bool OpenALSoundInstance::loadFile(const std::string& filePath) {
         drwav wav;
         if (drwav_init_file(&wav, filePath.c_str(), nullptr) == 0) {
             LOG_ENGINE_ERROR("Unable to read audio file: {} - unsupported wav format", filePath);
-            drwav_uninit(&wav);
             return false;
         }
         m_soundData.resize(wav.dataChunkDataSize);

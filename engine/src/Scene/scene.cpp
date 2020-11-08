@@ -35,7 +35,11 @@ void Scene::OnUpdate(const TimeStep& ts) {
     });
     lua::MessageHandler::ClearMessages();
     // sound
-    m_registry.view<SoundComponent>().each([&]([[maybe_unused]] const auto soundEntt, const auto& soundComp) { soundComp.sound->Update(); });
+    m_registry.view<SoundComponent>().each([&]([[maybe_unused]] const auto soundEntt, const SoundComponent& soundComp) {
+        if (soundComp.sound != nullptr) {
+            soundComp.sound->Update();
+        }
+    });
     // render
     m_registry.view<TransformComponent, CameraComponent>().each(
         // cameraEntity can be avoided to be captured

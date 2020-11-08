@@ -168,6 +168,23 @@ static void drawSpriteNode(SpriteComponent& component) {
 }
 
 static void drawSoundNode(SoundComponent& component) {
+    const auto& assets = AssetsManager::GetInstance();
+    char buffer[128];
+    memset(buffer, 0, sizeof(buffer));
+    memcpy(buffer, component.asset.c_str(), component.asset.length() + 1);
+    if (ImGui::InputText("Asset", buffer, sizeof(buffer))) {
+        ImGui::SameLine();
+        ImGui::SmallButton("Reload");
+        if (ImGui::IsItemClicked() && strlen(buffer) > 0) {
+            if (assets.IsSound(buffer)) {
+                component.asset = buffer;
+                component.sound = assets.GetSoundInstance(buffer);
+            }
+        }
+    }
+    if (!assets.IsSound(component.asset) || component.sound == nullptr) {
+        return;
+    }
     const auto& sound = component.sound;
     const auto& data = sound->GetAudioInfo();
     ImGui::Text("Channels: %d", data.channels);
@@ -242,10 +259,8 @@ static void drawComponents(Entity entity) {
             AddComponent<ScriptComponent>("Script", entity);
             /* AddComponent<LabelComponent>("Label", m_selected, [](LabelComponent& component) {
                 // TODO
-            });
-            AddComponent<SoundComponent>("Sound", m_selected, [](SoundComponent& component) {
-                // TODO
-            }); */
+            });*/
+            AddComponent<SoundComponent>("Sound", entity);
             ImGui::EndPopup();
         }
         ImGui::NewLine();
