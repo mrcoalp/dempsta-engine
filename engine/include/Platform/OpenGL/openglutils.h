@@ -24,11 +24,6 @@ private:
     static bool check_gl_errors(const std::string& filename, std::uint_fast32_t line);
 };
 
-#ifdef NDEBUG
 #define GL_CALL(_function, ...) ::de::OpenGLUtils::GLCallImpl(__FILE__, __LINE__, _function, __VA_ARGS__)
 #define GL_CALL_NO_ARGS(_function) ::de::OpenGLUtils::GLCallImpl(__FILE__, __LINE__, _function)
-#else
-#define GL_CALL(_function, ...)
-#define GL_CALL_NO_ARGS(_function)
-#endif
 }  // namespace de
