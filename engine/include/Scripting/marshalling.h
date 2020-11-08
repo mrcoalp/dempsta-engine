@@ -3,6 +3,7 @@
 #include <lua.hpp>
 #include <map>
 #include <stdexcept>
+#include <vector>
 
 #include "Scripting/types.h"
 

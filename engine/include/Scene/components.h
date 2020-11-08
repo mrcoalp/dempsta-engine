@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <utility>
 
 #include "Core/core.h"
 #include "Renderer/label.h"
@@ -16,7 +17,7 @@ struct NameComponent {
     NameComponent() = default;
     explicit NameComponent(std::string name) : name(std::move(name)) {}
 
-    explicit operator const std::string&() const noexcept { return name; }
+    explicit operator const std::string &() const noexcept { return name; }
     explicit operator const char*() const noexcept { return name.c_str(); }
 };
 
@@ -87,7 +88,7 @@ struct LabelComponent {
     glm::vec4 color = glm::vec4(1.0f);
 
     LabelComponent() = default;
-    explicit LabelComponent(const std::string& asset) : asset(asset) {}
+    explicit LabelComponent(std::string asset) : asset(std::move(asset)) {}
 };
 
 struct SoundComponent {
@@ -95,6 +96,6 @@ struct SoundComponent {
     Ref<SoundInstance> sound;
 
     SoundComponent() = default;
-    explicit SoundComponent(const std::string& asset) : asset(asset) {}
+    explicit SoundComponent(std::string asset) : asset(std::move(asset)) {}
 };
 }  // namespace de

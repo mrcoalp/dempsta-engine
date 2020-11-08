@@ -243,7 +243,7 @@ static void AddComponent(
     }
 }
 
-static void drawComponents(Entity entity) {
+static void drawComponents(Entity entity, const Ref<Scene>& context) {
     if (entity.HasComponent<NameComponent>()) {
         auto& name = entity.GetComponent<NameComponent>().name;
         char buffer[128];
@@ -259,7 +259,7 @@ static void drawComponents(Entity entity) {
 
         if (ImGui::BeginPopup("AddComponentPanel")) {
             AddComponent<TransformComponent>("Transform", entity);
-            AddComponent<CameraComponent>("Camera", entity);
+            AddComponent<CameraComponent>("Camera", entity, [&](CameraComponent& component) { context->OnAddComponent(entity, component); });
             AddComponent<SpriteComponent>("Sprite", entity);
             AddComponent<ScriptComponent>("Script", entity);
             AddComponent<LabelComponent>("Label", entity);
@@ -280,12 +280,14 @@ ScenePanel::ScenePanel(const Ref<Scene>& context) { SetContext(context); }
 
 void ScenePanel::SetContext(const Ref<Scene>& context) { m_context = context; }
 
+void ScenePanel::UnSelectEntity() { m_selected = {}; }
+
 void ScenePanel::OnImGuiRender() {
     if (ImGui::Begin("Scene Hierarchy")) {
-        m_context->m_registry.each([this](auto entityID) { drawEntityNode(Entity(entityID, m_context.get())); });
+        m_context->ForEachEntity([this](const auto& entityId) { drawEntityNode(Entity(entityId, m_context.get())); });
 
         if (ImGui::IsMouseClicked(0) && ImGui::IsWindowHovered()) {
-            m_selected = {};
+            UnSelectEntity();
         }
 
         if (ImGui::BeginPopupContextWindow(nullptr, 1, false)) {
@@ -299,7 +301,7 @@ void ScenePanel::OnImGuiRender() {
 
         if (ImGui::Begin("Properties")) {
             if (m_selected) {
-                drawComponents(m_selected);
+                drawComponents(m_selected, m_context);
             }
             ImGui::End();
         }

@@ -44,7 +44,7 @@ private:
 
 class FontAsset : public Asset {
 public:
-    explicit FontAsset(const std::string& filepath, const Ref<Font>& font) : m_font(font), Asset(filepath) { m_type = AssetType::Font; }
+    explicit FontAsset(const std::string& filepath, Ref<Font> font) : Asset(filepath), m_font(std::move(font)) { m_type = AssetType::Font; }
 
     [[nodiscard]] const Ref<Font>& GetFont() const { return m_font; }
 
@@ -84,6 +84,10 @@ public:
     ~AssetsManager();
 
     void InitFreeType();
+
+    [[nodiscard]] inline const std::vector<Ref<Asset>>& GetAssets() const { return m_assets; }
+
+    [[nodiscard]] inline const auto& GetTracker() const { return m_tracker; }
 
     [[nodiscard]] inline bool Exists(const std::string& name) const { return m_tracker.find(name) != m_tracker.end(); }
 
@@ -143,7 +147,7 @@ private:
     AssetsManager& add(const std::string& name, const std::string& filepath, const std::function<Ref<Asset>()>& assetGetter);
 
     template <class T>
-    const Ref<T>& get(const std::string& name) const {
+    Ref<T> get(const std::string& name) const {
         if (!Exists(name)) {
             DE_THROW("Asset ({}) with name '{}' not found", typeid(T).name(), name)
         }

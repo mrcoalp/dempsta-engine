@@ -201,7 +201,7 @@ std::unordered_map<GLenum, std::string> OpenGLShader::processFileData(const std:
 
         size_t _begin = position + typeTokenLength + 1;
         std::string type = fileSource.substr(_begin, _eol - _begin);
-        DE_ASSERT(ShaderTypeFromString(type), "Invalid shader type: '{0}'", type)
+        DE_ASSERT(ShaderTypeFromString(type) != 0, "Invalid shader type: '{}'", type)
 
         size_t nextLinePosition = fileSource.find_first_of('\n', _eol);
         position = fileSource.find(typeToken, nextLinePosition);

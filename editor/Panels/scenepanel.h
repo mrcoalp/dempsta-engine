@@ -12,6 +12,8 @@ public:
 
     void SetContext(const Ref<Scene>& context);
 
+    void UnSelectEntity();
+
     void OnImGuiRender();
 
 private:

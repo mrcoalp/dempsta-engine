@@ -14,8 +14,8 @@ OpenGLContext::OpenGLContext(GLFWwindow* windowHandle) : m_windowHandle(windowHa
 void OpenGLContext::Init() {
     glfwMakeContextCurrent(m_windowHandle);
     // Initialize GLAD
-    int _statusGLAD = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-    DE_ASSERT(_statusGLAD, "GLAD not initialized!")
+    int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+    DE_ASSERT(status != 0, "GLAD not initialized!")
 }
 
 void OpenGLContext::SwapBuffers() { glfwSwapBuffers(m_windowHandle); }

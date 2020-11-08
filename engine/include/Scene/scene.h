@@ -7,7 +7,6 @@
 
 namespace de {
 class Entity;
-class ScenePanel;
 
 /**
  * @brief Handles all scene related stuff.
@@ -35,6 +34,9 @@ public:
      */
     void OnViewportResize(uint32_t width, uint32_t height);
 
+    template <typename Component>
+    void OnAddComponent(Entity entity, Component& component);
+
     /**
      * @brief Creates a Entity object
      *
@@ -50,6 +52,17 @@ public:
      */
     void DestroyEntity(Entity entity);
 
+    /**
+     * @brief Iterates through each entity in the registry and applies callback on it.
+     *
+     * @tparam Callback Type of the callback function to call.
+     * @param callback Callback for each entity.
+     */
+    template <typename Callback>
+    inline void ForEachEntity(Callback&& callback) {
+        m_registry.each(std::forward<Callback>(callback));
+    }
+
 private:
     /**
      * @brief Storage for all the entities. Handled by EnTT.
@@ -60,6 +73,5 @@ private:
     uint32_t m_viewportHeight{0};
 
     friend class Entity;
-    friend class ScenePanel;
 };
 }  // namespace de

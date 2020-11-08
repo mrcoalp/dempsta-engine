@@ -14,11 +14,11 @@ OpenALSoundAPI::OpenALSoundAPI() : m_internal(CreateScope<Internal>()) {}
 void OpenALSoundAPI::Init() {
     m_internal->device = alcOpenDevice(nullptr);
     DE_ASSERT(m_internal->device != nullptr, "Could not open ALC device!")
-    DE_ASSERT(ALC_CALL(alcCreateContext, m_internal->context, m_internal->device, m_internal->device, nullptr) && m_internal->context != nullptr,
-              "Could not create audio context!")
+    const bool createdContext = ALC_CALL(alcCreateContext, m_internal->context, m_internal->device, m_internal->device, nullptr);
+    DE_ASSERT(createdContext && m_internal->context != nullptr, "Could not create audio context!")
     ALCboolean contextMadeCurrent = ALC_FALSE;
-    DE_ASSERT(ALC_CALL(alcMakeContextCurrent, contextMadeCurrent, m_internal->device, m_internal->context) && contextMadeCurrent == ALC_TRUE,
-              "Could not make audio context current!")
+    const bool makeCurrent = ALC_CALL(alcMakeContextCurrent, contextMadeCurrent, m_internal->device, m_internal->context);
+    DE_ASSERT(makeCurrent && contextMadeCurrent == ALC_TRUE, "Could not make audio context current!")
 
     m_allSources.resize(MAX_NUMBER_OF_SOURCES);
     AL_CALL(alGenSources, MAX_NUMBER_OF_SOURCES, m_allSources.data());
