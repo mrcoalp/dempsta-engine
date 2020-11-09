@@ -45,7 +45,7 @@ struct Complex : public de::JSON::Visitable {
 
 bool test_json_parse_simple_string_struct() {
     SimpleString one{{}, "simple string in json"};
-    if (!de::JSON::WriteFile(one, "assets/json/e.json")) {
+    if (!de::JSON::WriteFile(one, "assets/json/string.json")) {
         return false;
     }
     SimpleString other;
