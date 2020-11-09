@@ -59,7 +59,13 @@ add_subdirectory(external/glm)
 # Add lua
 add_subdirectory(external/lua)
 # Add freetype-gl
-add_subdirectory(external/freetype)
+find_package(Freetype REQUIRED)
+if (NOT FREETYPE_FOUND)
+    message("Freetype not found, trying to build it...")
+    set(FREETYPE_INCLUDE_DIRS "")
+    set(FREETYPE_LIBRARIES freetype)
+    add_subdirectory(external/freetype)
+endif ()
 # Add OpenAL
 set(ALSOFT_DLOPEN OFF CACHE BOOL "Check for the dlopen API for loading optional libs" FORCE)
 set(ALSOFT_UTILS OFF CACHE BOOL "Build and install utility programs" FORCE)
@@ -71,18 +77,9 @@ set(ALSOFT_AMBDEC_PRESETS OFF CACHE BOOL "Install AmbDec preset files" FORCE)
 set(CMAKE_INSTALL_BINDIR .)
 add_subdirectory(external/openal-soft)
 
-target_include_directories(dempsta PUBLIC include external/header_only)
+target_include_directories(dempsta PUBLIC include external/header_only ${FREETYPE_INCLUDE_DIRS})
 
-target_link_libraries(dempsta
-        PUBLIC
-        spdlog
-        glfw
-        glad
-        glm
-        imgui
-        lua
-        freetype
-        OpenAL)
+target_link_libraries(dempsta PUBLIC spdlog glfw glad glm imgui lua ${FREETYPE_LIBRARIES} OpenAL)
 
 set_target_properties(dempsta PROPERTIES INSTALL_RPATH $ORIGIN)
 

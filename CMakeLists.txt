@@ -37,7 +37,7 @@ if (BUILD_DOC)
     else (DOXYGEN_FOUND)
         message("Doxygen need to be installed to generate the doxygen documentation")
     endif (DOXYGEN_FOUND)
-endif(BUILD_DOC)
+endif (BUILD_DOC)
 
 add_subdirectory(engine)
 
@@ -45,9 +45,9 @@ file(GLOB_RECURSE SOURCES editor/*.h editor/*.cpp)
 
 add_executable(dempsta_editor ${SOURCES})
 
-if(BUILD_TESTS)
+if (BUILD_TESTS)
     add_subdirectory(test)
-endif()
+endif ()
 
 target_link_libraries(dempsta_editor PRIVATE dempsta)
 # Copy assets folder to binary destination
