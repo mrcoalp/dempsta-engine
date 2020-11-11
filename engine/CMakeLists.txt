@@ -59,7 +59,7 @@ add_subdirectory(external/glm)
 # Add moon
 add_subdirectory(external/moon)
 # Add freetype-gl
-find_package(Freetype REQUIRED)
+find_package(Freetype)
 if (NOT FREETYPE_FOUND)
     message("Freetype not found, trying to build it...")
     set(FREETYPE_INCLUDE_DIRS "")
