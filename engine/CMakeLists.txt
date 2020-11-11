@@ -57,6 +57,7 @@ add_subdirectory(external/imgui)
 # Add glm
 add_subdirectory(external/glm)
 # Add moon
+set(MOON_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 add_subdirectory(external/moon)
 # Add freetype-gl
 find_package(Freetype)
