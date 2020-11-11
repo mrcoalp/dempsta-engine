@@ -1,9 +1,8 @@
 #pragma once
 
-#include <unordered_map>
+#include <moon.h>
 
-#include "Scripting/binding.h"
-#include "Scripting/luaengine.h"
+#include <unordered_map>
 
 namespace lua {
 /**
@@ -44,7 +43,7 @@ public:
      * @brief Registers class as metatable in Lua.
      */
     static void Register() {
-        auto* L = LE::GetState();
+        auto* L = Moon::GetState();
         lua_pushcfunction(L, &LuaCtor);
         lua_setglobal(L, "DataBuffer");
 
@@ -71,7 +70,7 @@ public:
      */
     static LUA_METHOD(LuaCtor) {
         auto* buffer = new DataBuffer(L);
-        LE::PushValue(buffer);
+        Moon::PushValue(buffer);
         return 1;
     }
 
@@ -85,8 +84,8 @@ public:
         lua_getmetatable(L, 1);
         lua_pushvalue(L, 2);
         lua_rawget(L, -2);
-        auto* self = *LE::GetValue<DataBuffer**>();
-        self->Get(LE::GetValue<std::string>(2));
+        auto* self = *Moon::GetValue<DataBuffer**>();
+        self->Get(Moon::GetValue<std::string>(2));
 
         return 1;
     }
@@ -101,24 +100,24 @@ public:
         lua_getmetatable(L, 1);
         lua_pushvalue(L, 2);
         lua_rawget(L, -2);
-        auto* self = *LE::GetValue<DataBuffer**>();
+        auto* self = *Moon::GetValue<DataBuffer**>();
 
-        switch (LE::GetValueType(3)) {  // Handle Lua type
-            case LuaType::Number:
-                self->Set(LE::GetValue<std::string>(2), LE::GetValue<double>(3));
+        switch (Moon::GetValueType(3)) {  // Handle Lua type
+            case moon_types::LuaType::Number:
+                self->Set(Moon::GetValue<std::string>(2), Moon::GetValue<double>(3));
                 break;
-            case LuaType::Boolean:
-                self->Set(LE::GetValue<std::string>(2), LE::GetValue<bool>(3));
+            case moon_types::LuaType::Boolean:
+                self->Set(Moon::GetValue<std::string>(2), Moon::GetValue<bool>(3));
                 break;
-            case LuaType::String:
-                self->Set(LE::GetValue<std::string>(2), LE::GetValue<std::string>(3));
+            case moon_types::LuaType::String:
+                self->Set(Moon::GetValue<std::string>(2), Moon::GetValue<std::string>(3));
                 break;
-            case LuaType::Null:
-            case LuaType::LightUserData:
-            case LuaType::Table:
-            case LuaType::Function:
-            case LuaType::UserData:
-            case LuaType::Thread:
+            case moon_types::LuaType::Null:
+            case moon_types::LuaType::LightUserData:
+            case moon_types::LuaType::Table:
+            case moon_types::LuaType::Function:
+            case moon_types::LuaType::UserData:
+            case moon_types::LuaType::Thread:
             default:
                 break;
         }
@@ -170,13 +169,13 @@ public:
      */
     void Get(const std::string& key) {
         if (m_doubles.find(key) != m_doubles.end()) {
-            LE::PushValue(m_doubles.at(key));
+            Moon::PushValue(m_doubles.at(key));
         } else if (m_bools.find(key) != m_bools.end()) {
-            LE::PushValue(m_bools.at(key));
+            Moon::PushValue(m_bools.at(key));
         } else if (m_strings.find(key) != m_strings.end()) {
-            LE::PushValue(m_strings.at(key));
+            Moon::PushValue(m_strings.at(key));
         } else {
-            LE::PushNull();
+            Moon::PushNull();
         }
     }
 

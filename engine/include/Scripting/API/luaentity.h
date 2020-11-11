@@ -1,16 +1,16 @@
 #pragma once
 
+#include <moon.h>
+
 #include <glm/glm.hpp>
 
 #include "Scene/entity.h"
-#include "Scripting/binding.h"
-#include "Scripting/luaengine.h"
 
 #ifndef CHECK_GETTER
 #define CHECK_GETTER(_component)                                                \
     if (!m_entity.HasComponent<_component>()) {                                 \
         LOG_ENGINE_WARN("Component {} is not present in entity!", #_component); \
-        LE::PushNull();                                                         \
+        Moon::PushNull();                                                       \
         return 1;                                                               \
     }
 #endif

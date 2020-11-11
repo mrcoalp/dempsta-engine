@@ -1,20 +1,20 @@
 #include "Core/application.h"
 
 #include <GLFW/glfw3.h>
+#include <moon.h>
 
 #include "Core/assetsmanager.h"
 #include "Renderer/renderer.h"
 #include "Scripting/API/databuffer.h"
 #include "Scripting/API/helpers.h"
 #include "Scripting/API/luaentity.h"
-#include "Scripting/luaengine.h"
 #include "Sound/soundprovider.h"
 
 namespace de {
 static void RegisterScriptingAPI() {
     lua::Helpers::Register();
     lua::DataBuffer::Register();
-    LE::RegisterClass<lua::LuaEntity>();
+    Moon::RegisterClass<lua::LuaEntity>();
 }
 
 Application* Application::m_instance = nullptr;
@@ -32,7 +32,8 @@ Application::Application(const WindowProps& windowProps) {
     Renderer::Init();
     SoundProvider::Init();
     AssetsManager::GetInstance().InitFreeType();
-    LE::Init();
+    Moon::Init();
+    Moon::SetLogger([](const auto& error) { LOG_ENGINE_ERROR(error); });
     RegisterScriptingAPI();
 
     m_imguiLayer = new ImGuiLayer();
@@ -40,7 +41,7 @@ Application::Application(const WindowProps& windowProps) {
 }
 
 Application::~Application() {
-    LE::CloseState();
+    Moon::CloseState();
     SoundProvider::Destroy();
 }
 

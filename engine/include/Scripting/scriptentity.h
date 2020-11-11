@@ -1,10 +1,11 @@
 #pragma once
 
+#include <moon.h>
+
 #include "Core/core.h"
 #include "Scene/entity.h"
 #include "Scripting/API/databuffer.h"
 #include "Scripting/API/luaentity.h"
-#include "Scripting/luaengine.h"
 
 namespace de {
 class NativeScriptEntity {
@@ -53,10 +54,10 @@ public:
     template <typename T>
     void OnEvent(int eventType, T&& action) const {
         LoadCodeAndContext();
-        LE::CallFunction("OnEvent", dataBuffer.get(), eventType, action);
+        Moon::CallFunction("OnEvent", dataBuffer.get(), eventType, action);
     }
 
-    void OnMessage(const std::string& id, const std::string& sender, const LuaDynamicMap& data) const;
+    void OnMessage(const std::string& id, const std::string& sender, const moon_types::LuaDynamicMap& data) const;
 
     void OnDestroy();
 

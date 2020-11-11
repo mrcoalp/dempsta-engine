@@ -3,6 +3,7 @@
 
 // Public external
 #include <imgui.h>
+#include <moon.h>
 
 #include "Core/application.h"
 #include "Core/layer.h"
@@ -23,8 +24,6 @@
 #include "Scene/components.h"
 #include "Scene/entity.h"
 #include "Scene/scene.h"
-#include "Scripting/binding.h"
-#include "Scripting/luaengine.h"
 #include "Scripting/scriptentity.h"
 #include "Utils/fileutils.h"
 

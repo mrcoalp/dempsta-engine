@@ -56,8 +56,8 @@ add_subdirectory(external/glad)
 add_subdirectory(external/imgui)
 # Add glm
 add_subdirectory(external/glm)
-# Add lua
-add_subdirectory(external/lua)
+# Add moon
+add_subdirectory(external/moon)
 # Add freetype-gl
 find_package(Freetype REQUIRED)
 if (NOT FREETYPE_FOUND)
@@ -79,7 +79,7 @@ add_subdirectory(external/openal-soft)
 
 target_include_directories(dempsta PUBLIC include external/header_only ${FREETYPE_INCLUDE_DIRS})
 
-target_link_libraries(dempsta PUBLIC spdlog glfw glad glm imgui lua ${FREETYPE_LIBRARIES} OpenAL)
+target_link_libraries(dempsta PUBLIC spdlog glfw glad glm imgui moon ${FREETYPE_LIBRARIES} OpenAL)
 
 set_target_properties(dempsta PROPERTIES INSTALL_RPATH $ORIGIN)
 

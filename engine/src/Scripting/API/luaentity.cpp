@@ -8,49 +8,49 @@
 namespace lua {
 int LuaEntity::GetName(lua_State*) {
     CHECK_GETTER(de::NameComponent)
-    LE::PushValue(m_entity.GetComponent<de::NameComponent>().name);
+    Moon::PushValue(m_entity.GetComponent<de::NameComponent>().name);
     return 1;
 }
 
 int LuaEntity::SetName(lua_State*) {
     CHECK_SETTER(de::NameComponent)
-    m_entity.GetComponent<de::NameComponent>().name = LE::GetValue<std::string>();
+    m_entity.GetComponent<de::NameComponent>().name = Moon::GetValue<std::string>();
     return 0;
 }
 
 int LuaEntity::GetX(lua_State*) {
     CHECK_GETTER(de::TransformComponent)
-    LE::PushValue(m_entity.GetComponent<de::TransformComponent>().translation.x);
+    Moon::PushValue(m_entity.GetComponent<de::TransformComponent>().translation.x);
     return 1;
 }
 
 int LuaEntity::SetX(lua_State*) {
     CHECK_SETTER(de::TransformComponent)
-    m_entity.GetComponent<de::TransformComponent>().translation.x = LE::GetValue<float>();
+    m_entity.GetComponent<de::TransformComponent>().translation.x = Moon::GetValue<float>();
     return 0;
 }
 
 int LuaEntity::GetY(lua_State*) {
     CHECK_GETTER(de::TransformComponent)
-    LE::PushValue(m_entity.GetComponent<de::TransformComponent>().translation.y);
+    Moon::PushValue(m_entity.GetComponent<de::TransformComponent>().translation.y);
     return 1;
 }
 
 int LuaEntity::SetY(lua_State*) {
     CHECK_SETTER(de::TransformComponent)
-    m_entity.GetComponent<de::TransformComponent>().translation.y = LE::GetValue<float>();
+    m_entity.GetComponent<de::TransformComponent>().translation.y = Moon::GetValue<float>();
     return 0;
 }
 
 int LuaEntity::GetZ(lua_State*) {
     CHECK_GETTER(de::TransformComponent)
-    LE::PushValue(m_entity.GetComponent<de::TransformComponent>().translation.z);
+    Moon::PushValue(m_entity.GetComponent<de::TransformComponent>().translation.z);
     return 1;
 }
 
 int LuaEntity::SetZ(lua_State*) {
     CHECK_SETTER(de::TransformComponent)
-    m_entity.GetComponent<de::TransformComponent>().translation.z = LE::GetValue<float>();
+    m_entity.GetComponent<de::TransformComponent>().translation.z = Moon::GetValue<float>();
     return 0;
 }
 
@@ -58,14 +58,14 @@ int LuaEntity::GetPosition(lua_State*) {
     CHECK_GETTER(de::TransformComponent)
     const auto& translation = m_entity.GetComponent<de::TransformComponent>().translation;
     std::unordered_map<std::string, float> translationMap = {{"x", translation.x}, {"y", translation.y}, {"z", translation.z}};
-    LE::PushValue(translationMap);
+    Moon::PushValue(translationMap);
     return 1;
 }
 
 int LuaEntity::SetPosition(lua_State*) {
     CHECK_SETTER(de::TransformComponent)
-    auto translationMap = LE::GetValue<LuaMap<float>>();
-    if (!LE::EnsureMapKeys({"x", "y", "z"}, translationMap)) {
+    auto translationMap = Moon::GetValue<moon_types::LuaMap<float>>();
+    if (!Moon::EnsureMapKeys({"x", "y", "z"}, translationMap)) {
         LOG_ENGINE_WARN("Position map must contain: 'x' 'y' 'z' keys!");
         return 0;
     }
@@ -77,14 +77,14 @@ int LuaEntity::GetScale(lua_State*) {
     CHECK_GETTER(de::TransformComponent)
     const auto& scale = m_entity.GetComponent<de::TransformComponent>().scale;
     std::unordered_map<std::string, float> scaleMap = {{"x", scale.x}, {"y", scale.y}, {"z", scale.z}};
-    LE::PushValue(scaleMap);
+    Moon::PushValue(scaleMap);
     return 1;
 }
 
 int LuaEntity::SetScale(lua_State*) {
     CHECK_SETTER(de::TransformComponent)
-    auto scaleMap = LE::GetValue<LuaMap<float>>();
-    if (!LE::EnsureMapKeys({"x", "y", "z"}, scaleMap)) {
+    auto scaleMap = Moon::GetValue<moon_types::LuaMap<float>>();
+    if (!Moon::EnsureMapKeys({"x", "y", "z"}, scaleMap)) {
         LOG_ENGINE_WARN("Scale map must contain: 'x' 'y' 'z' keys!");
         return 0;
     }
@@ -94,25 +94,25 @@ int LuaEntity::SetScale(lua_State*) {
 
 int LuaEntity::GetColor(lua_State*) {
     CHECK_GETTER(de::SpriteComponent)
-    LE::PushValue(de::Color::Vec4ToHexString(m_entity.GetComponent<de::SpriteComponent>().color));
+    Moon::PushValue(de::Color::Vec4ToHexString(m_entity.GetComponent<de::SpriteComponent>().color));
     return 1;
 }
 
 int LuaEntity::SetColor(lua_State*) {
     CHECK_SETTER(de::SpriteComponent)
-    m_entity.GetComponent<de::SpriteComponent>().color = de::Color::HexStringToVec4(LE::GetValue<std::string>());
+    m_entity.GetComponent<de::SpriteComponent>().color = de::Color::HexStringToVec4(Moon::GetValue<std::string>());
     return 0;
 }
 
 int LuaEntity::GetAlpha(lua_State*) {
     CHECK_GETTER(de::SpriteComponent)
-    LE::PushValue(static_cast<int>(m_entity.GetComponent<de::SpriteComponent>().color.a * 255.f));
+    Moon::PushValue(static_cast<int>(m_entity.GetComponent<de::SpriteComponent>().color.a * 255.f));
     return 1;
 }
 
 int LuaEntity::SetAlpha(lua_State*) {
     CHECK_SETTER(de::SpriteComponent)
-    m_entity.GetComponent<de::SpriteComponent>().color.a = LE::GetValue<float>() / 255.f;
+    m_entity.GetComponent<de::SpriteComponent>().color.a = Moon::GetValue<float>() / 255.f;
     return 0;
 }
 
@@ -142,73 +142,73 @@ int LuaEntity::StopSound(lua_State*) {
 
 int LuaEntity::GetGain(lua_State*) {
     CHECK_GETTER(de::SoundComponent)
-    LE::PushValue(m_entity.GetComponent<de::SoundComponent>().sound->GetGain());
+    Moon::PushValue(m_entity.GetComponent<de::SoundComponent>().sound->GetGain());
     return 1;
 }
 
 int LuaEntity::SetGain(lua_State*) {
     CHECK_SETTER(de::SoundComponent)
-    m_entity.GetComponent<de::SoundComponent>().sound->SetGain(LE::GetValue<float>());
+    m_entity.GetComponent<de::SoundComponent>().sound->SetGain(Moon::GetValue<float>());
     return 0;
 }
 
 int LuaEntity::GetPitch(lua_State*) {
     CHECK_GETTER(de::SoundComponent)
-    LE::PushValue(m_entity.GetComponent<de::SoundComponent>().sound->GetPitch());
+    Moon::PushValue(m_entity.GetComponent<de::SoundComponent>().sound->GetPitch());
     return 1;
 }
 
 int LuaEntity::SetPitch(lua_State*) {
     CHECK_SETTER(de::SoundComponent)
-    m_entity.GetComponent<de::SoundComponent>().sound->SetPitch(LE::GetValue<float>());
+    m_entity.GetComponent<de::SoundComponent>().sound->SetPitch(Moon::GetValue<float>());
     return 0;
 }
 
 int LuaEntity::GetPan(lua_State*) {
     CHECK_GETTER(de::SoundComponent)
-    LE::PushValue(m_entity.GetComponent<de::SoundComponent>().sound->GetPan());
+    Moon::PushValue(m_entity.GetComponent<de::SoundComponent>().sound->GetPan());
     return 1;
 }
 
 int LuaEntity::SetPan(lua_State*) {
     CHECK_SETTER(de::SoundComponent)
-    m_entity.GetComponent<de::SoundComponent>().sound->SetPan(LE::GetValue<float>());
+    m_entity.GetComponent<de::SoundComponent>().sound->SetPan(Moon::GetValue<float>());
     return 0;
 }
 
 int LuaEntity::GetLooped(lua_State*) {
     CHECK_GETTER(de::SoundComponent)
-    LE::PushValue(m_entity.GetComponent<de::SoundComponent>().sound->GetLooped());
+    Moon::PushValue(m_entity.GetComponent<de::SoundComponent>().sound->GetLooped());
     return 1;
 }
 
 int LuaEntity::SetLooped(lua_State*) {
     CHECK_SETTER(de::SoundComponent)
-    m_entity.GetComponent<de::SoundComponent>().sound->SetLooped(LE::GetValue<bool>());
+    m_entity.GetComponent<de::SoundComponent>().sound->SetLooped(Moon::GetValue<bool>());
     return 0;
 }
 
 int LuaEntity::GetAcquireEvents(lua_State*) {
     CHECK_GETTER(de::ScriptComponent)
-    LE::PushValue(m_entity.GetComponent<de::ScriptComponent>().instance->acquireEvents);
+    Moon::PushValue(m_entity.GetComponent<de::ScriptComponent>().instance->acquireEvents);
     return 1;
 }
 
 int LuaEntity::SetAcquireEvents(lua_State*) {
     CHECK_SETTER(de::ScriptComponent)
-    m_entity.GetComponent<de::ScriptComponent>().instance->acquireEvents = LE::GetValue<bool>();
+    m_entity.GetComponent<de::ScriptComponent>().instance->acquireEvents = Moon::GetValue<bool>();
     return 0;
 }
 
 int LuaEntity::SendMessage(lua_State*) {
     CHECK_SETTER(de::NameComponent)
-    auto id = LE::GetValue<std::string>();
+    auto id = Moon::GetValue<std::string>();
     auto sender = m_entity.GetComponent<de::NameComponent>().name;
-    if (LE::GetTop() == 1) {  // In case no data was sent, only one argument (id)
-        MessageHandler::AddMessage({id, sender, LuaDynamicMap(LE::GetState())});
+    if (Moon::GetTop() == 1) {  // In case no data was sent, only one argument (id)
+        MessageHandler::AddMessage({id, sender, moon_types::LuaDynamicMap(Moon::GetState())});
         return 0;
     }
-    auto data = LE::GetValue<LuaDynamicMap>(2);
+    auto data = Moon::GetValue<moon_types::LuaDynamicMap>(2);
     MessageHandler::AddMessage({id, sender, data});
     return 0;
 }

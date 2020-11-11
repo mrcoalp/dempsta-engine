@@ -13,3 +13,6 @@
 [submodule "engine/external/openal-soft"]
 	path = engine/external/openal-soft
 	url = https://github.com/kcat/openal-soft
+[submodule "engine/external/moon"]
+	path = engine/external/moon
+	url = https://github.com/mrcoalp/moon.git
