@@ -1,8 +1,8 @@
 # Dempsta
 
-<center><img src="media/dempsta_icon.png" height="300"></center>
+<div style="text-align: center; "><img src="media/dempsta_icon.png" height="300" alt="Logo"></div>
 
-[![pipeline status](https://gitlab.com/mrcoalp/dempsta-engine/badges/master/pipeline.svg)](https://gitlab.com/mrcoalp/dempsta-engine/-/commits/master)
+[![Build Status](https://travis-ci.org/mrcoalp/dempsta-engine.svg?branch=main)](https://travis-ci.org/mrcoalp/dempsta-engine)
 [![contributions](https://img.shields.io/badge/contributions-welcome-informational)](https://gitlab.com/mrcoalp/dempsta-engine/-/blob/master/CONTRIBUTING.md)
 
 ## README
@@ -15,7 +15,7 @@ Using Lua as scripting language.
 
 Make sure to clone the repository with `--recursive` to fetch all the submodules.
 
-<center><img src="media/screen.png" width="800"></center>
+<div style="text-align: center; "><img src="media/screen.png" width="800" alt="Editor"></div>
 
 ### Compiling
 
@@ -23,7 +23,7 @@ Make sure to clone the repository with `--recursive` to fetch all the submodules
 
 Simply run:
 
-* `$ ./build.py` <br>
+- `$ ./build.py` <br>
 
 **Note** : Using by default Ninja as the build system, can be changed to Make with `--make` option. Run `$ ./build.py -h` to see all the available options.
 
@@ -31,7 +31,7 @@ Simply run:
 
 Simply run:
 
-* `> build.py` in a command prompt for Visual Studio. Refer to [this](https://docs.microsoft.com/en-us/dotnet/framework/tools/developer-command-prompt-for-vs)
+- `> build.py` in a command prompt for Visual Studio. Refer to [this](https://docs.microsoft.com/en-us/dotnet/framework/tools/developer-command-prompt-for-vs)
 
 **Note** : You can also open the project in Visual Studio, build and run dempsta_editor exe, generate the solution with cmake or use CLion.
 
@@ -43,17 +43,22 @@ Inside examples folder, lies an example scene parsed as json. Just use the edito
 
 To compile and run the tests:
 
-* `$ ./build.py -i -t`
-* `$ ./test.py`
+- `$ ./build.py -i -t`
+- `$ ./test.py`
 
 ### Features
 
-* [x] 2D renderer capable of render quads; 
-* [x] Basic capability to expose C++ to Lua and vice-versa; 
-* [x] Pseudo editor using ImGui; 
+- [x] 2D renderer capable of render quads;
+- [x] Basic capability to expose C++ to Lua and vice-versa;
+- [x] Pseudo editor using ImGui;
+- [x] Entity component system;
+- [x] Entity edition in editor;
+- [x] Text rendering;
+- [x] Sound;
+- [x] Scene serialization and deserialization (JSON);
 
-### In Progress
+### TODO
 
-* [ ] Entity component system; 
-* [ ] Entity edition in editor; 
-* [ ] Text rendering; 
+- [ ] Sprite animations;
+- [ ] Better asset management;
+- [ ] Customize editor appearance

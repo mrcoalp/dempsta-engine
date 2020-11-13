@@ -1,0 +1,30 @@
+dist: bionic
+
+os: linux
+
+language: cpp
+
+compiler: gcc
+
+git:
+  submodules: true
+
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get -qq -y install xorg-dev
+
+jobs:
+  include:
+    - stage: test
+      if: type = pull_request OR branch = main
+      script:
+        - bash utils/linux/build.sh --make -i -t
+        - bash utils/linux/test.sh -c
+
+    - stage: build-release
+      if: type = pull_request OR branch = main
+      script: bash utils/linux/build.sh --make -i -r
+
+    - stage: check
+      if: type = pull_request
+      script: bash utils/linux/check.sh

@@ -59,10 +59,10 @@ void SceneSerializer::Serialize(const std::string& filePath) const {
 
 bool SceneSerializer::Deserialize(const std::string& filePath) const {
     JSON::Scene jScene;
+    LOG_ENGINE_TRACE("Deserializing scene '{}'...", jScene.id);
     if (!JSON::ReadFile(filePath, jScene)) {
         return false;
     }
-    LOG_ENGINE_TRACE("Deserializing scene '{}'...", jScene.id);
     for (const auto& asset : jScene.assets) {
         auto& assetsManager = AssetsManager::GetInstance();
         switch ((AssetType)asset.type) {
@@ -128,8 +128,8 @@ bool SceneSerializer::Deserialize(const std::string& filePath) const {
             const auto& content = entity.labelComponent.content;
             deserialized.AddComponent<LabelComponent>(asset).label = CreateRef<Label>(AssetsManager::GetInstance().GetFont(asset), content);
         }
-        LOG_ENGINE_TRACE("Deserialized entity '{}' - name: {}", uuid, name);
     }
+    LOG_ENGINE_TRACE("Deserialized {} entities", jScene.entities.size());
     return true;
 }
 }  // namespace de
