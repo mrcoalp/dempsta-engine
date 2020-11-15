@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/core.h"
-#include "Core/uuid.h"
 #include "Scene/scene.h"
 
 namespace lua {
