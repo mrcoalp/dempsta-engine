@@ -72,9 +72,9 @@ set(ALSOFT_DLOPEN OFF CACHE BOOL "Check for the dlopen API for loading optional 
 set(ALSOFT_UTILS OFF CACHE BOOL "Build and install utility programs" FORCE)
 set(ALSOFT_EXAMPLES OFF CACHE BOOL "Build and install example programs" FORCE)
 set(ALSOFT_TESTS OFF CACHE BOOL "Build and install test programs" FORCE)
-set(ALSOFT_CONFIG OFF CACHE BOOL "Install alsoft.conf sample configuration file" FORCE)
-set(ALSOFT_HRTF_DEFS OFF CACHE BOOL "Install HRTF definition files" FORCE)
-set(ALSOFT_AMBDEC_PRESETS OFF CACHE BOOL "Install AmbDec preset files" FORCE)
+set(ALSOFT_INSTALL_CONFIG OFF CACHE BOOL "Install alsoft.conf sample configuration file" FORCE)
+set(ALSOFT_INSTALL_HRTF_DATA OFF CACHE BOOL "Install HRTF definition files" FORCE)
+set(ALSOFT_INSTALL_AMBDEC_PRESETS OFF CACHE BOOL "Install AmbDec preset files" FORCE)
 set(CMAKE_INSTALL_BINDIR .)
 add_subdirectory(external/openal-soft)
 

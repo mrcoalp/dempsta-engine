@@ -3,7 +3,7 @@
 <div style="text-align: center; "><img src="media/dempsta_icon.png" height="300" alt="Logo"></div>
 
 [![Build Status](https://travis-ci.org/mrcoalp/dempsta-engine.svg?branch=main)](https://travis-ci.org/mrcoalp/dempsta-engine)
-[![contributions](https://img.shields.io/badge/contributions-welcome-informational)](https://gitlab.com/mrcoalp/dempsta-engine/-/blob/master/CONTRIBUTING.md)
+[![contributions](https://img.shields.io/badge/contributions-welcome-informational)](https://github.com/mrcoalp/dempsta-engine/blob/main/CONTRIBUTING.md)
 
 ## README
 
@@ -45,20 +45,3 @@ To compile and run the tests:
 
 - `$ ./build.py -i -t`
 - `$ ./test.py`
-
-### Features
-
-- [x] 2D renderer capable of render quads;
-- [x] Basic capability to expose C++ to Lua and vice-versa;
-- [x] Pseudo editor using ImGui;
-- [x] Entity component system;
-- [x] Entity edition in editor;
-- [x] Text rendering;
-- [x] Sound;
-- [x] Scene serialization and deserialization (JSON);
-
-### TODO
-
-- [ ] Sprite animations;
-- [ ] Better asset management;
-- [ ] Customize editor appearance
