@@ -14,6 +14,13 @@ SubTexture2D::SubTexture2D(Ref<Atlas2D> atlas, const glm::vec2& min, const glm::
     m_textureCoords[3] = {min.x, max.y};
 }
 
+SubTexture2D::SubTexture2D(Ref<Atlas2D> atlas) : m_atlas(std::move(atlas)) {
+    m_textureCoords[0] = {0.f, 0.f};
+    m_textureCoords[1] = {1.f, 0.f};
+    m_textureCoords[2] = {1.f, 1.f};
+    m_textureCoords[3] = {0.f, 1.f};
+}
+
 SubTexture2D::SubTexture2D(const std::string& texturePath) : m_atlas(CreateRef<Atlas2D>(texturePath, glm::vec2())) {
     m_textureCoords[0] = {0.f, 0.f};
     m_textureCoords[1] = {1.f, 0.f};
@@ -33,6 +40,4 @@ Ref<SubTexture2D> SubTexture2D::CreateSprite(const Ref<Atlas2D>& spriteSheet, co
 
     return CreateRef<SubTexture2D>(spriteSheet, min, max);
 }
-
-Ref<SubTexture2D> SubTexture2D::CreateSprite(const std::string& texturePath) { return CreateRef<SubTexture2D>(texturePath); }
 }  // namespace de

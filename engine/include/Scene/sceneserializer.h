@@ -72,10 +72,16 @@ struct SpriteComponent : public Visitable {
     Vec4 color;
     Vec2 anchor;
     std::string asset;
+    bool hasSprite;
+    std::vector<Vec2> spriteCoords;
 
     template <template <typename> class Visitor>
     inline void Visit(Visitor<SpriteComponent>& visitor) {
-        visitor.Node(color, "color").Node(anchor, "anchor").Node(asset, "asset");
+        visitor.Node(color, "color")
+            .Node(anchor, "anchor")
+            .Node(asset, "asset")
+            .Node(hasSprite, "has_sprite")
+            .OptionalNode(spriteCoords, "sprite_coords");
     }
 };
 
@@ -136,10 +142,11 @@ struct Asset : public Visitable {
     std::string path;
     std::string name;
     unsigned fontSize;
+    Vec2 cellSize;
 
     template <template <typename> class Visitor>
     inline void Visit(Visitor<Asset>& visitor) {
-        visitor.Node(type, "type").Node(path, "path").Node(name, "name").OptionalNode(fontSize, "font_size");
+        visitor.Node(type, "type").Node(path, "path").Node(name, "name").OptionalNode(fontSize, "font_size").OptionalNode(cellSize, "cell_size");
     }
 };
 

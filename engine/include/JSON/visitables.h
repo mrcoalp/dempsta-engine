@@ -16,6 +16,7 @@ struct Vec2 : public Visitable {
 
     Vec2() = default;
     explicit Vec2(const glm::vec2& vec) : x(vec.x), y(vec.y) {}
+    Vec2(bool empty) { is_empty = empty; }
 };
 
 struct Vec3 : public Visitable {
@@ -32,6 +33,7 @@ struct Vec3 : public Visitable {
 
     Vec3() = default;
     explicit Vec3(const glm::vec3& vec) : x(vec.x), y(vec.y), z(vec.z) {}
+    Vec3(bool empty) { is_empty = empty; }
 };
 
 struct Vec4 : public Visitable {
@@ -49,5 +51,6 @@ struct Vec4 : public Visitable {
 
     Vec4() = default;
     explicit Vec4(const glm::vec4& vec) : x(vec.x), y(vec.y), z(vec.z), w(vec.w) {}
+    Vec4(bool empty) { is_empty = empty; }
 };
 }  // namespace de::JSON

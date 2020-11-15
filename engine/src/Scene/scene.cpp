@@ -49,10 +49,8 @@ void Scene::OnUpdate(const TimeStep& ts) {
             if (cameraComp.primary) {
                 Renderer2D::BeginScene(camera.GetProjection(), transform);
                 m_registry.view<TransformComponent, SpriteComponent>().each([](const auto& transformComp, const auto& spriteComp) {
-                    const auto& assets = AssetsManager::GetInstance();
-                    if (assets.IsSprite(spriteComp.asset)) {
-                        const auto& sprite = assets.GetSprite(spriteComp.asset);
-                        Renderer2D::DrawQuad(transformComp.GetTransform(), sprite, spriteComp.color, spriteComp.anchor);
+                    if (spriteComp.sprite != nullptr) {
+                        Renderer2D::DrawQuad(transformComp.GetTransform(), spriteComp.sprite, spriteComp.color, spriteComp.anchor);
                     } else {
                         Renderer2D::DrawQuad(transformComp.GetTransform(), spriteComp.color, spriteComp.anchor);
                     }

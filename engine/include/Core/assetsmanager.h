@@ -12,7 +12,7 @@
 #include "Utils/fileutils.h"
 
 namespace de {
-enum class AssetType { Undefined, Sprite, Font, Sound, Script, Shader };
+enum class AssetType { Undefined, Atlas, Font, Sound, Script, Shader };
 
 class Asset {
 public:
@@ -29,17 +29,18 @@ protected:
 private:
     std::string m_filepath;
 };
-class SpriteAsset : public Asset {
+
+class AtlasAsset : public Asset {
 public:
-    explicit SpriteAsset(const std::string& filepath) : Asset(filepath) {
-        m_type = AssetType::Sprite;
-        m_sprite = SubTexture2D::CreateSprite(filepath);
+    explicit AtlasAsset(const std::string& filepath, const glm::vec2& cellSize) : Asset(filepath) {
+        m_type = AssetType::Atlas;
+        m_atlas = CreateRef<Atlas2D>(filepath, cellSize);
     }
 
-    [[nodiscard]] const Ref<SubTexture2D>& GetSprite() const { return m_sprite; }
+    [[nodiscard]] const Ref<Atlas2D>& GetAtlas() const { return m_atlas; }
 
 private:
-    Ref<SubTexture2D> m_sprite;
+    Ref<Atlas2D> m_atlas;
 };
 
 class FontAsset : public Asset {
@@ -91,11 +92,11 @@ public:
 
     [[nodiscard]] inline bool Exists(const std::string& name) const { return m_tracker.find(name) != m_tracker.end(); }
 
-    [[nodiscard]] inline bool IsSprite(const std::string& name) const {
+    [[nodiscard]] inline bool IsAtlas(const std::string& name) const {
         if (!Exists(name)) {
             return false;
         }
-        return m_assets[m_tracker.at(name)]->GetType() == AssetType::Sprite;
+        return m_assets[m_tracker.at(name)]->GetType() == AssetType::Atlas;
     }
 
     [[nodiscard]] inline bool IsFont(const std::string& name) const {
@@ -119,7 +120,7 @@ public:
         return m_assets[m_tracker.at(name)]->GetType() == AssetType::Script;
     }
 
-    AssetsManager& AddSprite(const std::string& name, const std::string& filepath);
+    AssetsManager& AddAtlas(const std::string& name, const std::string& filepath, const glm::vec2& cellSize);
 
     AssetsManager& AddFont(const std::string& name, const std::string& filepath, unsigned size);
 
@@ -129,15 +130,19 @@ public:
 
     AssetsManager& AddShader(const std::string& name, const std::string& filepath);
 
-    [[nodiscard]] const Ref<SubTexture2D>& GetSprite(const std::string& name) const;
+    [[nodiscard]] const Ref<Atlas2D>& GetAtlas(const std::string& name) const;
 
     [[nodiscard]] const Ref<Font>& GetFont(const std::string& name) const;
-
-    [[nodiscard]] Ref<SoundInstance> GetSoundInstance(const std::string& name) const;
 
     [[nodiscard]] const std::string& GetScript(const std::string& name) const;
 
     [[nodiscard]] const Ref<Shader>& GetShader(const std::string& name) const;
+
+    Ref<SubTexture2D> CreateSprite(const std::string& atlasName) const;
+
+    Ref<SubTexture2D> CreateSprite(const std::string& atlasName, const glm::vec2& coords, const glm::vec2& spriteSize = {1.f, 1.f}) const;
+
+    Ref<SoundInstance> CreateSoundInstance(const std::string& name) const;
 
 private:
     AssetsManager() = default;

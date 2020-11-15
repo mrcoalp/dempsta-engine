@@ -9,7 +9,7 @@
 - [x] Sound;
 - [x] Scene serialization and deserialization (JSON);
 - [x] UUID;
-- [ ] Fix seg fault when deleting sound components;
-- [ ] Sprite animations;
 - [ ] Better asset management;
+- [ ] Sprite animations;
+- [ ] Fix seg fault when deleting sound components (upon editor closing);
 - [ ] Customize editor appearance

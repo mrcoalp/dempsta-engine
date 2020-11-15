@@ -28,6 +28,8 @@ class SubTexture2D {
 public:
     SubTexture2D(Ref<Atlas2D> atlas, const glm::vec2& min, const glm::vec2& max);
 
+    explicit SubTexture2D(Ref<Atlas2D> atlas);
+
     explicit SubTexture2D(const std::string& texturePath);
 
     /**
@@ -52,6 +54,13 @@ public:
     [[nodiscard]] inline const Ref<Texture2D>& GetTexture() const { return m_atlas->GetTexture(); }
 
     /**
+     * @brief Sets the sub-texture coordinates in the atlas
+     *
+     * @param coords Coordinates to set
+     */
+    inline void SetCoordinates(glm::vec2* coords) { memcpy(m_textureCoords, coords, sizeof(glm::vec2) * 4); }
+
+    /**
      * @brief Creates a subTexture based on coords in spriteSheet/atlas. Defaults to a cell of one by one.
      *
      * @param spriteSheet Atlas to be used to create subTexture
@@ -69,14 +78,6 @@ public:
      * @return A sprite/subTexture
      */
     static Ref<SubTexture2D> CreateSprite(const Ref<Atlas2D>& spriteSheet, const glm::vec2& coords, const glm::vec2& spriteSize);
-
-    /**
-     * @brief Creates a sprite of entire texture in path.
-     *
-     * @param texturePath Path to the texture to create sprite from
-     * @return A sprite/subTexture
-     */
-    static Ref<SubTexture2D> CreateSprite(const std::string& texturePath);
 
 private:
     glm::vec2 m_textureCoords[4];

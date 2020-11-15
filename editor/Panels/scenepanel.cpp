@@ -185,7 +185,7 @@ static void drawSoundNode(SoundComponent& component) {
             return;
         }
         component.asset = asset;
-        component.sound = AssetsManager::GetInstance().GetSoundInstance(asset);
+        component.sound = AssetsManager::GetInstance().CreateSoundInstance(asset);
     });
     if (component.sound == nullptr) {
         return;

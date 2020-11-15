@@ -11,7 +11,7 @@ AssetsManager& AssetsManager::GetInstance() {
 AssetsManager::~AssetsManager() {
     for (const auto& asset : m_assets) {
         switch (asset->GetType()) {  // todo(mpinto)
-            case AssetType::Sprite:
+            case AssetType::Atlas:
             case AssetType::Font:
             case AssetType::Sound:
             case AssetType::Script:
@@ -28,8 +28,8 @@ void AssetsManager::InitFreeType() {
     }
 }
 
-AssetsManager& AssetsManager::AddSprite(const std::string& name, const std::string& filepath) {
-    return add(name, filepath, [&filepath]() -> Ref<Asset> { return CreateRef<SpriteAsset>(filepath); });
+AssetsManager& AssetsManager::AddAtlas(const std::string& name, const std::string& filepath, const glm::vec2& cellSize) {
+    return add(name, filepath, [&filepath, &cellSize]() -> Ref<Asset> { return CreateRef<AtlasAsset>(filepath, cellSize); });
 }
 
 AssetsManager& AssetsManager::AddFont(const std::string& name, const std::string& filepath, unsigned size) {
@@ -51,29 +51,35 @@ AssetsManager& AssetsManager::AddShader(const std::string& name, const std::stri
     return add(name, filepath, [&filepath]() -> Ref<Asset> { return CreateRef<ShaderAsset>(filepath); });
 }
 
-const Ref<SubTexture2D>& AssetsManager::GetSprite(const std::string& name) const { return get<SpriteAsset>(name)->GetSprite(); }
+const Ref<Atlas2D>& AssetsManager::GetAtlas(const std::string& name) const { return get<AtlasAsset>(name)->GetAtlas(); }
 
 const Ref<Font>& AssetsManager::GetFont(const std::string& name) const { return get<FontAsset>(name)->GetFont(); }
-
-Ref<SoundInstance> AssetsManager::GetSoundInstance(const std::string& name) const {
-    return SoundInstance::CreateSound(get<SoundAsset>(name)->GetFilePath());
-}
 
 const std::string& AssetsManager::GetScript(const std::string& name) const { return get<ScriptAsset>(name)->GetFilePath(); }
 
 const Ref<Shader>& AssetsManager::GetShader(const std::string& name) const { return get<ShaderAsset>(name)->GetShader(); }
 
+Ref<SubTexture2D> AssetsManager::CreateSprite(const std::string& atlasName) const { return CreateRef<SubTexture2D>(GetAtlas(atlasName)); }
+
+Ref<SubTexture2D> AssetsManager::CreateSprite(const std::string& atlasName, const glm::vec2& coords, const glm::vec2& spriteSize) const {
+    return SubTexture2D::CreateSprite(GetAtlas(atlasName), coords, spriteSize);
+}
+
+Ref<SoundInstance> AssetsManager::CreateSoundInstance(const std::string& name) const {
+    return SoundInstance::CreateSound(get<SoundAsset>(name)->GetFilePath());
+}
+
 AssetsManager& AssetsManager::add(const std::string& name, const std::string& filepath, const std::function<Ref<Asset>()>& assetGetter) {
     if (Exists(name)) {
         LOG_ENGINE_WARN("Tried to add an already loaded asset: {}", name);
-        return AssetsManager::GetInstance();
+        return GetInstance();
     }
     size_t index;
     if (!sourceLoaded(filepath, index)) {
         m_assets.emplace_back(assetGetter());
     }
     m_tracker.emplace(name, index);
-    return AssetsManager::GetInstance();
+    return GetInstance();
 }
 
 bool AssetsManager::sourceLoaded(const std::string& filepath, size_t& index) {

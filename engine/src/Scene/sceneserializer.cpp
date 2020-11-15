@@ -22,6 +22,9 @@ void SceneSerializer::Serialize(const std::string& filePath) const {
         if (assets[asset.second]->GetType() == AssetType::Font) {
             jAsset.fontSize = AssetsManager::GetInstance().GetFont(asset.first)->GetSize();
         }
+        if (assets[asset.second]->GetType() == AssetType::Atlas) {
+            jAsset.cellSize = JSON::Vec2(AssetsManager::GetInstance().GetAtlas(asset.first)->GetCellSize());
+        }
         jScene.assets.emplace_back(jAsset);
     }
     m_scene->ForEachEntity([&](const auto& entityId) {
@@ -42,7 +45,15 @@ void SceneSerializer::Serialize(const std::string& filePath) const {
             jEntity.cameraComponent = {{false}, component.primary, component.fixedAspectRatio, jSceneCamera};
         });
         AddComponentToJSON<SpriteComponent>(entity, [&jEntity](SpriteComponent& component) {
-            jEntity.spriteComponent = {{false}, JSON::Vec4(component.color), JSON::Vec2(component.anchor), component.asset};
+            bool hasSprite = false;
+            std::vector<JSON::Vec2> spriteCoords;
+            if (component.sprite != nullptr) {
+                hasSprite = true;
+                for (size_t i = 0; i < 4; ++i) {
+                    spriteCoords.emplace_back(JSON::Vec2(component.sprite->GetCoordinates()[i]));
+                }
+            }
+            jEntity.spriteComponent = {{false}, JSON::Vec4(component.color), JSON::Vec2(component.anchor), component.asset, hasSprite, spriteCoords};
         });
         AddComponentToJSON<ScriptComponent>(entity, [&jEntity](ScriptComponent& component) { jEntity.scriptComponent = {{false}, component.asset}; });
         AddComponentToJSON<SoundComponent>(entity, [&jEntity](SoundComponent& component) { jEntity.soundComponent = {{false}, component.asset}; });
@@ -63,31 +74,33 @@ bool SceneSerializer::Deserialize(const std::string& filePath) const {
         return false;
     }
     LOG_ENGINE_TRACE("Deserializing scene '{}'...", jScene.name);
+    auto& assetsManager = AssetsManager::GetInstance();
     for (const auto& asset : jScene.assets) {
-        auto& assetsManager = AssetsManager::GetInstance();
-        switch ((AssetType)asset.type) {
-            case AssetType::Sprite:
-                assetsManager.AddSprite(asset.name, asset.path);
-                break;
-            case AssetType::Font:
-                assetsManager.AddFont(asset.name, asset.path, asset.fontSize);
-                break;
-            case AssetType::Sound:
-                assetsManager.AddSound(asset.name, asset.path);
-                break;
-            case AssetType::Script:
-                assetsManager.AddScript(asset.name, asset.path);
-                break;
-            case AssetType::Shader:
-                // assetsManager.AddSprite(asset.name, asset.path);
-                break;
-            case AssetType::Undefined:
-            default:
-                break;
+        if (!assetsManager.Exists(asset.name)) {
+            switch ((AssetType)asset.type) {
+                case AssetType::Atlas:
+                    assetsManager.AddAtlas(asset.name, asset.path, asset.cellSize.ToGLM());
+                    break;
+                case AssetType::Font:
+                    assetsManager.AddFont(asset.name, asset.path, asset.fontSize);
+                    break;
+                case AssetType::Sound:
+                    assetsManager.AddSound(asset.name, asset.path);
+                    break;
+                case AssetType::Script:
+                    assetsManager.AddScript(asset.name, asset.path);
+                    break;
+                case AssetType::Shader:
+                    // TODO(mpinto)
+                    break;
+                case AssetType::Undefined:
+                default:
+                    break;
+            }
         }
     }
     for (const auto& entity : jScene.entities) {
-        unsigned uuid = !entity.idComponent.is_empty ? entity.idComponent.id : 0;
+        uint64_t uuid = !entity.idComponent.is_empty ? entity.idComponent.id : 0;
         std::string name = !entity.nameComponent.is_empty ? entity.nameComponent.name : "New Entity";
         auto deserialized = m_scene->CreateEntityWithID(UUID(uuid), name, false);
         if (!entity.transformComponent.is_empty) {
@@ -112,18 +125,26 @@ bool SceneSerializer::Deserialize(const std::string& filePath) const {
             auto& sc = deserialized.AddComponent<SpriteComponent>(saved.asset);
             sc.color = saved.color.ToGLM();
             sc.anchor = saved.anchor.ToGLM();
+            if (saved.hasSprite) {
+                sc.sprite = assetsManager.CreateSprite(saved.asset);
+                glm::vec2 coords[4];
+                for (size_t i = 0; i < saved.spriteCoords.size(); ++i) {
+                    coords[i] = saved.spriteCoords[i].ToGLM();
+                }
+                sc.sprite->SetCoordinates(coords);
+            }
         }
         if (!entity.scriptComponent.is_empty) {
             deserialized.AddComponent<ScriptComponent>(entity.scriptComponent.asset);
         }
         if (!entity.soundComponent.is_empty) {
             const auto& asset = entity.soundComponent.asset;
-            deserialized.AddComponent<SoundComponent>(asset).sound = AssetsManager::GetInstance().GetSoundInstance(asset);
+            deserialized.AddComponent<SoundComponent>(asset).sound = assetsManager.CreateSoundInstance(asset);
         }
         if (!entity.labelComponent.is_empty) {
             const auto& asset = entity.labelComponent.asset;
             const auto& content = entity.labelComponent.content;
-            deserialized.AddComponent<LabelComponent>(asset).label = CreateRef<Label>(AssetsManager::GetInstance().GetFont(asset), content);
+            deserialized.AddComponent<LabelComponent>(asset).label = CreateRef<Label>(assetsManager.GetFont(asset), content);
         }
     }
     LOG_ENGINE_TRACE("Deserialized {} entities", jScene.entities.size());

@@ -54,6 +54,17 @@ void DempstaEditor::OnAttach() {
     }
     auto text = m_activeScene->CreateEntity("Text");
     text.AddComponent<LabelComponent>("arial_fnt").label = CreateRef<Label>(AssetsManager::GetInstance().GetFont("arial_fnt"), "Marco");*/
+
+    AssetsManager::GetInstance()
+        .AddAtlas("RPGpack", "assets/textures/RPGpack_sheet_2X.png", glm::vec2(128.0f))
+        .AddScript("sphere_script", "assets/scripts/sphere.lua");
+    auto camera = m_activeScene->CreateEntity("Primary Camera");
+    camera.AddComponent<CameraComponent>().primary = true;
+    auto barrel = m_activeScene->CreateEntity("Barrel");
+    auto& sc = barrel.AddComponent<SpriteComponent>("RPGpack");
+    sc.sprite = AssetsManager::GetInstance().CreateSprite("RPGpack", {8.f, 11.f});
+    sc.anchor = {0.5f, 0.5f};
+    barrel.AddComponent<ScriptComponent>("sphere_script");
 }
 
 void DempstaEditor::OnDetach() {}

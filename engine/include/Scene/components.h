@@ -7,6 +7,7 @@
 #include "Core/core.h"
 #include "Core/uuid.h"
 #include "Renderer/label.h"
+#include "Renderer/subtexture.h"
 #include "Scene/scenecamera.h"
 #include "Scripting/scriptentity.h"
 #include "Sound/sound.h"
@@ -48,6 +49,7 @@ struct SpriteComponent {
     glm::vec4 color{glm::vec4(1.0f)};
     glm::vec2 anchor{glm::vec2(0.f)};
     std::string asset;
+    Ref<SubTexture2D> sprite;
 
     SpriteComponent() = default;
     explicit SpriteComponent(std::string asset) : asset(std::move(asset)) {}
