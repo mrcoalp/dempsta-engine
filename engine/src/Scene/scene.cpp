@@ -137,6 +137,17 @@ void Scene::OnAddComponent<SoundComponent>([[maybe_unused]] Entity entity, Sound
 
 Entity Scene::CreateEntity(const std::string& name, bool addTransform) {
     Entity entity(m_registry.create(), this);
+    entity.AddComponent<IDComponent>().uuid = UUID();
+    entity.AddComponent<NameComponent>(name);
+    if (addTransform) {
+        entity.AddComponent<TransformComponent>();  // Add transform by default
+    }
+    return entity;
+}
+
+Entity Scene::CreateEntityWithID(const UUID& uuid, const std::string& name, bool addTransform) {
+    Entity entity(m_registry.create(), this);
+    entity.AddComponent<IDComponent>().uuid = uuid;
     entity.AddComponent<NameComponent>(name);
     if (addTransform) {
         entity.AddComponent<TransformComponent>();  // Add transform by default

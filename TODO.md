@@ -8,6 +8,7 @@
 - [x] Text rendering;
 - [x] Sound;
 - [x] Scene serialization and deserialization (JSON);
+- [x] UUID;
 - [ ] Fix seg fault when deleting sound components;
 - [ ] Sprite animations;
 - [ ] Better asset management;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/core.h"
+#include "Core/uuid.h"
 #include "Scene/scene.h"
 
 namespace lua {
@@ -45,7 +46,7 @@ public:
      */
     template <typename Component>
     void RemoveComponent() {
-        DE_ASSERT(HasComponent<Component>(), "Tried to remove an inexistent component from entity!");
+        DE_ASSERT(HasComponent<Component>(), "Tried to remove an nonexistent component from entity!");
         m_scene->m_registry.remove<Component>(m_handle);
     }
 
@@ -71,7 +72,7 @@ public:
      */
     template <typename Component>
     Component& GetComponent() {
-        DE_ASSERT(HasComponent<Component>(), "Tried to get an inexistent component from entity!");
+        DE_ASSERT(HasComponent<Component>(), "Tried to get an nonexistent component from entity!");
         return m_scene->m_registry.get<Component>(m_handle);
     }
 

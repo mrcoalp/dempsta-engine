@@ -244,6 +244,9 @@ static void AddComponent(
 }
 
 static void drawComponents(Entity entity, const Ref<Scene>& context) {
+    if (entity.HasComponent<IDComponent>()) {
+        ImGui::LabelText("UUID", "%lu", static_cast<uint64_t>(entity.GetComponent<IDComponent>().uuid));
+    }
     if (entity.HasComponent<NameComponent>()) {
         auto& name = entity.GetComponent<NameComponent>().name;
         char buffer[128];

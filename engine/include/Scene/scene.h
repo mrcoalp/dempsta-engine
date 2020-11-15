@@ -3,6 +3,7 @@
 #include <entt/entt.hpp>
 
 #include "Core/timestep.h"
+#include "Core/uuid.h"
 #include "Events/event.h"
 
 namespace de {
@@ -44,6 +45,15 @@ public:
      * @return Entity
      */
     Entity CreateEntity(const std::string& name = "New Entity", bool addTransform = true);
+
+    /**
+     * @brief Creates a Entity with a specified id
+     *
+     * @param uuid ID to create entity with
+     * @param name Name of the entity. Adds a new NameComponent. Default = "New Entity"
+     * @return Entity
+     */
+    Entity CreateEntityWithID(const UUID& uuid, const std::string& name = "New Entity", bool addTransform = true);
 
     /**
      * @brief Destroys a given entity

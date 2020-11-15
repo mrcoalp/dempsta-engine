@@ -2,21 +2,21 @@
     "assets": [
         {
             "font_size": 0,
-            "name": "sphere_tex",
-            "path": "assets/textures/sphere.png",
-            "type": 1
+            "name": "bg_music_script",
+            "path": "assets/scripts/bg_music.lua",
+            "type": 4
         },
         {
             "font_size": 0,
-            "name": "quad",
-            "path": "assets/shaders/quad.glsl",
-            "type": 5
+            "name": "bg_music_sound",
+            "path": "assets/sound/bg_music.wav",
+            "type": 3
         },
         {
             "font_size": 0,
-            "name": "mask_tex",
-            "path": "assets/textures/mask.png",
-            "type": 1
+            "name": "protector_sound",
+            "path": "assets/sound/iamtheprotectorofthissystem.wav",
+            "type": 3
         },
         {
             "font_size": 60,
@@ -32,24 +32,6 @@
         },
         {
             "font_size": 0,
-            "name": "bg_music_script",
-            "path": "assets/scripts/bg_music.lua",
-            "type": 4
-        },
-        {
-            "font_size": 0,
-            "name": "mask_script",
-            "path": "assets/scripts/mask.lua",
-            "type": 4
-        },
-        {
-            "font_size": 0,
-            "name": "protector_sound",
-            "path": "assets/sound/iamtheprotectorofthissystem.wav",
-            "type": 3
-        },
-        {
-            "font_size": 0,
             "name": "protector_script",
             "path": "assets/scripts/protector.lua",
             "type": 4
@@ -62,12 +44,333 @@
         },
         {
             "font_size": 0,
-            "name": "bg_music_sound",
-            "path": "assets/sound/bg_music.wav",
-            "type": 3
+            "name": "mask_tex",
+            "path": "assets/textures/mask.png",
+            "type": 1
+        },
+        {
+            "font_size": 0,
+            "name": "mask_script",
+            "path": "assets/scripts/mask.lua",
+            "type": 4
+        },
+        {
+            "font_size": 0,
+            "name": "sphere_tex",
+            "path": "assets/textures/sphere.png",
+            "type": 1
+        },
+        {
+            "font_size": 0,
+            "name": "quad",
+            "path": "assets/shaders/quad.glsl",
+            "type": 5
         }
     ],
     "entities": [
+        {
+            "id_component": {
+                "id": 13745246744983403621
+            },
+            "label_component": {
+                "asset": "arial_fnt",
+                "content": "Marco"
+            },
+            "name_component": {
+                "name": "Text"
+            },
+            "transform_component": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "id_component": {
+                "id": 3284727579927229668
+            },
+            "name_component": {
+                "name": "Mask_4"
+            },
+            "script_component": {
+                "asset": "mask_script"
+            },
+            "sprite_component": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "asset": "mask_tex",
+                "color": {
+                    "w": 0.8509804010391235,
+                    "x": 1.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "transform_component": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "id_component": {
+                "id": 4354997414273737855
+            },
+            "name_component": {
+                "name": "Mask_3"
+            },
+            "script_component": {
+                "asset": "mask_script"
+            },
+            "sprite_component": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "asset": "mask_tex",
+                "color": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 1.0,
+                    "z": 0.0
+                }
+            },
+            "transform_component": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "id_component": {
+                "id": 3212959976456670890
+            },
+            "name_component": {
+                "name": "Mask_2"
+            },
+            "script_component": {
+                "asset": "mask_script"
+            },
+            "sprite_component": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "asset": "mask_tex",
+                "color": {
+                    "w": 0.8509804010391235,
+                    "x": 1.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "transform_component": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "id_component": {
+                "id": 3883505432364393712
+            },
+            "name_component": {
+                "name": "Mask_1"
+            },
+            "script_component": {
+                "asset": "mask_script"
+            },
+            "sprite_component": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "asset": "mask_tex",
+                "color": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 1.0
+                }
+            },
+            "transform_component": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "id_component": {
+                "id": 5565931534767957436
+            },
+            "name_component": {
+                "name": "Mask_0"
+            },
+            "script_component": {
+                "asset": "mask_script"
+            },
+            "sprite_component": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "asset": "mask_tex",
+                "color": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 1.0,
+                    "z": 0.0
+                }
+            },
+            "transform_component": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "id_component": {
+                "id": 194253994185210792
+            },
+            "name_component": {
+                "name": "Sphere"
+            },
+            "script_component": {
+                "asset": "sphere_script"
+            },
+            "sprite_component": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "asset": "sphere_tex",
+                "color": {
+                    "w": 0.6666666865348816,
+                    "x": 0.0,
+                    "y": 1.0,
+                    "z": 0.0
+                }
+            },
+            "transform_component": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": -2.5,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "id_component": {
+                "id": 2099756959453107390
+            },
+            "name_component": {
+                "name": "Protector"
+            },
+            "script_component": {
+                "asset": "protector_script"
+            },
+            "sound_component": {
+                "asset": "protector_sound"
+            }
+        },
+        {
+            "id_component": {
+                "id": 17737352151675304705
+            },
+            "name_component": {
+                "name": "Background Music"
+            },
+            "script_component": {
+                "asset": "bg_music_script"
+            },
+            "sound_component": {
+                "asset": "bg_music_sound"
+            }
+        },
         {
             "camera_component": {
                 "fixed_aspect_ratio": false,
@@ -80,7 +383,9 @@
                     }
                 }
             },
-            "id": 123,
+            "id_component": {
+                "id": 11440011200928246176
+            },
             "name_component": {
                 "name": "Primary Camera"
             },
@@ -104,487 +409,7 @@
                     "z": 0.0
                 }
             }
-        },
-        {
-            "id": 123,
-            "name_component": {
-                "name": "Mask_9"
-            },
-            "script_component": {
-                "asset": "mask_script"
-            },
-            "sprite_component": {
-                "anchor": {
-                    "x": 0.0,
-                    "y": 0.0
-                },
-                "asset": "mask_tex",
-                "color": {
-                    "w": 1.0,
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 0.0
-                }
-            },
-            "transform_component": {
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "translation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                }
-            }
-        },
-        {
-            "id": 123,
-            "name_component": {
-                "name": "Mask_8"
-            },
-            "script_component": {
-                "asset": "mask_script"
-            },
-            "sprite_component": {
-                "anchor": {
-                    "x": 0.0,
-                    "y": 0.0
-                },
-                "asset": "mask_tex",
-                "color": {
-                    "w": 1.0,
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                }
-            },
-            "transform_component": {
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "translation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                }
-            }
-        },
-        {
-            "id": 123,
-            "name_component": {
-                "name": "Mask_7"
-            },
-            "script_component": {
-                "asset": "mask_script"
-            },
-            "sprite_component": {
-                "anchor": {
-                    "x": 0.0,
-                    "y": 0.0
-                },
-                "asset": "mask_tex",
-                "color": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 1.0,
-                    "z": 0.0
-                }
-            },
-            "transform_component": {
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "translation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                }
-            }
-        },
-        {
-            "id": 123,
-            "name_component": {
-                "name": "Mask_6"
-            },
-            "script_component": {
-                "asset": "mask_script"
-            },
-            "sprite_component": {
-                "anchor": {
-                    "x": 0.0,
-                    "y": 0.0
-                },
-                "asset": "mask_tex",
-                "color": {
-                    "w": 1.0,
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                }
-            },
-            "transform_component": {
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "translation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                }
-            }
-        },
-        {
-            "id": 123,
-            "name_component": {
-                "name": "Mask_5"
-            },
-            "script_component": {
-                "asset": "mask_script"
-            },
-            "sprite_component": {
-                "anchor": {
-                    "x": 0.0,
-                    "y": 0.0
-                },
-                "asset": "mask_tex",
-                "color": {
-                    "w": 1.0,
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 0.0
-                }
-            },
-            "transform_component": {
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "translation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                }
-            }
-        },
-        {
-            "id": 123,
-            "name_component": {
-                "name": "Mask_4"
-            },
-            "script_component": {
-                "asset": "mask_script"
-            },
-            "sprite_component": {
-                "anchor": {
-                    "x": 0.0,
-                    "y": 0.0
-                },
-                "asset": "mask_tex",
-                "color": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 1.0,
-                    "z": 0.0
-                }
-            },
-            "transform_component": {
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "translation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                }
-            }
-        },
-        {
-            "id": 123,
-            "name_component": {
-                "name": "Mask_3"
-            },
-            "script_component": {
-                "asset": "mask_script"
-            },
-            "sprite_component": {
-                "anchor": {
-                    "x": 0.0,
-                    "y": 0.0
-                },
-                "asset": "mask_tex",
-                "color": {
-                    "w": 0.8509804010391235,
-                    "x": 1.0,
-                    "y": 0.0,
-                    "z": 0.0
-                }
-            },
-            "transform_component": {
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "translation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                }
-            }
-        },
-        {
-            "id": 123,
-            "name_component": {
-                "name": "Mask_2"
-            },
-            "script_component": {
-                "asset": "mask_script"
-            },
-            "sprite_component": {
-                "anchor": {
-                    "x": 0.0,
-                    "y": 0.0
-                },
-                "asset": "mask_tex",
-                "color": {
-                    "w": 0.8509804010391235,
-                    "x": 1.0,
-                    "y": 0.0,
-                    "z": 0.0
-                }
-            },
-            "transform_component": {
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "translation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                }
-            }
-        },
-        {
-            "id": 123,
-            "name_component": {
-                "name": "Mask_1"
-            },
-            "script_component": {
-                "asset": "mask_script"
-            },
-            "sprite_component": {
-                "anchor": {
-                    "x": 0.0,
-                    "y": 0.0
-                },
-                "asset": "mask_tex",
-                "color": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 1.0,
-                    "z": 0.0
-                }
-            },
-            "transform_component": {
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "translation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                }
-            }
-        },
-        {
-            "id": 123,
-            "name_component": {
-                "name": "Mask_0"
-            },
-            "script_component": {
-                "asset": "mask_script"
-            },
-            "sprite_component": {
-                "anchor": {
-                    "x": 0.0,
-                    "y": 0.0
-                },
-                "asset": "mask_tex",
-                "color": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 1.0,
-                    "z": 0.0
-                }
-            },
-            "transform_component": {
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "translation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                }
-            }
-        },
-        {
-            "id": 123,
-            "name_component": {
-                "name": "PROTECTOR!"
-            },
-            "script_component": {
-                "asset": "protector_script"
-            },
-            "sound_component": {
-                "asset": "protector_sound"
-            }
-        },
-        {
-            "id": 123,
-            "name_component": {
-                "name": "Background Music"
-            },
-            "script_component": {
-                "asset": "bg_music_script"
-            },
-            "sound_component": {
-                "asset": "bg_music_sound"
-            }
-        },
-        {
-            "id": 123,
-            "name_component": {
-                "name": "Sphere"
-            },
-            "script_component": {
-                "asset": "sphere_script"
-            },
-            "sprite_component": {
-                "anchor": {
-                    "x": 0.5,
-                    "y": 0.5
-                },
-                "asset": "sphere_tex",
-                "color": {
-                    "w": 0.8509804010391235,
-                    "x": 1.0,
-                    "y": 0.0,
-                    "z": 0.0
-                }
-            },
-            "transform_component": {
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 2.382766008377075,
-                    "y": 2.382766008377075,
-                    "z": 1.0
-                },
-                "translation": {
-                    "x": -2.5,
-                    "y": 0.0,
-                    "z": 0.0
-                }
-            }
-        },
-        {
-            "id": 123,
-            "label_component": {
-                "asset": "arial_fnt",
-                "content": "Marco Pinto"
-            },
-            "name_component": {
-                "name": "Test Text"
-            },
-            "transform_component": {
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "translation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                }
-            }
         }
     ],
-    "id": "todo_scene_name"
+    "name": "todo_scene_name"
 }

@@ -15,7 +15,7 @@ static void AddComponentToJSON(Entity entity, const std::function<void(Component
 
 void SceneSerializer::Serialize(const std::string& filePath) const {
     JSON::Scene jScene;
-    jScene.id = "todo_scene_name";
+    jScene.name = "todo_scene_name";
     const auto& assets = AssetsManager::GetInstance().GetAssets();
     for (const auto& asset : AssetsManager::GetInstance().GetTracker()) {
         JSON::Asset jAsset{{false}, (int)assets[asset.second]->GetType(), assets[asset.second]->GetFilePath(), asset.first};
@@ -27,7 +27,7 @@ void SceneSerializer::Serialize(const std::string& filePath) const {
     m_scene->ForEachEntity([&](const auto& entityId) {
         auto entity = Entity(entityId, m_scene.get());
         JSON::Entity jEntity;
-        jEntity.id = 123;
+        AddComponentToJSON<IDComponent>(entity, [&jEntity](IDComponent& component) { jEntity.idComponent = {{false}, (uint64_t)component.uuid}; });
         AddComponentToJSON<NameComponent>(entity, [&jEntity](NameComponent& component) { jEntity.nameComponent = {{false}, component.name}; });
         AddComponentToJSON<TransformComponent>(entity, [&jEntity](TransformComponent& component) {
             JSON::Vec3 translation{component.translation};
@@ -59,10 +59,10 @@ void SceneSerializer::Serialize(const std::string& filePath) const {
 
 bool SceneSerializer::Deserialize(const std::string& filePath) const {
     JSON::Scene jScene;
-    LOG_ENGINE_TRACE("Deserializing scene '{}'...", jScene.id);
     if (!JSON::ReadFile(filePath, jScene)) {
         return false;
     }
+    LOG_ENGINE_TRACE("Deserializing scene '{}'...", jScene.name);
     for (const auto& asset : jScene.assets) {
         auto& assetsManager = AssetsManager::GetInstance();
         switch ((AssetType)asset.type) {
@@ -87,12 +87,9 @@ bool SceneSerializer::Deserialize(const std::string& filePath) const {
         }
     }
     for (const auto& entity : jScene.entities) {
-        auto uuid = entity.id;  // todo(mpinto): UUID
-        std::string name;
-        if (!entity.nameComponent.is_empty) {
-            name = entity.nameComponent.name;
-        }
-        auto deserialized = m_scene->CreateEntity(name, false);
+        unsigned uuid = !entity.idComponent.is_empty ? entity.idComponent.id : 0;
+        std::string name = !entity.nameComponent.is_empty ? entity.nameComponent.name : "New Entity";
+        auto deserialized = m_scene->CreateEntityWithID(UUID(uuid), name, false);
         if (!entity.transformComponent.is_empty) {
             const auto& saved = entity.transformComponent;
             auto& tc = deserialized.AddComponent<TransformComponent>();

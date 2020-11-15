@@ -8,6 +8,15 @@
 
 namespace de {
 namespace JSON {
+struct IDComponent : public Visitable {
+    uint64_t id;
+
+    template <template <typename> class Visitor>
+    inline void Visit(Visitor<IDComponent>& visitor) {
+        visitor.Node(id, "id");
+    }
+};
+
 struct NameComponent : public Visitable {
     std::string name;
 
@@ -99,8 +108,8 @@ struct LabelComponent : public Visitable {
 };
 
 struct Entity : public Visitable {
-    unsigned id;
     // All visitable components are empty by default to ensure they're not added to json
+    IDComponent idComponent{{true}};
     NameComponent nameComponent{{true}};
     TransformComponent transformComponent{{true}};
     CameraComponent cameraComponent{{true}};
@@ -111,7 +120,7 @@ struct Entity : public Visitable {
 
     template <template <typename> class Visitor>
     inline void Visit(Visitor<Entity>& visitor) {
-        visitor.Node(id, "id")
+        visitor.OptionalNode(idComponent, "id_component", {{true}})
             .OptionalNode(nameComponent, "name_component", {{true}})
             .OptionalNode(transformComponent, "transform_component", {{true}})
             .OptionalNode(cameraComponent, "camera_component", {{true}})
@@ -135,13 +144,13 @@ struct Asset : public Visitable {
 };
 
 struct Scene : public Visitable {
-    std::string id;
+    std::string name;
     std::vector<Asset> assets;
     std::vector<Entity> entities;
 
     template <template <typename> class Visitor>
     inline void Visit(Visitor<Scene>& visitor) {
-        visitor.Node(id, "id").Node(assets, "assets").Node(entities, "entities");
+        visitor.Node(name, "name").Node(assets, "assets").Node(entities, "entities");
     }
 };
 }  // namespace JSON

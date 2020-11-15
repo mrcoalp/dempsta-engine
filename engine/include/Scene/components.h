@@ -5,12 +5,17 @@
 #include <utility>
 
 #include "Core/core.h"
+#include "Core/uuid.h"
 #include "Renderer/label.h"
 #include "Scene/scenecamera.h"
 #include "Scripting/scriptentity.h"
 #include "Sound/sound.h"
 
 namespace de {
+struct IDComponent {
+    UUID uuid;
+};
+
 struct NameComponent {
     std::string name;
 

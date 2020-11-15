@@ -16,6 +16,8 @@ struct Trivial<int> : std::true_type {};
 template <>
 struct Trivial<unsigned> : std::true_type {};
 template <>
+struct Trivial<uint64_t> : std::true_type {};
+template <>
 struct Trivial<bool> : std::true_type {};
 template <>
 struct Trivial<float> : std::true_type {};
