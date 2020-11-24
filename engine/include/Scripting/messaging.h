@@ -9,7 +9,7 @@ namespace lua {
 struct Message {
     std::string id;
     std::string sender;
-    moon_types::LuaDynamicMap data;
+    moon::LuaDynamicMap data;
 };
 
 using MessageCallback = std::function<void(const Message&)>;

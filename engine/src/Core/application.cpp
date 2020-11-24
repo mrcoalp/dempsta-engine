@@ -1,7 +1,7 @@
 #include "Core/application.h"
 
 #include <GLFW/glfw3.h>
-#include <moon.h>
+#include <moon/moon.h>
 
 #include "Core/assetsmanager.h"
 #include "Renderer/renderer.h"

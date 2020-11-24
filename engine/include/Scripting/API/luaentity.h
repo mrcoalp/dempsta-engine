@@ -1,6 +1,6 @@
 #pragma once
 
-#include <moon.h>
+#include <moon/moon.h>
 
 #include <glm/glm.hpp>
 
@@ -30,42 +30,42 @@ public:
 
     explicit LuaEntity(lua_State*) {}
 
-    LUA_DECLARE_CLASS(LuaEntity)
+    MOON_DECLARE_CLASS(LuaEntity)
 
-    LUA_METHOD(GetName);
-    LUA_METHOD(SetName);
+    MOON_METHOD(GetName);
+    MOON_METHOD(SetName);
     // Transform
-    LUA_METHOD(GetX);
-    LUA_METHOD(SetX);
-    LUA_METHOD(GetY);
-    LUA_METHOD(SetY);
-    LUA_METHOD(GetZ);
-    LUA_METHOD(SetZ);
-    LUA_METHOD(GetPosition);
-    LUA_METHOD(SetPosition);
-    LUA_METHOD(GetScale);
-    LUA_METHOD(SetScale);
-    LUA_METHOD(GetColor);
-    LUA_METHOD(SetColor);
-    LUA_METHOD(GetAlpha);
-    LUA_METHOD(SetAlpha);
+    MOON_METHOD(GetX);
+    MOON_METHOD(SetX);
+    MOON_METHOD(GetY);
+    MOON_METHOD(SetY);
+    MOON_METHOD(GetZ);
+    MOON_METHOD(SetZ);
+    MOON_METHOD(GetPosition);
+    MOON_METHOD(SetPosition);
+    MOON_METHOD(GetScale);
+    MOON_METHOD(SetScale);
+    MOON_METHOD(GetColor);
+    MOON_METHOD(SetColor);
+    MOON_METHOD(GetAlpha);
+    MOON_METHOD(SetAlpha);
     // Sound
-    LUA_METHOD(PlaySound);
-    LUA_METHOD(PauseSound);
-    LUA_METHOD(ResumeSound);
-    LUA_METHOD(StopSound);
-    LUA_METHOD(GetGain);
-    LUA_METHOD(SetGain);
-    LUA_METHOD(GetPitch);
-    LUA_METHOD(SetPitch);
-    LUA_METHOD(GetPan);
-    LUA_METHOD(SetPan);
-    LUA_METHOD(GetLooped);
-    LUA_METHOD(SetLooped);
+    MOON_METHOD(PlaySound);
+    MOON_METHOD(PauseSound);
+    MOON_METHOD(ResumeSound);
+    MOON_METHOD(StopSound);
+    MOON_METHOD(GetGain);
+    MOON_METHOD(SetGain);
+    MOON_METHOD(GetPitch);
+    MOON_METHOD(SetPitch);
+    MOON_METHOD(GetPan);
+    MOON_METHOD(SetPan);
+    MOON_METHOD(GetLooped);
+    MOON_METHOD(SetLooped);
 
-    LUA_METHOD(GetAcquireEvents);
-    LUA_METHOD(SetAcquireEvents);
-    LUA_METHOD(SendMessage);
+    MOON_METHOD(GetAcquireEvents);
+    MOON_METHOD(SetAcquireEvents);
+    MOON_METHOD(SendMessage);
 
 private:
     de::Entity m_entity;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <moon.h>
+#include <moon/moon.h>
 
 #include "Events/event.h"
 #include "Input/input.h"
@@ -164,12 +164,12 @@ public:
         Moon::PushGlobalVariable("EVT_MOUSE_SCROLLED", static_cast<int>(de::EventType::MouseScrolled));
     }
 
-    static LUA_METHOD(IsKeyPressed) {
+    static MOON_METHOD(IsKeyPressed) {
         Moon::PushValue(de::Input::IsKeyPressed(Moon::GetValue<int>()));
         return 1;
     }
 
-    static LUA_METHOD(GenerateRandomSeed) {
+    static MOON_METHOD(GenerateRandomSeed) {
         static bool seed = false;
         if (!seed) {
             std::srand(std::time(nullptr));
@@ -178,7 +178,7 @@ public:
         return 0;
     }
 
-    static LUA_METHOD(RandomNumber) {
+    static MOON_METHOD(RandomNumber) {
         const auto low = Moon::GetValue<int>();
         const auto high = Moon::GetValue<int>(2);
         if (low > high) {
@@ -189,17 +189,17 @@ public:
         return 1;
     }
 
-    static LUA_METHOD(trace) {
+    static MOON_METHOD(trace) {
         LOG_TRACE(Moon::GetValue<std::string>());
         return 0;
     }
 
-    static LUA_METHOD(warn) {
+    static MOON_METHOD(warn) {
         LOG_WARN(Moon::GetValue<std::string>());
         return 0;
     }
 
-    static LUA_METHOD(error) {
+    static MOON_METHOD(error) {
         LOG_ERROR(Moon::GetValue<std::string>());
         return 0;
     }

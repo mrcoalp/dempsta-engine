@@ -64,7 +64,7 @@ int LuaEntity::GetPosition(lua_State*) {
 
 int LuaEntity::SetPosition(lua_State*) {
     CHECK_SETTER(de::TransformComponent)
-    auto translationMap = Moon::GetValue<moon_types::LuaMap<float>>();
+    auto translationMap = Moon::GetValue<moon::LuaMap<float>>();
     if (!Moon::EnsureMapKeys({"x", "y", "z"}, translationMap)) {
         LOG_ENGINE_WARN("Position map must contain: 'x' 'y' 'z' keys!");
         return 0;
@@ -83,7 +83,7 @@ int LuaEntity::GetScale(lua_State*) {
 
 int LuaEntity::SetScale(lua_State*) {
     CHECK_SETTER(de::TransformComponent)
-    auto scaleMap = Moon::GetValue<moon_types::LuaMap<float>>();
+    auto scaleMap = Moon::GetValue<moon::LuaMap<float>>();
     if (!Moon::EnsureMapKeys({"x", "y", "z"}, scaleMap)) {
         LOG_ENGINE_WARN("Scale map must contain: 'x' 'y' 'z' keys!");
         return 0;
@@ -205,48 +205,48 @@ int LuaEntity::SendMessage(lua_State*) {
     auto id = Moon::GetValue<std::string>();
     auto sender = m_entity.GetComponent<de::NameComponent>().name;
     if (Moon::GetTop() == 1) {  // In case no data was sent, only one argument (id)
-        MessageHandler::AddMessage({id, sender, moon_types::LuaDynamicMap(Moon::GetState())});
+        MessageHandler::AddMessage({id, sender, moon::LuaDynamicMap(Moon::GetState())});
         return 0;
     }
-    auto data = Moon::GetValue<moon_types::LuaDynamicMap>(2);
+    auto data = Moon::GetValue<moon::LuaDynamicMap>(2);
     MessageHandler::AddMessage({id, sender, data});
     return 0;
 }
 
-LUA_DEFINE_BINDING(LuaEntity, false)
-LUA_ADD_METHOD(GetName)
-LUA_ADD_METHOD(SetName)
-LUA_ADD_PROPERTY_CUSTOM(name, GetName, SetName)
-LUA_ADD_METHOD(GetX)
-LUA_ADD_METHOD(SetX)
-LUA_ADD_PROPERTY_CUSTOM(x, GetX, SetX)
-LUA_ADD_METHOD(GetY)
-LUA_ADD_METHOD(SetY)
-LUA_ADD_PROPERTY_CUSTOM(y, GetY, SetY)
-LUA_ADD_METHOD(GetZ)
-LUA_ADD_METHOD(SetZ)
-LUA_ADD_PROPERTY_CUSTOM(z, GetZ, SetZ)
-LUA_ADD_METHOD(GetPosition)
-LUA_ADD_METHOD(SetPosition)
-LUA_ADD_PROPERTY_CUSTOM(position, GetPosition, SetPosition)
-LUA_ADD_METHOD(GetScale)
-LUA_ADD_METHOD(SetScale)
-LUA_ADD_PROPERTY_CUSTOM(scale, GetScale, SetScale)
-LUA_ADD_METHOD(GetColor)
-LUA_ADD_METHOD(SetColor)
-LUA_ADD_PROPERTY_CUSTOM(color, GetColor, SetColor)
-LUA_ADD_METHOD(GetAlpha)
-LUA_ADD_METHOD(SetAlpha)
-LUA_ADD_METHOD(PlaySound)
-LUA_ADD_METHOD(PauseSound)
-LUA_ADD_METHOD(ResumeSound)
-LUA_ADD_METHOD(StopSound)
-LUA_ADD_PROPERTY_CUSTOM(gain, GetGain, SetGain)
-LUA_ADD_PROPERTY_CUSTOM(volume, GetGain, SetGain)
-LUA_ADD_PROPERTY_CUSTOM(pitch, GetPitch, SetPitch)
-LUA_ADD_PROPERTY_CUSTOM(pan, GetPan, SetPan)
-LUA_ADD_PROPERTY_CUSTOM(looped, GetLooped, SetLooped)
-LUA_ADD_PROPERTY_CUSTOM(alpha, GetAlpha, SetAlpha)
-LUA_ADD_PROPERTY_CUSTOM(acquire_events, GetAcquireEvents, SetAcquireEvents)
-LUA_ADD_METHOD(SendMessage);
+MOON_DEFINE_BINDING(LuaEntity, false)
+MOON_ADD_METHOD(GetName)
+MOON_ADD_METHOD(SetName)
+MOON_ADD_PROPERTY_CUSTOM(name, GetName, SetName)
+MOON_ADD_METHOD(GetX)
+MOON_ADD_METHOD(SetX)
+MOON_ADD_PROPERTY_CUSTOM(x, GetX, SetX)
+MOON_ADD_METHOD(GetY)
+MOON_ADD_METHOD(SetY)
+MOON_ADD_PROPERTY_CUSTOM(y, GetY, SetY)
+MOON_ADD_METHOD(GetZ)
+MOON_ADD_METHOD(SetZ)
+MOON_ADD_PROPERTY_CUSTOM(z, GetZ, SetZ)
+MOON_ADD_METHOD(GetPosition)
+MOON_ADD_METHOD(SetPosition)
+MOON_ADD_PROPERTY_CUSTOM(position, GetPosition, SetPosition)
+MOON_ADD_METHOD(GetScale)
+MOON_ADD_METHOD(SetScale)
+MOON_ADD_PROPERTY_CUSTOM(scale, GetScale, SetScale)
+MOON_ADD_METHOD(GetColor)
+MOON_ADD_METHOD(SetColor)
+MOON_ADD_PROPERTY_CUSTOM(color, GetColor, SetColor)
+MOON_ADD_METHOD(GetAlpha)
+MOON_ADD_METHOD(SetAlpha)
+MOON_ADD_METHOD(PlaySound)
+MOON_ADD_METHOD(PauseSound)
+MOON_ADD_METHOD(ResumeSound)
+MOON_ADD_METHOD(StopSound)
+MOON_ADD_PROPERTY_CUSTOM(gain, GetGain, SetGain)
+MOON_ADD_PROPERTY_CUSTOM(volume, GetGain, SetGain)
+MOON_ADD_PROPERTY_CUSTOM(pitch, GetPitch, SetPitch)
+MOON_ADD_PROPERTY_CUSTOM(pan, GetPan, SetPan)
+MOON_ADD_PROPERTY_CUSTOM(looped, GetLooped, SetLooped)
+MOON_ADD_PROPERTY_CUSTOM(alpha, GetAlpha, SetAlpha)
+MOON_ADD_PROPERTY_CUSTOM(acquire_events, GetAcquireEvents, SetAcquireEvents)
+MOON_ADD_METHOD(SendMessage);
 }  // namespace lua

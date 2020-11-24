@@ -1,6 +1,6 @@
 #pragma once
 
-#include <moon.h>
+#include <moon/moon.h>
 
 #include "Core/core.h"
 #include "Scene/entity.h"
@@ -57,7 +57,7 @@ public:
         Moon::CallFunction("OnEvent", dataBuffer.get(), eventType, action);
     }
 
-    void OnMessage(const std::string& id, const std::string& sender, const moon_types::LuaDynamicMap& data) const;
+    void OnMessage(const std::string& id, const std::string& sender, const moon::LuaDynamicMap& data) const;
 
     void OnDestroy();
 

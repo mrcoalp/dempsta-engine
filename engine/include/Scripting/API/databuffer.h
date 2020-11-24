@@ -1,6 +1,6 @@
 #pragma once
 
-#include <moon.h>
+#include <moon/moon.h>
 
 #include <unordered_map>
 
@@ -37,7 +37,7 @@ public:
 
     explicit DataBuffer(lua_State*) {}
 
-    LUA_DECLARE_CLASS(DataBuffer)
+    MOON_DECLARE_CLASS(DataBuffer)
 
     /**
      * @brief Registers class as metatable in Lua.
@@ -68,7 +68,7 @@ public:
      * @param L Lua state.
      * @return int Number of values returned to Lua.
      */
-    static LUA_METHOD(LuaCtor) {
+    static MOON_METHOD(LuaCtor) {
         auto* buffer = new DataBuffer(L);
         Moon::PushValue(buffer);
         return 1;
@@ -80,7 +80,7 @@ public:
      * @param L Lua state.
      * @return int Number of values returned to Lua.
      */
-    static LUA_METHOD(LuaGetter) {
+    static MOON_METHOD(LuaGetter) {
         lua_getmetatable(L, 1);
         lua_pushvalue(L, 2);
         lua_rawget(L, -2);
@@ -96,28 +96,28 @@ public:
      * @param L Lua state.
      * @return int Number of values returned to Lua.
      */
-    static LUA_METHOD(LuaSetter) {
+    static MOON_METHOD(LuaSetter) {
         lua_getmetatable(L, 1);
         lua_pushvalue(L, 2);
         lua_rawget(L, -2);
         auto* self = *Moon::GetValue<DataBuffer**>();
 
         switch (Moon::GetValueType(3)) {  // Handle Lua type
-            case moon_types::LuaType::Number:
+            case moon::LuaType::Number:
                 self->Set(Moon::GetValue<std::string>(2), Moon::GetValue<double>(3));
                 break;
-            case moon_types::LuaType::Boolean:
+            case moon::LuaType::Boolean:
                 self->Set(Moon::GetValue<std::string>(2), Moon::GetValue<bool>(3));
                 break;
-            case moon_types::LuaType::String:
+            case moon::LuaType::String:
                 self->Set(Moon::GetValue<std::string>(2), Moon::GetValue<std::string>(3));
                 break;
-            case moon_types::LuaType::Null:
-            case moon_types::LuaType::LightUserData:
-            case moon_types::LuaType::Table:
-            case moon_types::LuaType::Function:
-            case moon_types::LuaType::UserData:
-            case moon_types::LuaType::Thread:
+            case moon::LuaType::Null:
+            case moon::LuaType::LightUserData:
+            case moon::LuaType::Table:
+            case moon::LuaType::Function:
+            case moon::LuaType::UserData:
+            case moon::LuaType::Thread:
             default:
                 break;
         }

@@ -31,7 +31,7 @@ void ScriptEntity::OnUpdate(const de::TimeStep& ts) const {
     Moon::CallFunction("OnUpdate", dataBuffer.get(), (float)ts);
 }
 
-void ScriptEntity::OnMessage(const std::string& id, const std::string& sender, const moon_types::LuaDynamicMap& dataToSend) const {
+void ScriptEntity::OnMessage(const std::string& id, const std::string& sender, const moon::LuaDynamicMap& dataToSend) const {
     LoadCodeAndContext();
     Moon::CallFunction("OnMessage", dataBuffer.get(), id, sender, dataToSend);
 }
