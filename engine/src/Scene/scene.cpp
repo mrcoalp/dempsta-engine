@@ -25,8 +25,8 @@ void Scene::OnUpdate(const TimeStep& ts) {
             return;
         }
         if (sc.instance == nullptr) {
-            sc.instance = CreateScope<lua::ScriptEntity>(AssetsManager::GetInstance().GetScript(sc.asset));
-            sc.instance->entityRef->m_entity = Entity(entity, this);
+            sc.instance = CreateScope<lua::ScriptEntity>(AssetsManager::GetInstance().GetScript(sc.asset), Entity(entity, this));
+            sc.instance->ReloadScript();
             sc.instance->LoadCodeAndContext();
             sc.instance->OnInit();
         }

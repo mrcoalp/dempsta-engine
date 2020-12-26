@@ -213,7 +213,7 @@ int LuaEntity::SendMessage(lua_State*) {
     return 0;
 }
 
-MOON_DEFINE_BINDING(LuaEntity, false)
+MOON_DEFINE_BINDING(LuaEntity, true)
 MOON_ADD_METHOD(GetName)
 MOON_ADD_METHOD(SetName)
 MOON_ADD_PROPERTY_CUSTOM(name, GetName, SetName)

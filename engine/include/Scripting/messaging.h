@@ -1,9 +1,9 @@
 #pragma once
 
+#include <moon/moon.h>
+
 #include <functional>
 #include <vector>
-
-#include "Scripting/API/databuffer.h"
 
 namespace lua {
 struct Message {

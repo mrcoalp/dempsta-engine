@@ -129,7 +129,7 @@ static void drawScriptingNode(ScriptComponent& component) {
     if (component.instance == nullptr) {
         return;
     }
-    if (ImGui::CollapsingHeader("Data")) {
+    /*if (ImGui::CollapsingHeader("Data")) {
         auto [doubles, bools, strings] = component.instance->dataBuffer->GetData();
         for (auto& d : doubles) {
             auto d1 = static_cast<float>(d.second);
@@ -148,7 +148,7 @@ static void drawScriptingNode(ScriptComponent& component) {
             }
             delete[] cstr;
         }
-    }
+    }*/
 }
 
 static void drawLabelNode(LabelComponent& component) {

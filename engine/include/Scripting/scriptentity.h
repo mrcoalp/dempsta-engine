@@ -4,7 +4,6 @@
 
 #include "Core/core.h"
 #include "Scene/entity.h"
-#include "Scripting/API/databuffer.h"
 #include "Scripting/API/luaentity.h"
 
 namespace de {
@@ -38,10 +37,8 @@ constexpr const char* LUA_GLOBAL_FUNCTIONS[ScriptFunctions::MaxCount]{"OnInit", 
 
 class ScriptEntity {
 public:
-    explicit ScriptEntity(std::string filepath);
+    ScriptEntity(std::string filepath, const de::Entity& entity);
 
-    de::Scope<DataBuffer> dataBuffer;
-    de::Scope<LuaEntity> entityRef;
     bool acquireEvents = false;
 
     inline void SetPath(const std::string& filepath) { m_path = filepath; }
@@ -56,7 +53,7 @@ public:
 
     template <typename T>
     void OnEvent(int eventType, T&& action) const {
-        Moon::LuaFunctionCall(m_functions[ScriptFunctions::OnEvent], dataBuffer.get(), eventType, action);
+        Moon::LuaFunctionCall(m_functions[ScriptFunctions::OnEvent], m_data, eventType, action);
     }
 
     void OnMessage(const std::string& id, const std::string& sender, const moon::LuaDynamicMap& data) const;
@@ -66,5 +63,7 @@ public:
 private:
     std::string m_path;
     moon::LuaFunction m_functions[ScriptFunctions::MaxCount];
+    moon::LuaDynamicMap m_data;
+    moon::LuaRef m_entity;
 };
 }  // namespace lua

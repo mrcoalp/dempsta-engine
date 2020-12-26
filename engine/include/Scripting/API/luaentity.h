@@ -26,7 +26,7 @@
 namespace lua {
 class LuaEntity {
 public:
-    explicit LuaEntity() = default;
+    explicit LuaEntity(de::Entity entity) : m_entity(std::move(entity)) {}
 
     explicit LuaEntity(lua_State*) {}
 
@@ -69,6 +69,5 @@ public:
 
 private:
     de::Entity m_entity;
-    friend class de::Scene;
 };
 }  // namespace lua

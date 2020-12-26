@@ -5,7 +5,6 @@
 
 #include "Core/assetsmanager.h"
 #include "Renderer/renderer.h"
-#include "Scripting/API/databuffer.h"
 #include "Scripting/API/helpers.h"
 #include "Scripting/API/luaentity.h"
 #include "Sound/soundprovider.h"
@@ -13,7 +12,6 @@
 namespace de {
 static void RegisterScriptingAPI() {
     lua::Helpers::Register();
-    lua::DataBuffer::Register();
     Moon::RegisterClass<lua::LuaEntity>();
 }
 
