@@ -36,5 +36,6 @@ end
 function OnMessage(data, msg_id, sender, message)
     if msg_id == "moving" then
         data.moving = message.moving
+        trace(this.name .. ": Am I moving? " .. tostring(message.moving))
     end
 end

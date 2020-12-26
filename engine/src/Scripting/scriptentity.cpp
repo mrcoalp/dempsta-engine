@@ -1,43 +1,40 @@
 #include "Scripting/scriptentity.h"
 
-#include "Utils/fileutils.h"
-
 namespace lua {
-std::string ScriptEntity::s_previousLoadedScript;
-
 ScriptEntity::ScriptEntity(std::string filepath) : m_path(std::move(filepath)) {
     dataBuffer = de::CreateScope<DataBuffer>();
     entityRef = de::CreateScope<LuaEntity>();
     ReloadScript();
 }
 
-void ScriptEntity::ReloadScript() { m_code = de::FileUtils::ReadFile(m_path); }
-
-void ScriptEntity::LoadCodeAndContext() const {
-    Moon::PushGlobalVariable("this", entityRef.get());
-    if (s_previousLoadedScript != m_path) {
-        Moon::RunCode(m_code.c_str());
-        s_previousLoadedScript = m_path;
+void ScriptEntity::ReloadScript() {
+    int top = Moon::GetTop();
+    Moon::LoadFile(m_path.c_str());
+    for (char i = 0; i < ScriptFunctions::MaxCount; ++i) {
+        m_functions[i].Unload();
+        m_functions[i] = Moon::GetGlobalVariable<moon::LuaFunction>(LUA_GLOBAL_FUNCTIONS[i]);
+        Moon::CleanGlobalVariable(LUA_GLOBAL_FUNCTIONS[i]);
     }
+    DE_ASSERT(top == Moon::GetTop(), "Lua stack is not clean after loading script functions")
 }
 
-void ScriptEntity::OnInit() const {
-    LoadCodeAndContext();
-    Moon::CallFunction("OnInit", dataBuffer.get());
-}
+void ScriptEntity::LoadCodeAndContext() const { Moon::PushGlobalVariable("this", entityRef.get()); }
+
+void ScriptEntity::OnInit() const { Moon::LuaFunctionCall(m_functions[ScriptFunctions::OnInit], dataBuffer.get()); }
 
 void ScriptEntity::OnUpdate(const de::TimeStep& ts) const {
-    LoadCodeAndContext();
-    Moon::CallFunction("OnUpdate", dataBuffer.get(), (float)ts);
+    Moon::LuaFunctionCall(m_functions[ScriptFunctions::OnUpdate], dataBuffer.get(), (float)ts);
 }
 
 void ScriptEntity::OnMessage(const std::string& id, const std::string& sender, const moon::LuaDynamicMap& dataToSend) const {
-    LoadCodeAndContext();
-    Moon::CallFunction("OnMessage", dataBuffer.get(), id, sender, dataToSend);
+    Moon::LuaFunctionCall(m_functions[ScriptFunctions::OnMessage], dataBuffer.get(), id, sender, dataToSend);
 }
 
 void ScriptEntity::OnDestroy() {
     entityRef.reset(nullptr);
     dataBuffer.reset(nullptr);
+    for (auto& fn : m_functions) {
+        fn.Unload();
+    }
 }
 }  // namespace lua

@@ -27,8 +27,10 @@ void Scene::OnUpdate(const TimeStep& ts) {
         if (sc.instance == nullptr) {
             sc.instance = CreateScope<lua::ScriptEntity>(AssetsManager::GetInstance().GetScript(sc.asset));
             sc.instance->entityRef->m_entity = Entity(entity, this);
+            sc.instance->LoadCodeAndContext();
             sc.instance->OnInit();
         }
+        sc.instance->LoadCodeAndContext();
         sc.instance->OnUpdate(ts);
         // messaging
         lua::MessageHandler::HandleMessages([&sc](const lua::Message& msg) { sc.instance->OnMessage(msg.id, msg.sender, msg.data); });
@@ -80,6 +82,7 @@ void Scene::OnEvent(Event& event) {
         if (!sc.instance->acquireEvents) {
             return;
         }
+        sc.instance->LoadCodeAndContext();
         dispatcher.Dispatch<KeyPressedEvent>([&](KeyPressedEvent& event) {
             sc.instance->OnEvent(eventType, event.GetKeyCode());
             return false;

@@ -9,6 +9,7 @@
 - [x] Sound;
 - [x] Scene serialization and deserialization (JSON);
 - [x] UUID;
+- [ ] Better data buffer for scripts;
 - [ ] Better asset management;
 - [ ] Sprite animations;
 - [ ] Fix seg fault when deleting sound components (upon editor closing);

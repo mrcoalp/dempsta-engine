@@ -33,6 +33,9 @@ private:
 }  // namespace de
 
 namespace lua {
+enum ScriptFunctions { OnInit, OnUpdate, OnEvent, OnMessage, MaxCount };
+constexpr const char* LUA_GLOBAL_FUNCTIONS[ScriptFunctions::MaxCount]{"OnInit", "OnUpdate", "OnEvent", "OnMessage"};
+
 class ScriptEntity {
 public:
     explicit ScriptEntity(std::string filepath);
@@ -53,8 +56,7 @@ public:
 
     template <typename T>
     void OnEvent(int eventType, T&& action) const {
-        LoadCodeAndContext();
-        Moon::CallFunction("OnEvent", dataBuffer.get(), eventType, action);
+        Moon::LuaFunctionCall(m_functions[ScriptFunctions::OnEvent], dataBuffer.get(), eventType, action);
     }
 
     void OnMessage(const std::string& id, const std::string& sender, const moon::LuaDynamicMap& data) const;
@@ -63,8 +65,6 @@ public:
 
 private:
     std::string m_path;
-    std::string m_code;
-
-    static std::string s_previousLoadedScript;
+    moon::LuaFunction m_functions[ScriptFunctions::MaxCount];
 };
 }  // namespace lua
