@@ -1,6 +1,6 @@
 #type vertex
 
-#version 330 core
+#version 400 core
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec4 color;
@@ -22,7 +22,7 @@ void main() {
 
 #type fragment
 
-#version 330 core
+#version 400 core
 
 layout(location = 0) out vec4 color;
 
@@ -36,6 +36,4 @@ void main() {
     vec4 texColor = texture(u_textures[int(v_textureIndex)], v_texture) * v_color;
     if (texColor.a < 0.1) discard;
     color = texColor;
-    // vec4 texColor = texture(u_textures[int(v_textureIndex)], v_texture);
-    // color = vec4(v_color.rgb, texColor.r);
 }

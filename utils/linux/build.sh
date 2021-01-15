@@ -5,7 +5,7 @@ CONFIGURATION=Debug
 # Install game?
 INSTALL=0
 # Use Ninja?
-BUILD_SYSTEM=-GNinja
+BUILD_SYSTEM="Unix Makefiles"
 # Only generate compilation db
 CHECK_ONLY=0
 # Wether or not to build tests
@@ -29,8 +29,8 @@ Options
     -c | --clean        - Clean build of configuration
     -i | --install      - Install game to build/bin folder
     -j | --jobs <#jobs> - Number of jobs to use
-    --ninja             - Use Ninja as build system (default)
-    --make              - Use Make as build system
+    --ninja             - Use Ninja as build system
+    --make              - Use Make as build system (default)
     --cc <#version>     - Specify which GCC compiler <#version> to use. Ex: --cc 9
     --clang             - Use Clang compiler
     --check             - Only generate compilation database
@@ -58,10 +58,10 @@ while test $# -gt 0; do
     shift
     ;;
   --ninja)
-    BUILD_SYSTEM=-GNinja
+    BUILD_SYSTEM="Ninja"
     ;;
   --make)
-    BUILD_SYSTEM=
+    BUILD_SYSTEM="Unix Makefiles"
     ;;
   --cc)
     export CC=/usr/bin/gcc-$2
@@ -119,25 +119,17 @@ fi
 cd $CONFIGURATION || exit 1
 
 # Run CMake
-cmake -DBUILD_TESTS=$TESTS -DBUILD_DOC=$DOC ../.. $BUILD_SYSTEM -DCMAKE_BUILD_TYPE=$CONFIGURATION -DCMAKE_INSTALL_PREFIX=./bin -DCMAKE_EXPORT_COMPILE_COMMANDS=ON || exit 1
+cmake -DBUILD_TESTS=$TESTS -DBUILD_DOC=$DOC ../.. -G "$BUILD_SYSTEM" -DCMAKE_BUILD_TYPE=$CONFIGURATION -DCMAKE_INSTALL_PREFIX=./bin -DCMAKE_EXPORT_COMPILE_COMMANDS=ON || exit 1
 
 if [ $CHECK_ONLY = 1 ]; then
   exit 0
 fi
 
-if [ -z $BUILD_SYSTEM ]; then
-  make -j $JOBS || exit 1
-else
-  ninja -j $JOBS || exit 1
-fi
+cmake --build . -j $JOBS || exit 1
 
 # Install game
 if [ $INSTALL = 1 ]; then
-  if [ -z $BUILD_SYSTEM ]; then
-    make install || exit 1
-  else
-    ninja install || exit 1
-  fi
+  cmake --build . --target install -j $JOBS || exit 1
 fi
 
 # Exit script successfully
